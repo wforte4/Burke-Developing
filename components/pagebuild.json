@@ -1,0 +1,21 @@
+{
+    "title": "Burke Developing",
+    "paths": [
+        {
+            "name": "Home",
+            "url": "/"
+        },
+        {
+            "name": "Portfolio",
+            "url": "/portfolio"
+        },
+        {
+            "name": "About",
+            "url": "/about"
+        },
+        {
+            "name": "Contact",
+            "url": "/contact"
+        }
+    ]
+}
