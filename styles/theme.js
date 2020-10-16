@@ -11,7 +11,8 @@ const Theme = {
         onxy: "rgba(57, 57, 58, 1)",
         darkonxy: "rgba(37, 37, 38, 1)",
         opaq: "rgba(255, 255, 255, .0)",
-        shadowlight: "0 0 2px rgba(20,20,20,.2)"
+        shadowlight: "0 0 2px rgba(20,20,20,.2)",
+        white: "rgba(255, 255, 255, 1)"
     }
 }
 

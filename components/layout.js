@@ -133,9 +133,9 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user}) => {
                 }
                 .login {
                     float: left;
-                    font: 14px ${theme.fonts.subheader};
-                    padding: 25px 10px;
-                    height: 28px;
+                    font: 15px ${theme.fonts.subheader};
+                    padding: 30px 10px;
+                    height: 18px;
                     border-bottom: 2px solid ${theme.colors.opaq};
                     transition: all .3s ease;
                     opacity: .6;
@@ -147,9 +147,9 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user}) => {
                 }
                 .create {
                     float: left;
-                    font: 14px ${theme.fonts.subheader};
-                    padding: 25px 10px;
-                    height: 28px;
+                    font: 15px ${theme.fonts.subheader};
+                    padding: 30px 10px;
+                    height: 18px;
                     border-bottom: 2px solid ${theme.colors.opaq};
                     transition: all .3s ease;
                     opacity: .6;
@@ -200,6 +200,7 @@ const Header = ({title, currentpath}) => {
     return (
         <Head>
             <title>{title + ':' + currentpath}</title>
+            <link rel='icon' href='/icons/hardhat.png' type="image/gif" sizes="16x16"/>
             <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Open+Sans&family=Raleway&family=Roboto&display=swap" rel="stylesheet"/>
         </Head>
     )
@@ -220,13 +221,21 @@ function Layout({children, links, title, path}) {
     }, [router.pathname])
 
     useEffect(() => {
-        const user = localStorage.getItem('user')
-        const fullname = localStorage.getItem('userFullName')
-        if(user && fullname) {
-            setUser(user)
-            setFullName(fullname)
+        const updateUser = () => {
+
+            const user = localStorage.getItem('user')
+            const fullname = localStorage.getItem('userFullName')
+            if(user && fullname) {
+                setUser(user)
+                setFullName(fullname)
+            } else {
+                setUser(null)
+                setFullName(null)
+            }
         }
-    }, [])
+        updateUser();
+    }, [router.pathname])
+
     return (
         <div id='layout'>
             <Header title={title} currentpath={path}/>

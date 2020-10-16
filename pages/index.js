@@ -18,24 +18,34 @@ function Index() {
                 <p className="quote">Burke Developing is a registered home improvement company located in Quincy Massachusetts</p>
             </Span>
             <Row
-            height='400px'>
-                <Col background={Theme.colors.platinum}>
-                    <div className='center'>Our subcontractors are reliable and responsive. They are the collective workforce that make up the Burke Developing team.</div>
+            height='450px'>
+                <Col background={Theme.colors.white}>
+                    <img className='icon' src='/icons/gear.png'/>
+                    <div className='subtitle'>Building Services</div>
+                    <div className='pg'>Our subcontractors are reliable and responsive. They are the collective workforce that make up the Burke Developing team.</div>
                 </Col>
-                <Col background={Theme.colors.platinum}>
-                    Data
+                <Col background={Theme.colors.white}>
+                    <img className='icon' src='/icons/house.png'/>
+                    <div className='subtitle'>Home Renovations</div>
+                    <div className='pg'>Our specialty is complete home renovations. Through our primary business of buying and selling homes, one of our biggest assets has become our roladex of specialized subcontractors.</div>
                 </Col>
-                <Col background={Theme.colors.platinum}>
-                    Data
+                <Col background={Theme.colors.white}>
+                    <img className='icon' src='/icons/hardhat.png'/>
+                    <div className='subtitle'>On-Site Management</div>
+                    <div className='pg'>This advantage, along with our experience of being on site providing direction toward each order of operations, necessary to complete a project, helps our clients projects run smoother and more cost effective, resulting in a professional project completed.</div>
                 </Col>
             </Row>
             <Row
             height='400px'>
-                <Col background={'blue'}>
-                    Data
+                <Col background={Theme.colors.white}>
+                    <img className='icon' src='/icons/house.png'/>
+                    <div className='subtitle'>Home Renovations</div>
+                    <div className='pg'>Our specialty is complete home renovations. Through our primary business of buying and selling homes, one of our biggest assets has become our roladex of specialized subcontractors.</div>
                 </Col>
-                <Col background={Theme.colors.platinum}>
-                    Data
+                <Col background={Theme.colors.white}>
+                    <img className='icon' src='/icons/hardhat.png'/>
+                    <div className='subtitle'>On-Site Management</div>
+                    <div className='pg'>This advantage, along with our experience of being on site providing direction toward each order of operations, necessary to complete a project, helps our clients projects run smoother and more cost effective, resulting in a professional project completed.</div>
                 </Col>
             </Row>
             <style jsx>{`
@@ -44,14 +54,30 @@ function Index() {
                     width: 100%;
                     min-height: 1200px;
                 }
-                .center {
-                    position: absolute;
-                    max-width: 60%;
-                    top: 50%;
-                    left: 50%;
+                .icon {
+                    float: left;
+                    width: 40px;
+                    height: 40px;
+                    margin-left: 50%;
+                    margin-top: 70px;
+                    transform: translateX(-50%);
+                }
+                .subtitle {
+                    float: left;
+                    width: 50%;
+                    margin-left: 50%;
+                    padding: 20px 0;
+                    transform: translateX(-50%);
+                    font: 18px ${Theme.fonts.title};
+                    text-align: center;
+                }
+                .pg {
+                    float: left;
+                    width: 50%;
+                    margin-left: 50%;
+                    transform: translateX(-50%);
                     font: 14px ${Theme.fonts.paragraph};
                     text-align: center;
-                    transform: translate(-50%, -50%);
                 }
                 .quote {
                     float: left;

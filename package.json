@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node ssr-server.js",
     "build": "next build",
-    "start": "next start"
+    "start": "next start -p 3030"
   },
   "author": "William Forte",
   "license": "ISC",
