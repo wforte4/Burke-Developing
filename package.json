@@ -15,6 +15,7 @@
     "chokidar": "^3.4.2",
     "express": "^4.17.1",
     "next": "^9.5.5",
+    "next-cookies": "^2.0.3",
     "nprogress": "^0.2.0",
     "react": "^16.13.1",
     "react-anchor-link-smooth-scroll": "^1.0.12",

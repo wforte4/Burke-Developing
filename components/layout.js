@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import Head from 'next/head';
 import theme from '../styles/theme';
-import {useScroll} from '../components/hooks';
+import {useScroll, useWindowSize} from '../components/hooks';
 import { useEffect , useState} from 'react';
+import {useRouter} from 'next/router';
+import { Logout } from '../services/apiservice';
 
 export function LoadingScreen({loader}) {
     return (
@@ -34,15 +36,31 @@ export function LoadingScreen({loader}) {
     )
 }
 
-const Navigation = ({title, links, logo, currentpath}) => {
+const Navigation = ({title, links, logo, currentpath, hideNav, user}) => {
     return (
         <div id='nav'>
-            <h1>{title}</h1>
-            <ul>
+            <Link href="/"><h1>{title}</h1></Link>
+            <ul className='barlink'>
                 {links.map((link, i) => {
                     return <Link key={i} href={link.url}><li title={link.url}>{link.name}</li></Link>
                 })}
             </ul>
+            <div className='right'>
+                {user == null ? <>
+                    <Link href='/login'><div className='login'>Login</div></Link>
+                    <Link href='/login'><div className='create'>CreateProfile</div></Link>
+                </>:
+                    <div className='username'>
+                        <h2>Welcome, {user}</h2>
+                        <div className='dropdown'>
+                            <ul>
+                                <Link href="/backend_host_controller"><li>Admin</li></Link>
+                                <li onClick={Logout}>Logout</li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+            </div>
             <style jsx>{`
                 #nav {
                     position: fixed;
@@ -54,36 +72,124 @@ const Navigation = ({title, links, logo, currentpath}) => {
                     background: rgba(255,255,255, .85);
                     backdrop-filter: blur(8px);
                     box-shadow: 0 0 2px rgba(23, 23, 23, .8);
+                    display: ${hideNav == false ? 'block': 'none'};
+                }
+                .username {
+                    float: right;
+                    margin-right: 10px;
+                    min-height: 78px;
+                    min-width: 250px;
+                    cursor: pointer;
+                }
+                .username:hover {
+                    border-bottom: 2px solid ${theme.colors.coral};
+                }
+                .username h2 {
+                    float: left;
+                    font: 16px ${theme.fonts.subheader};
+                    margin: 20px 0;
+                    margin-top: 26px;
+                    width: 100%;
+                    text-align: center;
+                    z-index: 2;
+                }
+                .dropdown {
+                    float: left;
+                    background: white;
+                    z-index: 1;
+                    height: .01px;
+                    opacity: 0;
+                    transition: all .6s ease;
+                    width: 100%;
+                    box-shadow: ${theme.colors.shadowlight};
+                }
+                .dropdown ul li {
+                    float: left;
+                    width: 100%;
+                    padding: 10px 0;
+                    font: 14px ${theme.fonts.subheader};
+                    text-align: center;
+                    list-style: none;
+                    transition: all .3s ease;
+                }
+                .dropdown ul li:hover {
+                    background: ${theme.colors.platinum};
+                }
+                .dropdown ul {
+                    float: left;
+                    width: 100%;
+                    margin: 0;
+                    padding: 0;
+                }
+                .username:hover .dropdown {
+                    height: 100px;
+                    opacity: 1;
+                }
+                .right {
+                    float: right;
+                    height: 80px;
+                    margin-right: 10px;
+                    position: relative;
+                }
+                .login {
+                    float: left;
+                    font: 14px ${theme.fonts.subheader};
+                    padding: 25px 10px;
+                    height: 28px;
+                    border-bottom: 2px solid ${theme.colors.opaq};
+                    transition: all .3s ease;
+                    opacity: .6;
+                    cursor: pointer;
+                }
+                .login:hover {
+                    border-bottom: 2px solid ${theme.colors.coral};
+                    opacity: 1;
+                }
+                .create {
+                    float: left;
+                    font: 14px ${theme.fonts.subheader};
+                    padding: 25px 10px;
+                    height: 28px;
+                    border-bottom: 2px solid ${theme.colors.opaq};
+                    transition: all .3s ease;
+                    opacity: .6;
+                    cursor: pointer;
+                }
+                .create:hover {
+                    border-bottom: 2px solid ${theme.colors.coral};
+                    opacity: 1;
                 }
                 h1 {
                     float: left;
                     font: 26px ${theme.fonts.title};
                     color: ${theme.colors.onxy};
                     margin: 0 10px;
+                    cursor: pointer;
                     padding: 22px 10px;
                 }
-                ul {
+                .barlink {
                     float: left;
                     height: 90px;
                     position: relative;
-
+                    margin: 0;
                 }
-                li {
+                .barlink li {
                     float: left;
-                    font: 16px ${theme.fonts.subheader};
-                    list-style: none;
-                    padding: 8px 12px;
-                    margin: 4px 10px;
+                    font: 15px ${theme.fonts.subheader};
+                    padding: 30px 10px;
+                    height: 18px;
+                    border-bottom: 2px solid ${theme.colors.opaq};
                     transition: all .3s ease;
-                    color: ${theme.colors.onxy};
-                    border-bottom: 2px solid rgba(0,0,0,0);
+                    opacity: .6;
+                    list-style: none;
                     cursor: pointer;
                 }
-                li[title="${currentpath}"] {
+                .barlink li:hover {
                     border-bottom: 2px solid ${theme.colors.coral};
+                    opacity: 1;
                 }
-                li:hover {
-                    opacity: .9;
+                .barlink li[title="${currentpath}"] {
+                    border-bottom: 2px solid ${theme.colors.coral};
                 }
             `}</style>
         </div>
@@ -101,11 +207,30 @@ const Header = ({title, currentpath}) => {
 
 
 function Layout({children, links, title, path}) {
+    
+    const router = useRouter();
+    const wzise = useWindowSize();
+    const [user, setUser] = useState(null)
+    const [userFullName, setFullName] = useState(null)
 
+    const [hideNav, setNav] = useState(router.pathname === '/login' ? true: false)
+
+    useEffect(() => {
+        setNav(router.pathname === '/login'? true: false)
+    }, [router.pathname])
+
+    useEffect(() => {
+        const user = localStorage.getItem('user')
+        const fullname = localStorage.getItem('userFullName')
+        if(user && fullname) {
+            setUser(user)
+            setFullName(fullname)
+        }
+    }, [])
     return (
         <div id='layout'>
-            <Header title={title}/>
-            <Navigation title={title} links={links} logo='/uplinkflat.png' currentpath={path}/>
+            <Header title={title} currentpath={path}/>
+            <Navigation user={userFullName} hideNav={hideNav} title={title} links={links} logo='/uplinkflat.png' currentpath={path}/>
             <div id="canvas">
                 {children}
             </div>
@@ -149,6 +274,7 @@ function Layout({children, links, title, path}) {
                 #canvas {
                     float: left;
                     width: 100%;
+                    min-height: 100%;
                     height: auto;
                 }
                 #__next {
@@ -164,6 +290,9 @@ function Layout({children, links, title, path}) {
                     height: 100%;
                     padding: 0;
                     margin: 0;
+                }
+                #nprogress .bar {
+                    background: #ff8552 !important;
                 }
                 html {
                     float: left;

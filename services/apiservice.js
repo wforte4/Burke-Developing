@@ -5,7 +5,7 @@ import { Cookies } from 'react-cookie';
 
 const cookies = new Cookies();
 
-export const backendImages = "https://zerorevision.com/restapi/uploadimages/";
+export const backendImages = "https://uplink.work/restapi/uploadimages/";
 
 export async function createProfile(fullname, email, newpassword, image) {
     // Request data to post to createprofile route on rest api
@@ -101,7 +101,7 @@ export async function Logout() {
     localStorage.removeItem('expiration');
     localStorage.removeItem('sub');
     console.log("User logged out")
-    await Router.push("/logout");
+    await Router.push("/login");
 }
 
 export async function loginRequest(email, password) {
@@ -122,7 +122,7 @@ export async function loginRequest(email, password) {
     localStorage.setItem('expiration', res.data.exp);
     localStorage.setItem('sub', res.data.sub);
     cookies.set('token', res.data.value);
-    Router.push("/login");
+    Router.push("/");
 }
 
 export async function getProfile(user) {

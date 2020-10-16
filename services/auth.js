@@ -1,26 +1,14 @@
 import axios from 'axios';
 import Router, { useRouter } from 'next/router';
 import {Component} from 'react';
-import { Cookies } from 'react-cookie';
+import nextCookie from 'next-cookies';
 import {baseConfig} from './restservice';
 import {Logout} from './apiservice';
 import { post, get , postFile} from "./restservice";
 // set up cookies
-const cookies = new Cookies();
 
 async function handleAuthSSR(ctx) {
-  let token = null;
-  // if context has request info aka Server Side
-  if (ctx.req) {
-    // ugly way to get cookie value from a string of values
-    // good enough for demostration
-    token = ctx.req.headers.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-    
-  }
-  else {
-    // we dont have request info aka Client Side
-    token = cookies.get('token')
-  }
+  const { token } = nextCookie(ctx);
 
   try {
     const response = await axios.get(baseConfig.baseURL + "/user/restricted", { headers: { 'Authorization':'Bearer ' + token } });
@@ -33,11 +21,11 @@ async function handleAuthSSR(ctx) {
     console.log("redirecting back to main page");
     if (ctx.res) {
       ctx.res.writeHead(302, {
-        Location: '/'
+        Location: '/login'
       })
       ctx.res.end()
     } else {
-      Router.push('error', '/')
+      Router.push('error', '/login')
       return null
     }
   }
