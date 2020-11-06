@@ -1,290 +1,176 @@
-import { catchAxiosError } from "./error";
-import { post, get , postFile} from "./restservice";
 import Router from 'next/router';
 import { Cookies } from 'react-cookie';
+import jwt_decode from 'jwt-decode';
 
 const cookies = new Cookies();
 
-export const backendImages = "https://uplink.work/restapi/uploadimages/";
+export const backendImages = "http://localhost:3600/ftp/";
 
-export async function createProfile(fullname, email, newpassword, image) {
+export async function createProfile(firstname, lastname, email, password) {
     // Request data to post to createprofile route on rest api
-    const data = new URLSearchParams({
-        fullname,
-        email,
-        newpassword,
-        image,
+    fetch('http://localhost:3600/users', {
+        method: 'POST',
+        headers: {
+            "Content-type": "application/json"
+        },
+        body: JSON.stringify({
+            "firstName": firstname,
+            "lastName": lastname,
+            "email": email,
+            "password": password
+        })
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+        console.log('Request succeeded with JSON response', data);
+    })
+    .catch(function(error) {
+        console.log('Request failed', error);
     });
-    const res = await post("/createprofile", data).catch(catchAxiosError);
-    if(res.error) return res.error;
-    if(!res.data) return "Something wrong";
-
-    return res.data.status;
-}
-
-export async function resetPassword(email, newpassword) {
-    const data = new URLSearchParams({
-        email,
-        newpassword
-    })
-    const res = await post("/resetpass", data).catch(catchAxiosError);
-    if(res.error) return res.error;
-    return res.data.status;
-}
-
-export async function confirmEmail(fullname, email) {
-    const data = new URLSearchParams({
-        fullname,
-        email
-    })
-    const res = await post("/confirmemailzr", data).catch(catchAxiosError);
-    if(res.error) return res.error;
-    return res.data.message;
-}
-
-export async function forgotPass(email) {
-    const data = new URLSearchParams({
-        email,
-    })
-    const res = await post("/forgotpass", data).catch(catchAxiosError);
-    if(res.error) return res.error;
-    return res.data.message;
-}
-
-export async function checkConfirm(email, confirmation) {
-    const data = new URLSearchParams({
-        email,
-        confirmation
-    })
-    const res = await post("/checkconfirm", data).catch(catchAxiosError);
-    if(res.error) return res.error;
-    if(res.data) return res.data.status;
-}
-
-export async function deleteProfile(user) {
-    const res = await get(`/removeuser/${user}`);
-    if(res.data) return res.data;
-    if(res.error) return res.error;
-    return res.data;
-}
-
-export async function removeFile(filename) {
-    const res = await get(`/removefile/${filename}`).then(
-        res => {
-            if(res.error) return res.error;
-            console.log(res.data.status);
-            return res.data.status;
-        }
-    )
-}
-
-export async function removeUserFile(filepath, user) {
-    const data = new URLSearchParams({
-        filepath, 
-        user,
-    });
-    const res = await post("/removefile", data).catch(catchAxiosError);
-    if(res.error) return res.error;
-    return res.data.status;
-}
-
-export const COOKIES = {
-    logintoken: "indexplus.token.secured"
-};
-
-export async function Logout() {
-    cookies.remove('token');
-    
-    localStorage.removeItem('user');
-    localStorage.removeItem('userFullName');
-    localStorage.removeItem('authorization');
-    localStorage.removeItem('expiration');
-    localStorage.removeItem('sub');
-    console.log("User logged out")
-    await Router.push("/login");
 }
 
 export async function loginRequest(email, password) {
     // New Login Data request
-    const data = new URLSearchParams({
-        email, 
-        password,
+    const newLogin = await fetch('http://localhost:3600/auth', {
+        method: 'POST',
+        headers: {
+            "Content-type": "application/json"
+        },
+        body: JSON.stringify({
+            "email": email,
+            "password": password
+        })
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+        cookies.set('accessToken', data.accessToken);
+        cookies.set('refreshToken', data.refreshToken);
+        const decoded = jwt_decode(data.accessToken);
+        cookies.set('name', decoded.name)
+        cookies.set('email', decoded.email)
+        cookies.set('refreshKey', decoded.refreshKey)
+        cookies.set('permission_level', decoded.permissionLevel)
+        cookies.set('userId', decoded.userId)
+        Router.push("/")
+    })
+    .catch(function(error) {
+        return error
     });
-    const res = await post("/login", data).catch(catchAxiosError);
-    if(res.error) return res.error;
-    if(res.data.error) {
-        return res.data.error;
+    if(newLogin) {
+        return "Username/Password does not match our records!"
     }
-    const { token } = res.data.value;
-    localStorage.setItem('user', res.data.email);
-    localStorage.setItem('userFullName', res.data.fullname);
-    localStorage.setItem('authorization', res.data.value);
-    localStorage.setItem('expiration', res.data.exp);
-    localStorage.setItem('sub', res.data.sub);
-    cookies.set('token', res.data.value);
-    Router.push("/");
 }
 
-export async function getProfile(user) {
-    const res = await get(`/getprofile/${user}`);
-    if(res.error) return res.error;
-    return res.data;
+export async function Logout() {
+    cookies.remove('accessToken');
+    cookies.remove('refreshToken');
+    cookies.remove('name')
+    cookies.remove('email')
+    cookies.remove('refreshKey')
+    cookies.remove('userId')
+    await Router.push("/login");
 }
 
-export async function getStaticImages() {
-    const res = await get("/uploadedimages");
-    return res.data;
-}
-
-export async function getUserImages(user) {
-    const res = await get(`/uploadedimages/${user}`);
-    return res.data;
-}
-
-// Store Item and Post Upload Endpoints //
-export async function getStoreItems(store) {
-    const res = await get(`/getstoreitems/${store}`);
-    if(res.error) return res.error;
-    if(!res.data) return "Did not load or no items yet...";
-    return res.data;
-}
-
-export async function getStoreItemsByUser(owner) {
-    const res = await get(`/getstoreitemsbyuser/${owner}`);
-    if(res.error) return res.error;
-    if(!res.data) return "Did not load or no items yet...";
-    return res.data;
-}
-
-export async function getStorePosts(store) {
-    const res = await get(`/getstoreposts/${store}`);
-    if(res.error) return "noresponse";
-    if(!res.data) return "Did not load or no posts yet...";
-    console.log("called get posts");
-    return res.data;
-}
-
-export async function getStorePost(postid) {
-    const res = await get(`/getstorepost/${postid}`);
-    if(res.error) return res.error;
-    if(!res.data) return "Did not load the post";
-    return res.data;
-}
-
-export async function getStoreItem(itemid) {
-    const res = await get(`/getstoreitem/${itemid}`);
-    if(res.error) return res.error;
-    if(!res.data) return "Did not load the item";
-    return res.data;
-}
-
-export async function likeItem(itemid) {
-    const res = await get(`/likeitem/${itemid}`);
-    if(res.error) return res.error;
-    return res.data.status;
-}
-
-export async function dislikeItem(itemid) {
-    const res = await get(`/dislikeitem/${itemid}`);
-    if(res.error) return res.error;
-    return res.data.status;
-}
-
-export async function getItemComments(itemid) {
-    const res = await get(`/getcomments/${itemid}`);
-    if(res.error) return res.error;
-    return res.data;
-}
-
-export async function makeComment(owner, commentstring, connectingitem, rating) {
-    const data = new URLSearchParams({
-        owner,
-        commentstring,
-        connectingitem,
-        rating
+export async function createTask(objective, status) {
+    
+    const getCookies = cookies.getAll()
+    // New Login Data request
+    const newTask = await fetch('http://localhost:3600/tasks', {
+        method: 'POST',
+        headers: {
+            "Content-type": "application/json",
+            "Authorization": `Bearer ${getCookies.accessToken}`
+        },
+        body: JSON.stringify({
+            "objective": objective,
+            "status": status
+        })
     })
-    const res = await post("/makecomment", data).catch(catchAxiosError);
-    if(res.error) return res.error;
-    if(res.data) return res.data.status;
-}
-
-export async function getStoreAuth(user) {
-    const res = await get(`/getstoreauth/${user}`);
-    if(res.error) return res.error;
-    if(res.data.status) return "No Store";
-    return res.data;
-}
-
-export async function makeNewAuth(storename, storeurl, username) {
-    const data = new URLSearchParams({
-        username,
-        storename,
-        storeurl
-    });
-    const res = await post("/makestoreauth", data).catch(catchAxiosError);
-    if(res.error) return res.error;
-    if(!res.data.status) "Did not work";
-    return res.data.status;
-}
-
-export async function addStoreItem(itemname, itemdescription, itemprice, itemimage, itemstore, itemowner) {
-    const data = new URLSearchParams({
-        itemname, 
-        itemdescription, 
-        itemprice, 
-        itemimage, 
-        itemstore,
-        itemowner
-    });
-    const res = await post("/createstoreitem", data).catch(catchAxiosError);
-    if(res.error) return res.error;
-    if(!res.data.status) "No Response";
-    return res.data.itemid;
-}
-
-export async function removeItem(id) {
-    const res = await get(`/deleteitem/${id}`);
-    if(res.error) return res.error;
-    return res.data.status;
-}
-
-// Shopping Card Session fetching and creating //
-// >> ADD TO CART
-// >> REMOVE FROM CART
-// >> GET SHOPPING SESSION (AUTO CREATES SESSION IF NOT EXISTS)
-// >> 
-
-export async function addToCart(email, item) {
-    const data = new URLSearchParams({
-        email, item
+    .then(function(response) {
+        return response.json();
     })
-    const additem = await post('/addtocart', data).catch(catchAxiosError);
-    if(additem) return additem.data.status;
-}
-
-export async function getShoppingSession(email) {
-    const res = await get(`/getshoppingsession/${email}`);
-    if(res) return res.data;
-}
-
-export async function getCartItems(cartdata) {
-    const res = await get(`/getcartitems/${cartdata}`);
-    if(res) return res.data;
-}
-
-export async function clearCart(email) {
-    localStorage.removeItem('cartsession');
-    const res = await get(`/clearcart/${email}`);
-    if(res) return res.data.status;
-}
-
-export async function getpaymentintent(email, cartdata) {
-    const data = new URLSearchParams({
-        email,
-        cartdata,
+    .catch(function(error) {
+        return error
     });
-    const res = await post("/paymentIntent", data).catch(catchAxiosError);
-    if(res.error) return res.error;
-    if(!res.data) return "Did not load or no items yet...";
-    return res.data.client_secret;
+    if(newTask) {
+        return newTask
+    }
+}
+
+export async function getTasks(limit, token) {
+    
+    const getCookies = cookies.getAll()
+    // New Login Data request
+    const newTask = await fetch('http://localhost:3600/tasks', {
+        method: 'GET',
+        headers: {
+            "Content-type": "application/json",
+            "Authorization": `Bearer ${getCookies.accessToken ? getCookies.accessToken: token}`
+        },
+        query: JSON.stringify({
+            "limit": limit
+        })
+    })
+    .then(function(response) {
+        if(response.status == 403) {
+            return 'Not Authorized'
+        }
+        return response.json();
+    })
+    .catch(function(error) {
+        return error
+    });
+    if(newTask) {
+        return newTask
+    }
+}
+
+export async function removeTask(taskId) {
+    
+    const getCookies = cookies.getAll()
+    // New Login Data request
+    const newTask = await fetch(`http://localhost:3600/tasks/${taskId}`, {
+        method: 'DELETE',
+        headers: {
+            "Authorization": `Bearer ${getCookies.accessToken ? getCookies.accessToken: token}`
+        }
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .catch(function(error) {
+        return error
+    });
+    if(newTask) {
+        return newTask
+    }
+}
+
+export async function updateTaskStatus(taskId, newstatus) {
+    
+    const getCookies = cookies.getAll()
+    // New Login Data request
+    const newTask = await fetch(`http://localhost:3600/tasks/${taskId}`, {
+        method: 'PATCH',
+        headers: {
+            "Content-type": "application/json",
+            "Authorization": `Bearer ${getCookies.accessToken ? getCookies.accessToken: token}`
+        },
+        body: JSON.stringify({
+            "status": newstatus
+        })
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .catch(function(error) {
+        return error
+    });
+    if(newTask) {
+        return newTask
+    }
 }

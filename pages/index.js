@@ -3,22 +3,22 @@ import build from '../components/pagebuild.json';
 import BannerSlider from '../components/banner';
 import Theme from '../styles/theme';
 import {Span, Row, Col} from '../components/elements';
+import {isMobile} from 'react-device-detect';
+import { useState } from 'react';
 
 function Index() {
-
     return (
         <div id="mybody">
             <BannerSlider
-                defaultBackground={Theme.colors.platinum}
                 images={['/yellow_house.jpg', '/3foyer.jpg', '/4livingroom.jpg', '/9kitchen.jpg', '/kitchen_living.jpg']}
-                height={700}
-                cover='rgba(72, 70, 93, .4)'
+                height={isMobile == true ? 250:650}
             />
             <Span background={Theme.colors.platinum} padding={40}>
                 <p className="quote">Burke Developing is a registered home improvement company located in Quincy Massachusetts</p>
             </Span>
             <Row
-            height='450px'>
+                padding='2.5'
+                height={isMobile == true ? 'auto': '450px'}>
                 <Col background={Theme.colors.white}>
                     <img className='icon' src='/icons/gear.png'/>
                     <div className='subtitle'>Building Services</div>

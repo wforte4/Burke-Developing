@@ -13,16 +13,16 @@ function Login() {
         password: '',
     })
     const wsize = useWindowSize();
-    const [isloading, setLoading] = useState(false);
-    const [formStatus, setFormStatus] = useState(false);
+    const [formStatus, setFormStatus] = useState('form');
+    const [status, setStatus] = useState(null)
 
     const userLoginRequest = async(e) => {
         e.preventDefault();
-        setLoading(true);
+        setFormStatus('loading');
         const newLogin = await loginRequest(inputs.username, inputs.password);
         if(newLogin) {
-            setFormStatus(newLogin);
-            setLoading(false);
+            setFormStatus('failed');
+            setStatus(newLogin)
         }
     }
 
@@ -39,7 +39,7 @@ function Login() {
                 <img className='bgimage' src='/bg_login.png' />
                 <h1 className='header'>BurkeDeveloping</h1>
                 <div className='formbody'>
-                    <form onSubmit={userLoginRequest}>
+                    <form onSubmit={formStatus !== 'loading' ? userLoginRequest: null}>
                         <label title='username'>Username</label>
                         <input 
                             name='username'
@@ -55,18 +55,28 @@ function Login() {
                             onChange={isTyping}
                             required 
                         />
-                        <div className='formstatus'>{formStatus ? formStatus: null}</div>
-                        <button>Login</button>
+                        <div className='formstatus'>{status ? status: null}</div>
+                        <button type="submit">Login</button>
                     </form>
+                    <img className='loader' src='/loading_a.gif'/>
                 </div>
                 <style jsx>{`
+                    .formstatus {
+                        float: left;
+                        margin: 20px 5%;
+                        width: 90%;
+                        font: 12px 'Roboto';
+                        color: red;
+                        opacity: .7;
+                    }
                     .formbody {
                         position: absolute;
                         top: 50%;
                         left: 50%;
                         transform: translate(-50%, -50%);
                         width: 400px;
-                        height: 500px;
+                        transition: all .4s ease;
+                        height: ${formStatus == 'loading' ? '250px': '500px'};
                         backdrop-filter: blur(8px);
                         background: rgba(255, 255, 255, .7);
                         box-shadow: 0 0 4px rgba(25, 26, 24, .2);
@@ -91,7 +101,7 @@ function Login() {
                         width: 60%;
                         padding: 10px 5%;
                         margin: 2px 20%;
-                        margin-top: 45px;
+                        margin-top: 30px;
                         font: 14px ${Theme.fonts.subheader};
                         border: none;
                         cursor: pointer;
@@ -111,6 +121,19 @@ function Login() {
                         float: left;
                         width: 100%;
                         margin-top: 70px;
+                        transition: all .3s ease;
+                        opacity: ${formStatus == 'loading' ? 0: 1};
+                    }
+                    .formbody .loader {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        width: 60px;
+                        height: 60px;
+                        z-index: 100;
+                        opacity: ${formStatus == 'loading' ? 1: 0};
+
                     }
                     .bgimage {
                         position: absolute;

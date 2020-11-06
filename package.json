@@ -4,7 +4,7 @@
   "description": "BurkeDeveloping Construction company",
   "main": "index.js",
   "scripts": {
-    "dev": "node ssr-server.js",
+    "dev": "next",
     "build": "next build",
     "start": "next start -p 3030"
   },
@@ -14,12 +14,14 @@
     "axios": "^0.20.0",
     "chokidar": "^3.4.2",
     "express": "^4.17.1",
+    "jwt-decode": "^3.0.0",
     "next": "^9.5.5",
     "next-cookies": "^2.0.3",
     "nprogress": "^0.2.0",
     "react": "^16.13.1",
     "react-anchor-link-smooth-scroll": "^1.0.12",
     "react-cookie": "^4.0.3",
+    "react-device-detect": "^1.14.0",
     "react-dom": "^16.13.1"
   }
 }

@@ -51,7 +51,6 @@ function Slide({index, image, height, currentSlide}) {
                     position: absolute;
                     top: 0;
                     left: ${index * 100}%;
-                    background: red;
                     width: 100%;
                     height: ${height}px;
                     overflow: hidden;
@@ -61,8 +60,8 @@ function Slide({index, image, height, currentSlide}) {
                     position: absolute;
                     top: 50%;
                     left: 50%;
-                    transition: all 1s ease;
-                    transform: translate(-50%,-50%) scale(${index == currentSlide ? '1.1, 1.1': '1, 1'});
+                    transition: all 2s ease;
+                    transform: translate(-50%,-50%) scale(${index == currentSlide ? '1.2, 1.2': '1, 1'});
                     width: 100%;
                     
                 }
@@ -142,8 +141,6 @@ export default function BannerSlider({cover, defaultBackground, images, children
                     min-width: 40px;
                     bottom: 14px;
                     left: 50%;
-                    backdrop-filter: blur(12px);
-                    background: rgba(255, 255, 255, .4);
                     padding: 7px;
                     border-radius: 10px;
                     transform: translateX(-50%);
@@ -161,10 +158,10 @@ export default function BannerSlider({cover, defaultBackground, images, children
                 }
                 .arrow {
                     position: absolute;
-                    width: 25px;
-                    height: 25px;
+                    width: 30px;
+                    height: 30px;
                     top: 50%;
-                    padding: 10px;
+                    padding: 5px;
                     z-index: 12;
                     opacity: .4;
                     transition: all .3s ease;
@@ -192,12 +189,16 @@ export default function BannerSlider({cover, defaultBackground, images, children
                     position: absolute;
                     top: 0;
                     left: 0;
-                    background: ${cover};
+                    transition: background .4s ease-in-out;
+                    background: ${isHovering ? 'rgba(0,0,0,.4)': 'none'};
                     height: 100%;
                     width: 100%;
                     z-index: 10;
                 }
                 @media only screen and (max-width: 800px) {
+                    #banner {
+                        max-height: 300px;
+                    }
                 } 
                 @media only screen and (max-width: 1100px) {
                 }
