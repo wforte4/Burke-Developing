@@ -61,7 +61,7 @@ function Slide({index, image, height, currentSlide}) {
                     top: 50%;
                     left: 50%;
                     transition: all 2s ease;
-                    transform: translate(-50%,-50%) scale(${index == currentSlide ? '1.2, 1.2': '1, 1'});
+                    transform: translate(-50%,-50%) scale(${index == currentSlide ? '1.2, 1.2': '1, 1'}) translate3d(0, 0, 0);
                     width: 100%;
                     
                 }
@@ -70,7 +70,7 @@ function Slide({index, image, height, currentSlide}) {
     )
 }
 
-export default function BannerSlider({cover, defaultBackground, images, children, height, shadow}) {
+export default function BannerSlider({cover, defaultBackground, images, children, height, shadow, backendImageRoute}) {
     
     const defaultSize = 600;
     const [currentSlide, setCurrent] = useState(0);
@@ -115,7 +115,7 @@ export default function BannerSlider({cover, defaultBackground, images, children
             <div className='imgcont'>
                 {images == null ? null: images.map((image, i) => {
                     return (
-                        <Slide key={i} image={image} height={height} index={i} currentSlide={currentSlide} />
+                        <Slide key={i} image={backendImageRoute ? backendImageRoute + image: image} height={height} index={i} currentSlide={currentSlide} />
                     )
                 })}
             </div>

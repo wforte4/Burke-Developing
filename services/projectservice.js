@@ -1,5 +1,5 @@
 import { Cookies } from 'react-cookie';
-
+import { baseConfig } from './restservice' 
 
 const cookies = new Cookies();
 
@@ -7,7 +7,7 @@ export async function createProject(title, body, tags, images) {
     
     const getCookies = cookies.getAll()
     // New Login Data request
-    const newProject = await fetch('http://localhost:3600/projects', {
+    const newProject = await fetch(baseConfig.baseURL + '/projects', {
         method: 'POST',
         headers: {
             "Content-type": "application/json",
@@ -31,15 +31,12 @@ export async function createProject(title, body, tags, images) {
     }
 }
 
-export async function getTasks(limit, token) {
-    
-    const getCookies = cookies.getAll()
+export async function getProjects(limit) {
     // New Login Data request
-    const newTask = await fetch('http://localhost:3600/tasks', {
+    const newTask = await fetch(baseConfig.baseURL + '/projects', {
         method: 'GET',
         headers: {
-            "Content-type": "application/json",
-            "Authorization": `Bearer ${getCookies.accessToken ? getCookies.accessToken: token}`
+            "Content-type": "application/json"
         },
         query: JSON.stringify({
             "limit": limit
@@ -59,11 +56,34 @@ export async function getTasks(limit, token) {
     }
 }
 
-export async function removeTask(taskId) {
+export async function getProjectById(id) {
+    // New Login Data request
+    console.log(process.env.PROJECTS_ROUTE)
+    const newTask = await fetch(process.env.PROJECTS_ROUTE + '/' + id, {
+        method: 'GET',
+        headers: {
+            "Content-type": "application/json"
+        }
+    })
+    .then(function(response) {
+        if(response.status == 403) {
+            return 'Not Authorized'
+        }
+        return response.json();
+    })
+    .catch(function(error) {
+        return error
+    });
+    if(newTask) {
+        return newTask
+    }
+}
+
+export async function removeProject(taskId) {
     
     const getCookies = cookies.getAll()
     // New Login Data request
-    const newTask = await fetch(`http://localhost:3600/tasks/${taskId}`, {
+    const newTask = await fetch(`http://localhost:3600/projects/${taskId}`, {
         method: 'DELETE',
         headers: {
             "Authorization": `Bearer ${getCookies.accessToken ? getCookies.accessToken: token}`

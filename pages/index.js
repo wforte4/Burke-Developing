@@ -53,6 +53,7 @@ function Index() {
                     float: left;
                     width: 100%;
                     min-height: 1200px;
+                    margin-top: 80px;
                 }
                 .icon {
                     float: left;

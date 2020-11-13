@@ -13,7 +13,9 @@ const Theme = {
         opaq: "rgba(255, 255, 255, .0)",
         shadowlight: "0 0 2px rgba(20,20,20,.2)",
         white: "rgba(255, 255, 255, 1)",
-        royalblue: "rgba(37, 67, 158, 1)"
+        royalblue: "rgba(37, 67, 158, 1)",
+        charcoal: "rgba(40, 56, 69, 1)",
+        gunmetal: "rgba(32, 44, 57, 1)"
     }
 }
 

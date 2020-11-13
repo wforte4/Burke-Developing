@@ -68,10 +68,14 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission}
                     <Link href='/createprofile'><div className='create'>CreateProfile</div></Link>
                 </>:
                     <div className='username'>
+                        <img src='/logo_arrow_left.png'/>
                         <h2>Welcome, {user}</h2>
                         <div className='dropdown'>
                             <ul>
-                                {permission > 5 ? <Link href="/backend_host_controller"><li>Admin</li></Link>: null}
+                                {permission > 2000 ? <>
+                                    <Link href="/backend_host_controller"><li>Upload Project</li></Link>
+                                    <Link href="/backend_host_controller/taskmanager"><li>View Tasks</li></Link>
+                                    </>: null}
                                 <li onClick={Logout}>Logout</li>
                             </ul>
                         </div>
@@ -96,14 +100,28 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission}
                     right: 20px;
                     width: 30px;
                     height: 30px;
-                    display: ${isMobile == true ? 'block': 'none'};
+                    display: none;
                 }
                 .username {
-                    float: right;
-                    margin-right: 10px;
+                    position: fixed;
+                    right: 0;
+                    top: 0;
                     min-height: 78px;
-                    min-width: 250px;
+                    min-width: 200px;
                     cursor: pointer;
+                    position: relative;
+                }
+                .username img {
+                    position: absolute;
+                    left: 10px;
+                    top: 30px;
+                    width: 14px;
+                    height: 14px;
+                    transition: all .3s ease-in-out;
+                    transform: rotate(180deg);
+                }
+                .username:hover img {
+                    transform: rotate(-90deg);
                 }
                 .username h2 {
                     float: left;
@@ -123,7 +141,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission}
                     transition: height .4s ease, opacity 1s ease;
                     width: 100%;
                     overflow: hidden;
-                    border-bottom: 2px solid ${theme.colors.coral};
+                    border-bottom: 2px solid ${theme.colors.gunmetal};
                     border-radius: 8px;
                     box-shadow: ${theme.colors.shadowlight};
                 }
@@ -146,14 +164,16 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission}
                     padding: 0;
                 }
                 .username:hover .dropdown {
-                    height: 100px;
+                    height: auto;
                     opacity: 1;
                 }
                 .right {
-                    float: right;
-                    height: 80px;
+                    position: fixed;
+                    right: 0;
+                    top: 0;
+                    width: 270px;
+                    min-height: 80px;
                     margin-right: 10px;
-                    position: relative;
                     display: ${isMobile == true ? 'none': 'block'}
                 }
                 .login {
@@ -194,34 +214,30 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission}
                 }
                 .barlink {
                     float: left;
-                    margin: ${isMobile == true ? '0': '10px'};
-                    margin-top: ${isMobile == true ? '0': '15px'};
-                    padding: ${isMobile == true ? '10px 5%': '10px'};
+                    margin: 10px;
+                    margin-top: 15px;
+                    padding: 10px;
                     position: relative;
                     transition: transform .6s ease-in-out;
-                    transform: translateX(${isMobile == true ? mobileactive ? '0': '100%': '0'});
-                    background: ${isMobile == true ? 'white': 'none'};
-                    width: ${isMobile == true ? '90%': 'auto'};
                 }
                 .barlink li {
                     float: left;
                     font: 16px ${theme.fonts.subheader};
-                    padding: ${isMobile == true ? '10px 5%': '10px 10px'};
+                    padding: 10px 10px;
                     padding-top: 0;
                     height: 18px;
                     border-bottom: 2px solid ${theme.colors.opaq};
                     transition: all .3s ease;
-                    opacity: .8;
+                    opacity: .7;
                     line-height: 32px;
                     list-style: none;
                     cursor: pointer;
                     display: inline-block;
-                    width: ${isMobile == true ? '90%': 'auto'};
                 }
                 .barlink li:after {
                   display:block;
                   content: '';
-                  border-bottom: solid 2px ${theme.colors.coral};  
+                  border-bottom: solid 2px ${theme.colors.charcoal};  
                   transform: scaleX(0);  
                   transition: transform 250ms ease-in-out;
                 }
@@ -232,6 +248,27 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission}
                 }
                 .barlink li[title="${currentpath}"] {
                     opacity: 1;
+                }
+                @media screen and (max-width: 480px) {
+                    .barlink {
+                        width: 100%;
+                        background: white;
+                        position: absolute;
+                        top: 80px;
+                        margin: 0;
+                        padding: 10px 0;
+                        transform: translateX(${mobileactive ? 0: '-100%'});
+                    }
+                    .barlink li {
+                        width: 90%;
+                        padding: 8px 5%;
+                    }
+                    .hamburg {
+                        display: block;
+                    }
+                    .username {
+                        display: none;
+                    }
                 }
             `}</style>
         </div>
@@ -289,6 +326,7 @@ function Layout({children, links, title, path}) {
                 {children}
             </div>
             <div id="footer">
+                <p>"The finest compliment I can receive is the referral of <br></br>your friends, family, and business associates.<br></br>Thank you for your trust"</p>
                 <Row height={mobiletrue ? 'auto': '400px'} padding='4'>
                     <Col>
                         <ul className='footlink'>
@@ -337,7 +375,7 @@ function Layout({children, links, title, path}) {
                     width: 50%;
                     position: absolute;
                     left: 50%;
-                    top: 80px;
+                    top: 10%;
                     transform: translateX(-50%);
                     padding: 0;
                     margin: 0;
@@ -365,9 +403,19 @@ function Layout({children, links, title, path}) {
                     float: left;
                     width: 100%;
                     min-height: 500px;
-                    height: ${mobiletrue ? 'auto': '500px'};
+                    height: auto;
                     background: ${theme.colors.onxy};
                     position: relative;
+                    z-index: 100;
+                }
+                #footer p {
+                    float: left;
+                    width: 90%;
+                    padding: 15px 5%;
+                    color: white;
+                    opacity: .8;
+                    font: 15px ${theme.fonts.fancy};
+                    font-style: italic;
                 }
                 #copyw {
                     position: absolute;
@@ -407,7 +455,7 @@ function Layout({children, links, title, path}) {
                     margin: 0;
                 }
                 #nprogress .bar {
-                    background: #ff8552 !important;
+                    background: #283845 !important;
                 }
                 html {
                     float: left;

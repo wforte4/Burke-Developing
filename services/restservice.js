@@ -4,6 +4,7 @@ import { catchAxiosError } from "./error";
 // Base Url for the rest api -- Every other directory can be accessed baseURL + "/%s";
 export const baseConfig = {
   baseURL: "http://localhost:3600",
+  backendImages: 'http://localhost:3600/ftp/'
 };
 
 // Post a request to the Go-lang Rest Api plus catch error if necessary

@@ -5,6 +5,7 @@ import Theme from '../styles/theme';
 import { createProfile } from '../services/apiservice'
 import { useState } from 'react'
 import { useWindowSize } from '../components/hooks';
+import { Router } from 'next/router';
 
 function Create() {
 
@@ -24,6 +25,7 @@ function Create() {
         const newUser = await createProfile(inputs.firstname, inputs.lastname, inputs.email, inputs.password);
         if(newUser) {
             console.log(newUser);
+            Router.push('/login')
         }
     }
 

@@ -110,7 +110,7 @@ function Login() {
                     }
                     .formbody button:hover {
                         color: white;
-                        background: ${Theme.colors.coral};
+                        background: ${Theme.colors.charcoal};
                     }
                     .formstatus {
                         float: left;
