@@ -34,6 +34,9 @@ export function BannerSingle({defaultBackground, image, children, customHeight, 
                     transform: translate(-50%, -50%) scale(1.2, 1.2);
                 }
                 @media only screen and (max-width: 800px) {
+                    #banner {
+                        height: 320px;
+                    }
                 } 
                 @media only screen and (max-width: 1100px) {
                 }
@@ -215,7 +218,7 @@ export default function BannerSlider({hideMovement, cover, defaultBackground, im
                 }
                 @media only screen and (max-width: 800px) {
                     #banner {
-                        max-height: 400px;
+                        height: 240px;
                     }
                 } 
                 @media only screen and (max-width: 1100px) {

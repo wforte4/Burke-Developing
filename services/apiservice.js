@@ -5,11 +5,9 @@ import { baseConfig } from './restservice';
 
 const cookies = new Cookies();
 
-export const backendImages = "http://localhost:3600/ftp/";
-
 export async function createProfile(firstname, lastname, email, password) {
     // Request data to post to createprofile route on rest api
-    fetch('http://localhost:3600/users', {
+    fetch(baseConfig.baseURL + '/users', {
         method: 'POST',
         headers: {
             "Content-type": "application/json"

@@ -33,6 +33,16 @@
       "static/chunks/main.js",
       "static/chunks/webpack.js",
       "static/chunks/pages/backend_host_controller.js"
+    ],
+    "/posts/[id]": [
+      "static/chunks/main.js",
+      "static/chunks/webpack.js",
+      "static/chunks/pages/posts/[id].js"
+    ],
+    "/projects": [
+      "static/chunks/main.js",
+      "static/chunks/webpack.js",
+      "static/chunks/pages/projects.js"
     ]
   },
   "ampFirstPages": []

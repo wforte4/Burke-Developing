@@ -43,7 +43,7 @@ function Backend({initialProjectsLoad}) {
 
     const loadImages = async(e) => {
         e.preventDefault()
-        const getImages = await fetch('http://localhost:3600/getallimages', {
+        const getImages = await fetch(baseConfig.baseURL + '/getallimages', {
             method: 'GET',
         }).then (response => {
             return response.json()
