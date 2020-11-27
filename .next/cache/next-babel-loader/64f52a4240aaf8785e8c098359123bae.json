@@ -1,0 +1,1 @@
+{"ast":null,"code":"// Base Url for the rest api -- Every other directory can be accessed baseURL + \"/%s\";\nexport var baseConfig = {\n  baseURL: \"http://localhost:3600\",\n  backendImages: 'http://localhost:3600/ftp/',\n  projectURL: \"http://localhost:3600/projects/\"\n};","map":null,"metadata":{},"sourceType":"module"}

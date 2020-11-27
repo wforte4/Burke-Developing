@@ -2,12 +2,13 @@ import Link from 'next/link'
 import Head from 'next/head'
 import theme from '../styles/theme'
 import { useScroll, useWindowSize } from '../components/hooks'
-import { useEffect , useState } from 'react'
+import { useEffect , useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { Logout } from '../services/apiservice'
 import { Cookies } from 'react-cookie'
 import { Row, Col } from '../components/elements'
 import { isMobile } from 'react-device-detect';
+import AnchorLink from 'react-anchor-link-smooth-scroll'
 
 const cookies = new Cookies();
 
@@ -41,17 +42,34 @@ export function LoadingScreen({loader}) {
     )
 }
 
-const Navigation = ({title, links, logo, currentpath, hideNav, user, permission}) => {
+const Navigation = ({title, links, logo, currentpath, hideNav, user, permission, clearUserInfo}) => {
+
     const scroll = useScroll();
+    const router = useRouter()
+    const searchRef = useRef()
+    const [searchFocused, setFocused] = useState(false)
     const [mobileactive, setActive] = useState(false)
     const toggleActive = (e) => {
         e.persist();
         if(mobileactive == true) setActive(false)
         else setActive(true)
     }
+    const [inputs, setInputs] = useState({search: ''})
+
     useEffect(() => {
         setActive(false)
     }, [currentpath])
+
+    const handleType = (e) => {
+        e.persist()
+        setInputs({...inputs, [e.target.name]: e.target.value})
+    }
+
+    const handleSearch = async(e) => {
+        e.preventDefault()
+        const newsearch = `/projects?searchProjects=${inputs.search}`
+        await router.push(newsearch)
+    }
 
     return (
         <div id='nav'>
@@ -61,12 +79,26 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission}
                 {links.map((link, i) => {
                     return <Link key={i} href={link.url}><li title={link.url}>{link.name}</li></Link>
                 })}
-            </ul>
-            <div className='right'>
                 {user == null ? <>
-                    <Link href='/login'><div className='login'>Login</div></Link>
-                    <Link href='/createprofile'><div className='create'>CreateProfile</div></Link>
-                </>:
+                    <Link href='/login'><li>Login</li></Link>
+                    <Link href='/createprofile'><li>CreateProfile</li></Link>
+                </>:null}
+            </ul>
+            <form onSubmit={handleSearch} className='search'>
+                <img onClick={(e) => {
+                    e.persist()
+                    if(searchFocused === true) {
+                        searchRef.current.blur()
+                        setFocused(false)
+                    } else {
+                        searchRef.current.focus()
+                        setFocused(true)
+                    }
+                }} src='/icons/icon_search.png'/>
+                <input ref={searchRef} autoComplete='off' value={inputs.search} name='search' onChange={handleType} />
+            </form>
+            <div className='right'>
+                {user == null ? null:
                     <div className='username'>
                         <img src='/logo_arrow_left.png'/>
                         <h2>Welcome, {user}</h2>
@@ -74,9 +106,10 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission}
                             <ul>
                                 {permission > 2000 ? <>
                                     <Link href="/backend_host_controller"><li>Upload Project</li></Link>
+                                    <Link href="/backend_host_controller/imageupload"><li>Upload Images</li></Link>
                                     <Link href="/backend_host_controller/taskmanager"><li>View Tasks</li></Link>
                                     </>: null}
-                                <li onClick={Logout}>Logout</li>
+                                <li onClick={clearUserInfo}>Logout</li>
                             </ul>
                         </div>
                     </div>
@@ -88,11 +121,41 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission}
                     left: 0;
                     width: 100%;
                     height: 80px;
-                    z-index: 999;
+                    z-index: 1000;
+                    display: flex;
                     transition: all .8s ease;
                     background: rgba(255,255,255, .85);
                     backdrop-filter: blur(8px);
+                    box-shadow: ${theme.colors.shadowlight};
                     opacity: ${hideNav == false ? '1': '0'};
+                }
+                .search {
+                    float: left;
+                    margin: 22px 5px;
+                }
+                .search img {
+                    width: 20px;
+                    height: 20px;
+                    margin: 5px 0;
+                    cursor: pointer;
+                    float: left;
+                }
+                .search input {
+                    padding: 10px;
+                    border: none;
+                    font: 13px 'Open Sans';
+                    border-radius: 8px;
+                    width: .01px;
+                    opacity: 0;
+                    margin: 0 10px;
+                    transition: all .4s ease-in-out;
+                }
+                .search input:focus {
+                    background: rgba(244,244,244,.7);
+                    outline: none;
+                    opacity: 1;
+                    width: 140px;
+                    box-shadow: ${theme.colors.shadowlight};
                 }
                 .hamburg {
                     position: fixed;
@@ -108,15 +171,15 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission}
                     top: 0;
                     min-height: 78px;
                     min-width: 200px;
-                    cursor: pointer;
                     position: relative;
                 }
                 .username img {
                     position: absolute;
                     left: 10px;
-                    top: 30px;
+                    top: 32px;
                     width: 14px;
                     height: 14px;
+                    cursor: pointer;
                     transition: all .3s ease-in-out;
                     transform: rotate(180deg);
                 }
@@ -126,11 +189,19 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission}
                 .username h2 {
                     float: left;
                     font: 16px ${theme.fonts.subheader};
-                    margin: 20px 0;
-                    margin-top: 26px;
+                    margin: 4px 0;
+                    padding: 8px 0;
+                    border-radius: 8px;
+                    margin-top: 22px;
                     width: 100%;
+                    transition: all .3s ease;
+                    cursor: pointer;
                     text-align: center;
                     z-index: 2;
+                }
+                .username:hover h2 {
+                    box-shadow: ${theme.colors.shadowlight};
+                    background: white;
                 }
                 .dropdown {
                     float: left;
@@ -149,7 +220,8 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission}
                     float: left;
                     width: 100%;
                     padding: 10px 0;
-                    font: 14px ${theme.fonts.subheader};
+                    cursor: pointer;
+                    font: 14px 'Open Sans';
                     text-align: center;
                     list-style: none;
                     transition: all .3s ease;
@@ -164,7 +236,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission}
                     padding: 0;
                 }
                 .username:hover .dropdown {
-                    height: auto;
+                    height: 170px;
                     opacity: 1;
                 }
                 .right {
@@ -206,11 +278,11 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission}
                 }
                 h1 {
                     float: left;
-                    font: 26px ${theme.fonts.title};
+                    font: 38px ${theme.fonts.bigtitle};
                     color: ${theme.colors.onxy};
                     margin: 0 10px;
                     cursor: pointer;
-                    padding: 22px 10px;
+                    padding: 15px 10px;
                 }
                 .barlink {
                     float: left;
@@ -222,7 +294,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission}
                 }
                 .barlink li {
                     float: left;
-                    font: 16px ${theme.fonts.subheader};
+                    font: 17px ${theme.fonts.subheader};
                     padding: 10px 10px;
                     padding-top: 0;
                     height: 18px;
@@ -269,6 +341,9 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission}
                     .username {
                         display: none;
                     }
+                    .right {
+                        display: none;
+                    }
                 }
             `}</style>
         </div>
@@ -279,12 +354,28 @@ const Header = ({title, currentpath}) => {
     return (
         <Head>
             <title>{title}</title>
-            <link rel='icon' href='/icons/hardhat.png' type="image/gif" sizes="16x16"/>
-            <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Open+Sans&family=Raleway&family=Roboto&display=swap" rel="stylesheet"/>
+            <link rel="preconnect" href="https://fonts.gstatic.com"/>
+            <link rel='icon' href='/icons/icon_bd.png' type="image/gif" sizes="16x16"/><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans&family=Roboto&display=swap" rel="stylesheet"/>
+            <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Inline+Display:wght@500&family=Big+Shoulders+Stencil+Display:wght@700&family=Playfair+Display:wght@500&display=swap" rel="stylesheet"/>
         </Head>
     )
 }
 
+const restrictedRoutes = [
+    '/login',
+    '/createprofile'
+]
+
+function hideNavigation(currentpath) {
+    var decision = null
+    restrictedRoutes.forEach(route => {
+        if(route === currentpath) decision = true
+    })
+    if(decision == true) {
+        return true
+    }
+    return false
+}
 
 function Layout({children, links, title, path}) {
     
@@ -293,11 +384,12 @@ function Layout({children, links, title, path}) {
     const [permission, setPermission] = useState(null)
     const [userFullName, setFullName] = useState(null)
     const mobiletrue = useState(isMobile)
+    const newscroll = useScroll()
 
-    const [hideNav, setNav] = useState(router.pathname === '/login' ? true: false)
+    const [hideNav, setNav] = useState(hideNavigation(router.pathname) ? true: false)
 
     useEffect(() => {
-        setNav(router.pathname === '/login'? true: false)
+        setNav(hideNavigation(router.pathname) ? true: false)
     }, [router.pathname])
 
     useEffect(() => {
@@ -318,21 +410,30 @@ function Layout({children, links, title, path}) {
         updateUser();
     }, [router.pathname])
 
+    const clearUser = async(e) => {
+        e.persist()
+        setUser(null)
+        setFullName(null)
+        setPermission(null)
+        await Logout()
+    }
+
     return (
         <div id='layout'>
             <Header title={title} currentpath={path}/>
-            <Navigation permission={permission} user={userFullName} hideNav={hideNav} title={title} links={links} logo='/uplinkflat.png' currentpath={path}/>
+            <Navigation permission={permission} user={userFullName} hideNav={hideNav} title={title} links={links} logo='/uplinkflat.png' currentpath={path} clearUserInfo={clearUser}/>
             <div id="canvas">
                 {children}
             </div>
+            <AnchorLink href='#layout'><img id='totop' src='/logo_arrow_left.png' /></AnchorLink>
             <div id="footer">
                 <p>"The finest compliment I can receive is the referral of <br></br>your friends, family, and business associates.<br></br>Thank you for your trust"</p>
                 <Row height={mobiletrue ? 'auto': '400px'} padding='4'>
                     <Col>
-                        <ul className='footlink'>
+                        <ul className='footlink big'>
                             <h2>Links</h2>
                             {links.map((link, i) => {
-                                return <Link key={i} href={link.url}><li title={link.url}>{link.name}</li></Link>
+                                return <Link key={i} href={link.url}><li title={link.url}><img className='flip' src='/logo_arrow_left_white.png'/>{link.name}</li></Link>
                             })}
                         </ul>
                     </Col>
@@ -344,8 +445,12 @@ function Layout({children, links, title, path}) {
                             <li><img src='/icons/icon_email.png'/>dan@burkedeveloping.com</li>
                         </ul>
                     </Col>
-                    <Col></Col>
-                    <Col></Col>
+                    <Col>
+                        <ul className='footlink big'>
+                            <h2>Social Media</h2>
+                            <Link href='http://www.facebook.com/BurkeDeveloping'><li><img src='/icons/facebook.png'/>Facebook</li></Link>
+                        </ul>
+                    </Col>
                 </Row>
                 <div id="copyw">
                     <h2>© CopyRight 2020 BurkeDeveloping</h2>
@@ -358,16 +463,21 @@ function Layout({children, links, title, path}) {
                     width: 100%;
                     height: 100%;
                 }
+                .flip {
+                    transform: rotate(180deg);
+                }
                 .footlink img {
                     float: left;
                     width: 25px;
                     height: 25px;
                     margin: 0 10px;
+                    transition: all .3s ease;
                 }
                 .footlink h2 {
                     float: left;
                     width: 100%;
                     color: white;
+                    text-align: center;
                     text-shadow: 0 0 2px black;
                     font: 20px 'Montserrat';
                 }
@@ -395,7 +505,10 @@ function Layout({children, links, title, path}) {
                 .footlink li:hover {
                     opacity: 1;
                 }
-                 .big {
+                .footlink li:hover img {
+                    transform: translate3D(0,0,8px);
+                }
+                .big {
                     width: 85%;
                 }
                 
@@ -427,7 +540,7 @@ function Layout({children, links, title, path}) {
                 }
                 #copyw h2 {
                     float: left;
-                    font: 18px 'Montserrat';
+                    font: 14px 'Montserrat';
                     color: white;
                     opacity: .8;
                     margin: 10px;
@@ -438,6 +551,20 @@ function Layout({children, links, title, path}) {
                     width: 100%;
                     min-height: 100%;
                     height: auto;
+                }
+                #totop {
+                    position: fixed;
+                    bottom: 20px;
+                    left: 20px;
+                    width: 30px;
+                    height: 30px;
+                    transition: all .3s ease;
+                    padding: 10px;
+                    cursor: pointer;
+                    background: white;
+                    opacity: ${newscroll.scrollY >= 850 ? '1': '0'};
+                    transform: rotate(90deg);
+                    z-index: 9999;
                 }
                 #__next {
                     float: left;
@@ -455,7 +582,13 @@ function Layout({children, links, title, path}) {
                     margin: 0;
                 }
                 #nprogress .bar {
-                    background: #283845 !important;
+                    background: ${theme.colors.etonblue} !important;
+                }
+                input:focus {
+                    outline: none;
+                }
+                textarea:focus {
+                    outline: none;
                 }
                 html {
                     float: left;

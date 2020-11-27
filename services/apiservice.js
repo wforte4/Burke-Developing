@@ -1,6 +1,7 @@
 import Router from 'next/router';
 import { Cookies } from 'react-cookie';
 import jwt_decode from 'jwt-decode';
+import { baseConfig } from './restservice';
 
 const cookies = new Cookies();
 
@@ -67,12 +68,41 @@ export async function loginRequest(email, password) {
 
 export async function Logout() {
     cookies.remove('accessToken');
+    cookies.remove('permission_level')
     cookies.remove('refreshToken');
     cookies.remove('name')
     cookies.remove('email')
     cookies.remove('refreshKey')
     cookies.remove('userId')
     await Router.push("/login");
+}
+
+export async function submitContact(name, message, email, cellphone) {
+    // Request data to post to createprofile route on rest api
+    const newfetch = await fetch(baseConfig.baseURL + '/contact', {
+        method: 'POST',
+        headers: {
+            "Content-type": "application/json"
+        },
+        body: JSON.stringify({
+            "name": name,
+            "message": message,
+            "cellphone": cellphone,
+            "email": email
+        })
+    })
+    .then(function(res) {
+        return res.status
+    })
+    .catch(function(error) {
+        console.log('Request failed', error);
+    });
+
+    if(newfetch) {
+        return newfetch
+    } else {
+        return 404
+    }
 }
 
 export async function createTask(objective, status) {

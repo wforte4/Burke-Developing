@@ -3,21 +3,28 @@ import { getProjects } from '../services/projectservice';
 import Link from 'next/link';
 import { baseConfig } from '../services/restservice'
 
-function Portfolio({projects}) {
+function Portfolio({projects, searchQuery}) {
     return (
         <div className='body'>
             <h1 id='title'>Home Improvement Projects</h1>
+            <div className='searchQuery'>
+                <h1>Search Result:</h1>
+                <h2>{searchQuery ? searchQuery: null}</h2>
+            </div>
             <div id='projectcontainer'>
                 {projects == null ? null: projects.map((project, i) => {
+                    if(searchQuery && project.title.toUpperCase().indexOf(searchQuery.toUpperCase()) == -1) return
                     return (
                         <div className='project' key={i}>
-                            <h2>{project.title}</h2>
+                            <Link href={`/posts/${project.id}`}><h2>{project.title}</h2></Link>
                             <div className='frame'>
                                 <img src={baseConfig.backendImages + project.images[0]} />
                             </div>
-                            {project.tags.map((tag, i) => {
-                                return <h3>{tag}</h3>
-                            })}
+                            <div className='tagholder'>
+                                {project.tags.map((tag, i) => {
+                                    return <h3 key={i}>{tag + (i == project.tags.length - 1 ? '': ',')}</h3>
+                                })}
+                            </div>
                             <p>{project.body.split('').map((char, i) => {
                                 if(i <= 200) {
                                     return char
@@ -26,27 +33,50 @@ function Portfolio({projects}) {
                                     return ' ...'
                                 }
                             })}</p>
-                            <Link href={`/posts/${project.id}`}><h4>View Post</h4></Link>
+                            <Link href={`/posts/${project.id}`}><h4>View Project</h4></Link>
                         </div>
                     )
                 })}
             </div>
             <style jsx>{`
+                .searchQuery {
+                    float: left;
+                    width: 90%;
+                    padding: 10px 5%;
+                    display: ${searchQuery ? 'block': 'none'};
+                    background: ${Theme.colors.lightplatinum};
+                }
+                .searchQuery h1 {
+                    float: left;
+                    margin: 0;
+                    font: 30px ${Theme.fonts.timesnew};
+                }
+                .searchQuery h2 {
+                    float: left;
+                    margin: 8px 0;
+                    margin-left: 40px;
+                    font: 20px 'Open Sans';
+                }
+                .tagholder {
+                    float: left;
+                    width: 90%;
+                    padding: 3px 5%;
+                }
                 .project {
                     float: left;
                     position: relative;
-                    width: 280px;
-                    height: 400px;
-                    padding: 30px 10px;
-                    margin: 10px 15px;
+                    width: 380px;
+                    height: 560px;
+                    padding: 30px 0px;
+                    margin: 10px 25px;
                     box-shadow: 0 0 1px ${Theme.colors.gunmetal};
-                    border-radius: 3px;
+                    border-radius: 14px;
                     border-bottom: 1px solid ${Theme.colors.gunmetal};
                 }
                 .project h3 {
                     float: left;
                     width: auto;
-                    font: 11px ${Theme.fonts.fancy};
+                    font: 12px ${Theme.fonts.subheader};
                     font-style: italic;
                     margin: 2px 2px;
                 }
@@ -54,17 +84,22 @@ function Portfolio({projects}) {
                     position: absolute;
                     bottom: 5px;
                     left: 10px;
-                    font: 14px 'Roboto';
-                    background: ${Theme.colors.charcoal};
+                    font: 16px 'Roboto';
                     color: white;
+                    background: ${Theme.colors.charcoal};
+                    box-shadow: ${Theme.shadows.neo};
                     padding: 10px;
                     margin-left: 10px;
                     cursor: pointer;
                     border-radius: 8px;
+                    opacity: .8;
                     transition: all .3s ease-in-out;
                 }
                 .project h4:hover {
-                    opacity: .8;
+                    opacity: 1;
+                }
+                .project h4:active {
+                    box-shadow: ${Theme.shadows.inset};
                 }
                 .frame {
                     float: left;
@@ -72,8 +107,8 @@ function Portfolio({projects}) {
                     justify-content: center;
                     align-content: center;
                     width: 100%;
-                    margin: 5px 0;
-                    max-height: 150px;
+                    margin: 20px 0;
+                    height: 220px;
                     overflow: hidden;
                 }
                 .frame img {
@@ -89,22 +124,30 @@ function Portfolio({projects}) {
                     float: left;
                     width: 90%;
                     padding: 10px 5%;
-                    margin: 0;
-                    font: 16px 'Montserrat';
-                    color: ${Theme.colors.gunmetal};
+                    margin: 10px 0;
+                    cursor: pointer;
+                    color: white;
+                    text-align: center;
+                    font: 17px 'Montserrat';
+                    color: white;
+                    transition: all .3s ease;
+                    background: ${Theme.colors.gunmetal};
+                }
+                .project h2:hover {
+                    transform: scale(1.05,1.05) translateY(-2px);
                 }
                 .project p {
                     float: left;
                     width: 90%;
                     padding: 10px 5%;
-                    font: 13px 'Open Sans';
+                    font: 16px 'Open Sans';
                     color: ${Theme.colors.onxy};
                 }
                 #projectcontainer {
                     float: left;
                     width: 95%;
                     min-height: 600px;
-                    margin: 20px 2.5%;
+                    margin: 40px 2.5%;
                     display: flex;
                     flex-wrap: wrap;
                     justify-content: center;
@@ -118,9 +161,9 @@ function Portfolio({projects}) {
                 #title {
                     float: left;
                     width: 100%;
-                    font: 20px 'Montserrat';
+                    font: 34px 'Montserrat';
                     color: ${Theme.colors.gunmetal};
-                    margin: 20px;
+                    margin: 40px 0;
                     text-align: center;
                 }
             `}</style>
@@ -130,7 +173,8 @@ function Portfolio({projects}) {
 
 Portfolio.getInitialProps = async(ctx) => {
     const getAllProjects = await getProjects(50);
-    return {projects: getAllProjects}
+    const searchresult = await ctx.query.searchProjects
+    return {projects: getAllProjects, searchQuery: searchresult}
 }
 
 export default Portfolio

@@ -1,16 +1,21 @@
 import Theme from '../../styles/theme'
 import { backendImages } from '../../services/apiservice'
 import { useState } from 'react'
-import { createProject } from '../../services/projectservice'
+import { createProject, getProjects, removeProject, updateProject } from '../../services/projectservice'
 import { baseConfig } from '../../services/restservice'
+import { withAuthSync } from '../../services/auth'
+import Link from 'next/link' 
 
-function Backend() {
+function Backend({initialProjectsLoad}) {
 
-    const [file, setFile] = useState(null)
-    const [preview, setPreview] = useState(null)
     const [images, setImages] = useState(null)
     const [tags, setTags] = useState([])
+    const [editPost, setEditPost] = useState(null)
     const [formState, setFormState] = useState()
+    const [newProject, setNewProject] = useState()
+    const [areYouSure, setYourSure] = useState()
+    const [imagesLoaded, setImagesLoaded] = useState(false)
+    const [projects, setProjects] = useState(initialProjectsLoad)
     const [inputs, setInputs] = useState({
         title: '',
         body: '',
@@ -18,63 +23,22 @@ function Backend() {
         tag: ''
     })
 
-    const uploadImage = async(e) => {
-        e.preventDefault()
-        if(file == null) return 
-        const formData = new FormData()
-        formData.append("myFile", file)
-        const uploadImage = await fetch('http://localhost:3600/uploadfile', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            return response.json()
-        })
-        if(uploadImage) {
-            setPreview(null)
-            setFile(null)
-            loadImages(e)
-        }
+    const loadProjects = async(e) => {
+        const getAllProjects = await getProjects(100)
+        if(getAllProjects) setProjects(getAllProjects)
     }
 
-    const uploadImageMultiple = async(e) => {
-        e.preventDefault()
-        console.log(file)
-        if(file == null) return 
-        const formData = new FormData()
-
-        for (let i = 0; i < file.length; i++) {
-            console.log(file[i].uri)
-            formData.append(`myImages[]`, {
-                uri: file[i].uri,
-                type: 'image/*',
-                name: file[i].name
-            })
-        }
-
-        console.log(formData)
-        const newupload = await fetch('http://localhost:3600/uploadmultiple', {
-            method: 'POST',
-            body: formData
+    const clearAllInputs = (e) => {
+        e.persist();
+        setInputs({
+            title: '',
+            body: '',
+            images: [],
+            tag: ''
         })
-        .then(response => {
-            return response.json()
-        })
-        console.log(newupload)
-        if(newupload) {
-            setPreview(null)
-            setFile(null)
-            console.log(newupload)
-            loadImages(e)
-        }
-    }
-
-    const handleFileChange = (e) => {
-        e.persist()
-        setPreview(URL.createObjectURL(e.target.files[0]))
-        console.log(e.target.files.length)
-        if(e.target.files.length === 1) setFile(e.target.files[0])
-        else setFile(e.target.files)
+        setTags([])
+        setFormState('')
+        setEditPost(null)
     }
 
     const loadImages = async(e) => {
@@ -116,11 +80,22 @@ function Backend() {
         else setFormState('chooseimg')
     }
 
-    const createNewPost = async(e) => {
+    const createNewProject = async(e) => {
         e.preventDefault()
+        setFormState('loading')
         const newPost = await createProject(inputs.title, inputs.body, tags, inputs.images)
         if(newPost) {
             console.log(newPost)
+            setNewProject(newPost.id)
+            setFormState('done')
+        }
+    }
+
+    const removeThisProject = async(e, pid) => {
+        const removePost = await removeProject(pid)
+        if(removePost) {
+            console.log(removePost);
+            loadProjects(e)
         }
     }
 
@@ -136,16 +111,27 @@ function Backend() {
         }
     }
 
-    const removeImage = async(e, image) => {
-        e.preventDefault()
-        const newremove = await fetch(baseConfig.baseURL + '/removeimage/' + image, {
-            method: 'DELETE',
-        }).then(response => {
-            return response.status
+    const newPostEdit = (e, pid) => {
+        e.persist()
+        const thisProject = projects.filter((project) => project.id == pid)
+        setEditPost(thisProject[0])
+        setInputs({
+            ...inputs,
+            title: thisProject[0].title,
+            body: thisProject[0].body,
+            images: thisProject[0].images,
+            tags: thisProject[0].tags
         })
-        if(newremove) {
-            console.log(newremove)
+        setTags(thisProject[0].tags)
+    }
 
+    const uploadEdits = async(e) => {
+        e.preventDefault()
+        setFormState('loading')
+        const newEdits = await updateProject(editPost.id, inputs.title, inputs.body, inputs.images, tags)
+        if(newEdits) {
+            console.log(newEdits)
+            setFormState('newedit')
         }
     }
 
@@ -153,28 +139,9 @@ function Backend() {
         <div className='body'>
             <img id='body_bg' src='/bg_login.png'/>
             <div id="abovelayer">
-                <div className='imageupload'>
-                    <form onSubmit={file == null ? null: file.length ? uploadImageMultiple: uploadImage}>
-                        <div className='frame'><img className='preview' src={preview ? preview: '/imageplaceholder.png'} /></div>
-                        <label htmlFor='fileid'>{file ? file.length ? 'Multiple Images': file.name: 'Select Image'}</label>
-                        <input id='fileid' type='file' accept='image/*' onChange={handleFileChange} required multiple/>
-                        <button type='submit'>Upload Image</button>
-                    </form>
-                    <div className='images'>
-                        <h1>My Images</h1>
-                        {images != null ? images.map((image, i) => {
-                            return (
-                                <div key={i} className='imgframe'>
-                                    <div onClick={(e) => removeImage(e, image)} className='x'>x</div>
-                                    <img src={backendImages + image} />
-                                </div>
-                            )
-                        }): <h2 onClick={loadImages}>Load Images</h2>}
-                    </div>
-                </div>
                 <div className='projects'>
-                    <h1>Upload New Project</h1>
-                    <form onSubmit={createNewPost} className='projectsform'>
+                    <h3 className='subheader'>{editPost ? `Editing ${editPost.title}`: 'Upload New Project'}</h3>
+                    <form onSubmit={editPost == null ? createNewProject: uploadEdits} className='projectsform'>
                         <div className='upper'>
                             <label>Title</label>
                             <input 
@@ -183,37 +150,60 @@ function Backend() {
                                 onChange={handleTypeing}
                                 required
                             />
-                            <label>Tags</label>
+                            <p className='info'>Main title for the post</p>
+                            <label>Add Tag</label>
                             <input 
                                 name='tag'
                                 value={inputs.tag}
                                 onChange={handleTypeing}
                                 onKeyPress={addTagToList}
                                 tabIndex={0}
-                                required
+                                autoComplete='off'
                              />
+                             <p className='info'>Hit the "Space" key to add tag to list</p>
+                            <label>Tags</label>
                             <div className='tagholder'>
-                                {tags ? tags.map((tag, i) => {
+                                {tags.length !== 0 ? tags.map((tag, i) => {
                                     return <h3 key={i}>{tag}<img onClick={(e) => removeTag(e, tag)} src='logo_exx.png'/></h3>
-                                }): null}
+                                }): <p className='info'>No tag's yet...</p>}
                             </div>
                             <div className='chooseImages'>
                                 <h2 onClick={(e)=> {
                                     if(images == null) loadImages(e)
                                     toggleFormState(e)
-                                }}>Select Images</h2>
+                                }}>{inputs.images.length == 0 ? 'Select Images': 'Edit Selection'}</h2>
                                 <div className='imgfloat'>
                                     <div className='tri'></div>
+                                    <img className='imgloader' src='/loading_a.gif'/>
                                     <p>Click on the images below to select them for the post</p>
                                     <img onClick={toggleFormState} className='exxx' src='/logo_exx.png'/>
-                                    {images != null ? images.map((image, i) => {
-                                        const isSelected = inputs.images.indexOf(image) >= 0 ? true: false
-                                        return <div key={i} name={isSelected == true ? 'green': 'none'} className='imgframe'><img onClick={(e) => toggleImageSelection(e, image, isSelected)} src={backendImages + image} /></div>
-                                    }): null}
+                                    <div className='imagewrapper'>
+                                        {images != null ? images.map((image, i) => {
+                                            const isSelected = inputs.images.indexOf(image) >= 0 ? true: false
+                                            if(i == images.length - 1) {
+                                                return (
+                                                    <div key={i} name={isSelected == true ? 'green': 'none'} className='imgframe'>
+                                                        <img onLoad={()=> setImagesLoaded(true)} onClick={(e) => toggleImageSelection(e, image, isSelected)} src={backendImages + image} />
+                                                        <h3>{image.split('').map((char, i) => {
+                                                            if(i > 13) return char
+                                                        })}</h3>
+                                                    </div>
+                                                )
+                                            }
+                                            return (
+                                                <div key={i} name={isSelected == true ? 'green': 'none'} className='imgframe'>
+                                                    <img onClick={(e) => toggleImageSelection(e, image, isSelected)} src={backendImages + image} />
+                                                    <h3>{image.split('').map((char, i) => {
+                                                        if(i > 13) return char
+                                                    })}</h3>
+                                                </div>
+                                            )
+                                        }): null}
+                                    </div>
                                 </div>
                                 <div className='selimageouter'>
                                     {inputs.images.length == 0 ? null: inputs.images.map((image, i) => {
-                                        return <div className='selimage'>{image}</div>
+                                        return <div key={i} className='selimage'>{image}</div>
                                     })}
                                 </div>
                             </div>
@@ -225,22 +215,301 @@ function Backend() {
                             onChange={handleTypeing}
                             required
                         />
-                        <button type='submit'>Upload Project</button>
+                        <p className='info'>This is the body paragraph of your post, main description of the project goes here</p>
+                        <button type='submit'>{editPost ? 'Save Edits': 'Upload Project'}</button>
                     </form>
-                    <div className='projectsdisplay'>
-
+                    <img className='loader' src='/loading_a.gif'/>
+                    <div className='messagecenter'>
+                        <p>Congratulation's your project has been uploaded</p>
+                        <Link href={`/posts/${newProject}`}><h4>Click here to view new project!</h4></Link>
+                    </div>
+                    <div className='newedit'>
+                        <p>Your Edit's were made to <strong>{editPost ? editPost.title: null}</strong></p>
+                        <h4 onClick={clearAllInputs}>Create New Post</h4>
+                        <h4 onClick={()=> setFormState('')}>Continue Editing</h4>
+                        <Link href={`/posts/${editPost ? editPost.id: null}`}><h4>View Edited Post</h4></Link>
+                    </div>
+                </div>
+                <div className='pastpro'>
+                    <h3 className='subheader'>My Projects</h3>
+                    <div onClick={loadProjects} className='centerbox'>View Projects</div>
+                    <div className='list'>
+                        {projects ? projects.map((project, i) => {
+                            return (
+                                <div key={project.id} className='singleproject'>
+                                    <img className='sinpreview' src={baseConfig.backendImages + project.images[1]}/>
+                                    <Link href={`/posts/${project.id}`} ><h2>{project.title}</h2></Link>
+                                    <img className='threedots' src='/threedots.png' />
+                                    <ul className='dropdown'>
+                                        <Link href={`/posts/${project.id}`} ><li>View Post</li></Link>
+                                        <li onClick={function(e) {newPostEdit(e, project.id)}}>Edit Post</li>
+                                        <li onClick={function(e) {
+                                            const thisProject = projects.filter((pj) => pj.id == project.id)
+                                            setYourSure(thisProject[0])
+                                        }}>Remove Post</li>
+                                    </ul>
+                                </div>
+                            )
+                        }): null}
                     </div>
                 </div>
             </div>
+            <div id='areyousure'>
+                <p>Are you sure you would like to delete {areYouSure ? areYouSure.title : null}</p>
+                <h2>Warning, you will not be able to undo this action.</h2>
+                <h4 title='red' onClick={(e)=> {
+                    removeThisProject(e, areYouSure.id)
+                    setYourSure(null)
+                }}>Yes I Am Sure</h4>
+                <h4 onClick={(e) => {
+                    setYourSure(null)
+                }}>No I Don't want to delete</h4>
+            </div>
             <style jsx>{`
-                .x {
-                    position: absolute;
-                    z-index: 10;
-                    top: 3px;
-                    right: 3px;
-                    width: 15px;
+                #areyousure p {
+                    float: left;
+                    font: 16px 'Roboto';
+                    width: 90%;
+                    padding: 10px 5%;
+                    color: ${Theme.colors.gunmetal};
+                }
+                #areyousure h2 {
+                    float: left;
+                    width: 90%;
                     font: 12px 'Roboto';
+                    padding: 5px 5%;
+                    color: ${Theme.colors.failure};
+                    margin: 0;
+                }
+                #areyousure h4 {
+                    float: left;
+                    width: 80%;
+                    font: 16px 'Roboto';
+                    padding: 8px 0;
+                    text-align: center;
+                    margin: 30px 10%;
+                    transition: all .3s ease;
+                    cursor: pointer;
+                    opacity: .7;
+                    border-radius: 4px;
+                    background: ${Theme.colors.gunmetal};
+                    color: ${Theme.colors.white};
+                }
+                #areyousure h4:hover {
+                    opacity: 1;
+                }
+                #areyousure h4[title="red"] {
+                    background: ${Theme.colors.failure};
+                }
+                #areyousure {
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate3d(-50%,-50%,0);
+                    width: 600px;
+                    height: 400px;
+                    border-radius: 12px;
+                    box-shadow: ${Theme.colors.shadow};
+                    display: ${areYouSure ? 'block': 'none'};
+                    background: white;
+                    z-index: 99999999;
+                }
+                .newedit {
+                    transform: translate(-50%,-50%);
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    width: 60%;
+                    display: ${formState == 'newedit' ? 'block': 'none'};
+                }
+                .newedit p {
+                    float: left;
+                    font: 16px 'Roboto';
+                    text-align: center;
+                    width: 90%;
+                    padding: 10px 5%;
+                }
+                .newedit h4 {
+                    float: left;
+                    text-align: center;
+                    margin: 5px 0;
+                    font: 16px 'Roboto';
+                    width: 90%;
+                    padding: 10px 5%;
+                    background: ${Theme.colors.gunmetal};
+                    color: white;
+                    cursor: pointer;
+                    box-shadow: ${Theme.colors.shadowlight};
+                    border-radius: 10px;
+                    margin-top: 20px;
+                }
+                .messagecenter {
+                    transform: translate(-50%,-50%);
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    width: 80%;
+                    display: ${formState == 'done' ? 'block': 'none'};
+                }
+                .messagecenter p {
+                    float: left;
+                    font: 16px 'Roboto';
+                    text-align: center;
+                    width: 90%;
+                    padding: 10px 5%;
+                }
+                .messagecenter h4 {
+                    float: left;
+                    text-align: center;
+                    margin: 0;
+                    font: 16px 'Roboto';
+                    width: 90%;
+                    padding: 10px 5%;
+                    background: ${Theme.colors.gunmetal};
+                    color: white;
+                    cursor: pointer;
+                    box-shadow: ${Theme.colors.shadowlight};
+                    border-radius: 10px;
+                    margin-top: 20px;
+                }
+                .loader {
+                    width: 60px;
+                    height: 60px;
+                    transform: translate(-50%,-50%);
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    display: ${formState == 'loading' ? 'block': 'none'};
+                }
+                .imgloader {
+                    width: 60px;
+                    height: 60px;
+                    transform: translate(-50%,-50%);
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    display: ${imagesLoaded == false ? 'block': 'none'};
+                }
+                .list {
+                    display: ${projects ? 'block': 'none'};
+                    float: left;
+                    width: 100%;
+                }
+                .singleproject {
+                    float: left;
+                    width: 95%;
+                    height: 100px;
+                    margin: 5px 0;
+                    padding: 10px 2.5%;
+                    border-radius: 4px;
+                    box-shadow: ${Theme.colors.shadowlight};
+                    background: ${Theme.colors.lightplatinum};
+                    position: relative;
+                }
+                .dropdown {
+                    position: absolute;
+                    top: 16px;
+                    right: 0px;
+                    width: 100px;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: ${Theme.colors.shadowlight};
+                    padding: 0;
+                    margin: 0;
+                    z-index: 99;
+                    display: none;
+                    background: white;
+                }
+                .threedots:hover ~ .dropdown {
+                    display: block;
+                }
+                .dropdown:hover {
+                    display: block;
+                }
+                .dropdown li {
+                    float: left;
+                    width: 100%;
+                    padding: 10px 0;
+                    text-align: center;
+                    cursor: pointer;
+                    list-style: none;
+                    font: 12px ${Theme.fonts.subheader};
+                }
+                .dropdown li:hover {
+                    background: ${Theme.colors.lightplatinum};
+                }
+                .singleproject .threedots {
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    width: 15px;
                     height: 15px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    padding: 5px;
+                }
+                .singleproject .sinpreview {
+                    float: left;
+                    width: 100px;
+                    height: 100px;
+                    border-radius: 10px;
+                    box-shadow: ${Theme.colors.shadow};
+                }
+                .singleproject h2 {
+                    float: left;
+                    font: 12px 'Montserrat';
+                    max-width: 80%;
+                    margin-left: 15px;
+                    margin-top: 15px;
+                    cursor: pointer;
+                    transition: all .3s ease-in-out;
+                    color: ${Theme.colors.gunmetal};
+                }
+                .singleproject h2:hover {
+                    color: ${Theme.colors.etonblue};
+                }
+                .pastpro {
+                    float: left;
+                    position: relative;
+                    width: 28%;
+                    margin: 20px 1%;
+                    padding: 5px 1%;
+                    border-radius: 8px;
+                    background: rgba(255,255,255,.7);
+                    backdrop-filter: blur(8px);
+                    min-height: 500px;
+                    z-index: -10;
+                    box-shadow: ${Theme.colors.shadowlight};
+                }
+                .subheader {
+                    float: left;
+                    width: 100%;
+                    text-align: center;
+                    padding: 10px 0;
+                    margin: 20px 0;
+                    margin-bottom: 35px;
+                    border-radius: 3px;
+                    box-shadow: ${Theme.colors.shadowlight};
+                    color: white;
+                    font: 20px ${Theme.fonts.title};
+                    background: ${Theme.colors.gunmetal};
+                }
+                .centerbox {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%,-50%);
+                    cursor: pointer;
+                    border-radius: 10px;
+                    margin: 0;
+                    padding: 20px;
+                    background: ${Theme.colors.charcoal};
+                    color: white;
+                    display: ${projects ? 'none': 'block'};
+                    font: 28px ${Theme.fonts.curvy};
+                }
+                .centerbox:hover {
+                    box-shadow: ${Theme.colors.shadow};
                 }
                 .selimage {
                     float: left;
@@ -251,35 +520,54 @@ function Backend() {
                 .selimageouter {
                     float: left;
                     width: 100%;
-                    max-height: 150px;
+                    max-height: 130px;
                     overflow-y: scroll;
-                    box-shadow: inset 0px 0px 9px -1px rgba(20,20,20,.4);
+                    box-shadow: inset 0px 0px 9px -1px rgba(20,20,20,.2);
                     border-radius: 3px;
+                    display: ${inputs.images.length > 0 ? 'block': 'none'};
                     margin: 10px 0;
                     padding: 10px 0;
+                }
+                .imagewrapper {
+                    float: left;
+                    width: 100%;
+                    max-height: 520px;
+                    min-height: 300px;
+                    overflow-y: scroll;
+                    display: flex;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                }
+                .imgframe h3 {
+                    position: absolute;
+                    bottom: 0;
+                    text-align: center;
+                    left: 0;
+                    width: 100%;
+                    padding: 10px 0;
+                    margin: 0;
+                    background: rgba(255,255,255,.7);
+                    color: ${Theme.colors.gunmetal};
+                    font: 12px 'Open Sans';
                 }
                 .imgfloat {
                     position: absolute;
                     top: 60px;
+                    right: -40%;
                     padding: 20px;
                     padding-top: 60px;
-                    width: 200%;
+                    width: 220%;
                     background: white;
                     box-shadow: 0 0 6px rgba(30,30,30,.2);
                     border-radius: 10px;
-                    display: ${formState == 'chooseimg' ? 'flex': 'none'};
-                    right: 10px;
-                    max-height: 450px;
-                    overflow-y: scroll;
-                    flex-wrap: wrap;
-                    justify-content: center;
+                    display: ${formState == 'chooseimg' ? 'block': 'none'};
                 }
                 .imgfloat p {
                     position: absolute;
                     top: 10px;
                     left: 20px;
                     width: 100%;
-                    font: 14px 'Roboto';
+                    font: 16px 'Roboto';
                     color: ${Theme.colors.onxy};
                 }
                 .imgfloat .exxx {
@@ -290,15 +578,15 @@ function Backend() {
                     cursor: pointer;
                     background: ${Theme.colors.royalblue};
                     right: 10px;
-                    width: 12px;
-                    height: 12px;
+                    width: 15px;
+                    height: 15px;
                 }
                 .tri {
                     position: absolute;
-                    top: -10px;
+                    top: -15px;
                     right: 25%;
-                    width: 20px;
-                    height: 20px;
+                    width: 30px;
+                    height: 30px;
                     transform: rotate(45deg);
                     background: white;
                 }
@@ -310,12 +598,13 @@ function Backend() {
                 }
                 .chooseImages h2 {
                     float: left;
-                    width: 80%;
+                    width: 60%;
                     padding: 10px 0;
-                    margin: 10px 10%;
+                    margin: 10px 20%;
                     text-align: center;
                     font: 16px ${Theme.fonts.fancy};
                     background: ${Theme.colors.gunmetal};
+                    border-radius: 6px;
                     color: white;
                     transition: all .3s ease;
                     cursor: pointer;
@@ -329,7 +618,9 @@ function Backend() {
                     height: 130px;
                     margin: 8px;
                     border-radius: 8px;
-                    border: 2px solid ${Theme.colors.platinum};
+                    transition: all .3s ease;
+                    border: 3px solid ${Theme.colors.platinum};
+                    opacity: ${imagesLoaded ? '1': '0'};
                     position: relative;
                     overflow: hidden;
                 }
@@ -337,7 +628,7 @@ function Backend() {
                     cursor: pointer;
                 }
                 .imgframe[name='green'] {
-                    border: 2px solid rgba(59, 237, 59, 1);
+                    border: 3px solid #72ff72;
                 }
                 .imgframe img {
                     position: absolute;
@@ -352,31 +643,23 @@ function Backend() {
                 }
                 .projects {
                     float: left;
-                    width: 46%;
+                    width: 58%;
                     margin: 20px 1%;
                     padding: 5px 1%;
                     position: relative;
                     border-radius: 10px;
                     backdrop-filter: blur(8px);
-                    background: rgba(255, 255, 255, .7);
-                    box-shadow: 0 0 2px rgba(20,20,20,.8);
+                    transition: all .3s ease;
+                    background: ${editPost ? 'rgba(214, 248, 214, .7)': 'rgba(255, 255, 255, .7)'};
+                    box-shadow: ${Theme.colors.shadowlight};
                     min-height: 300px;
-                }
-                .projects h1 {
-                    float: left;
-                    width: 95%;
-                    text-align: left;
-                    margin: 20px 2.5%;
-                    font: 20px 'Montserrat';
-                    transition: all .3s ease-in-out;
-                    color: ${Theme.colors.gunmetal};
                 }
                 .projectsform {
                     float: left;
                     width: 100%;
                     margin: 10px 0;
                     transition: all .3s ease-in-out;
-                    opacity: ${formState == 'loading' || formState == 'done' ? 0: 1};
+                    opacity: ${formState == 'loading' || formState == 'done' || formState == 'newedit' ? 0: 1};
                 }
                 .projectsform input {
                     float: left;
@@ -391,9 +674,10 @@ function Backend() {
                 }
                 .projectsform textarea {
                     float: left;
-                    width: 90%;
+                    width: 85%;
                     padding: 10px 2.5%;
-                    margin: 10px 2.5%;
+                    margin: 10px 5%;
+                    margin-bottom: 0;
                     color: ${Theme.colors.onxy};
                     font: 16px 'Roboto';
                     border: none;
@@ -405,11 +689,20 @@ function Backend() {
                 }
                 .projectsform label {
                     float: left;
+                    width: 95%;
+                    padding: 4px 2.5%;
+                    margin: 8px 0;
+                    margin-bottom: 1px;
+                    color: ${Theme.colors.charcoal};
+                    font: 16px ${Theme.fonts.fancy};
+                }
+                .projectsform .info {
+                    float: left;
                     width: 90%;
-                    padding: 8px 2.5%;
-                    margin: 5px 2.5%;
+                    padding: 2px 5%;
+                    margin: 0;
                     color: ${Theme.colors.onxy};
-                    font: 16px 'Open Sans';
+                    font: 13px ${Theme.fonts.timesnew};
                 }
                 .projectsform button {
                     float: left;
@@ -419,14 +712,21 @@ function Backend() {
                     color: white;
                     cursor: pointer;
                     margin: 10px 0;
-                    font: 14px ${Theme.fonts.fancy};
+                    border-radius: 6px;
+                    margin-top: 30px;
+                    margin-left: 40px;
+                    transition: all .3s ease;
+                    font: 16px ${Theme.fonts.fancy};
+                }
+                .projectsform button:hover {
+                    opacity: .7;
                 }
                 .tagholder {
                     float: left;
                     width: 100%;
                     transition: all .3s ease;
                     margin-top: 20px;
-                    height: ${tags.length == 0 ? '2px': '40px'};
+                    min-height: 40px;
                 }
                 .tagholder img {
                     width: 10px;
@@ -461,106 +761,6 @@ function Backend() {
                 .layertop {
                     z-index: 9999;
                 }
-                .images {
-                    float: left;
-                    width: 100%;
-                    min-height: 100px;
-                    max-height: 400px;
-                    overflow-y: scroll;
-                    margin: 10px 0;
-                    display: flex;
-                    flex-wrap: wrap;
-                    justify-content: center;
-                }
-                .images h2 {
-                    float: left;
-                    width: 100%;
-                    text-align: center;
-                    margin: 10px 0;
-                    margin-top: 30px;
-                    cursor: pointer;
-                    font: 14px 'Montserrat';
-                    transition: all .3s ease-in-out;
-                    color: ${Theme.colors.royalblue};
-                }
-                .images h1 {
-                    float: left;
-                    width: 90%;
-                    text-align: left;
-                    margin: 10px 5%;
-                    font: 20px 'Montserrat';
-                    transition: all .3s ease-in-out;
-                    color: ${Theme.colors.royalblue};
-                }
-                .images h2:hover {
-                    transform: scale(1.05, 1.05);
-                }
-                .imageupload {
-                    float: left;
-                    width: 23%;
-                    margin: 20px 1%;
-                    position: relative;
-                    border-radius: 10px;
-                    backdrop-filter: blur(8px);
-                    background: rgba(255, 255, 255, .7);
-                    box-shadow: 0 0 2px rgba(20,20,20,.8);
-                    overflow: hidden;
-                    z-index: -99;
-                }
-                .imageupload form {
-                    width: 100%;
-                    float: left;
-                }
-                .imageupload label {
-                    float: left;
-                    width: 80%;
-                    cursor: pointer;
-                    padding: 10px 0;
-                    margin: 10px 10%;
-                    margin-top: 20px;
-                    border-radius: 8px;
-                    background: ${Theme.colors.onxy};
-                    transition: background .3s ease;
-                    color: white;
-                    text-align: center;
-                    font: 14px 'Roboto';
-                }
-                .imageupload label:hover {
-                    background: ${Theme.colors.royalblue};
-                }
-                .imageupload button {
-                    float: left;
-                    width: 80%;
-                    border: none;
-                    border-radius: 8px;
-                    cursor: pointer;
-                    padding: 10px 0;
-                    margin: 10px 10%;
-                    margin-bottom: 20px;
-                    background: ${Theme.colors.onxy};
-                    transition: background .3s ease;
-                    color: white;
-                    text-align: center;
-                    font: 14px 'Roboto';
-                }
-                .imageupload button:hover {
-                    background: ${Theme.colors.royalblue};
-                }
-                .frame {
-                    float: left;
-                    width: 100%;
-                    height: ${preview ? '260px': '200px'};
-                    transition: all .3s ease-in-out;
-                    overflow: hidden;
-                    position: relative;
-                }
-                .imageupload .preview {
-                    position: absolute;
-                    width: 100%;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%) scale(1.1,1.1);
-                }
                 #fileid {
                     display: none;
                 }
@@ -578,8 +778,12 @@ function Backend() {
                     height: 100%;
                     z-index: 99;
                     position: relative;
+                    display: flex;
+                    justify-content: center;
+                    flex-wrap: wrap;
                     overflow: hidden;
                     margin-top: 80px;
+                    opacity: ${areYouSure ? '.7': 1};
                 }
                 #body_bg {
                     width: 100%;
@@ -594,4 +798,9 @@ function Backend() {
     )
 }
 
-export default Backend
+Backend.getInitialProps = async(ctx) => {
+    const getAllProjects = await getProjects(100)
+    return {initialProjectsLoad: getAllProjects}
+}
+
+export default withAuthSync(Backend)

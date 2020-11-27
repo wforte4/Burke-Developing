@@ -5,7 +5,7 @@ import Theme from '../styles/theme';
 import { createProfile } from '../services/apiservice'
 import { useState } from 'react'
 import { useWindowSize } from '../components/hooks';
-import { Router } from 'next/router';
+import { useRouter } from 'next/router';
 
 function Create() {
 
@@ -16,6 +16,7 @@ function Create() {
         password: '',
     })
     const wsize = useWindowSize();
+    const router = useRouter()
     const [isloading, setLoading] = useState(false);
     const [formStatus, setFormStatus] = useState(false);
 
@@ -24,8 +25,8 @@ function Create() {
         setLoading(true);
         const newUser = await createProfile(inputs.firstname, inputs.lastname, inputs.email, inputs.password);
         if(newUser) {
-            console.log(newUser);
-            Router.push('/login')
+            console.log(newUser.id);
+            await router.push('/login')
         }
     }
 
@@ -40,7 +41,7 @@ function Create() {
     return (
             <div className='body'>
                 <img className='bgimage' src='/bg_login.png' />
-                <h1 className='header'>BurkeDeveloping</h1>
+                <h1 className='header'>Create A Profile</h1>
                 <div className='formbody'>
                     <form onSubmit={createUser}>
                         <label title='username'>First Name</label>
@@ -93,7 +94,9 @@ function Create() {
                         float: left;
                         width: 80%;
                         padding: 10px 5%;
-                        margin: 4px 5%;
+                        margin: 0 5%;
+                        margin-top: 10px;
+                        margin-bottom: -2px;
                         font: 14px ${Theme.fonts.subheader};
                     }
                     .formbody input {
@@ -101,6 +104,8 @@ function Create() {
                         width: 60%;
                         padding: 10px 5%;
                         margin: 2px 15%;
+                        border: 1px solid ${Theme.colors.lightplatinum};
+                        border-radius: 4px;
                         font: 14px ${Theme.fonts.paragraph};
                     }
                     .formbody button {
@@ -109,7 +114,7 @@ function Create() {
                         padding: 10px 5%;
                         margin: 2px 20%;
                         margin-top: 45px;
-                        font: 14px ${Theme.fonts.subheader};
+                        font: 16px ${Theme.fonts.fancy};
                         border: none;
                         cursor: pointer;
                         transition: all .3s ease;
@@ -117,7 +122,7 @@ function Create() {
                     }
                     .formbody button:hover {
                         color: white;
-                        background: ${Theme.colors.coral};
+                        background: ${Theme.colors.gunmetal};
                     }
                     .formstatus {
                         float: left;

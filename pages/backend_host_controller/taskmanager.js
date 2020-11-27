@@ -71,8 +71,14 @@ function TaskManager({getFirstLoad}) {
         objective: '',
         status: 'created',
     })
+    const [sortedTasks, setSortedTasks] = useState({
+        inprogress: [],
+        created: [],
+        done: []
+    })
     const [allTasks, setAllTasks] = useState(getFirstLoad != null ? getFirstLoad: null)
     const [status, setStatus] = useState(getFirstLoad != null ? 'succeeded': 'none')
+    const [loading, setLoading] = useState(false)
     let lastcat = null
 
     // Create a new Task DEFAULT: status: 'created'
@@ -86,6 +92,27 @@ function TaskManager({getFirstLoad}) {
         }
     }
 
+    const sortAllTasks = (tasks) => {
+        const inp = []
+        const cr = []
+        const dn = []
+        tasks.map((task) => {
+            if(task.status === 'done') dn.push(task)
+            if(task.status === 'created') cr.push(task)
+            if(task.status === 'inprogress') inp.push(task)
+        })
+        setSortedTasks({
+            ...sortedTasks,
+            inprogress: inp,
+            created: cr,
+            done: dn
+        })
+    }
+    useEffect(() => {
+        sortAllTasks(getFirstLoad)
+        console.log(sortedTasks)
+    }, [sortedTasks.done.length == 0])
+
     // Updating Tasks with Backend
     const updateTasks = async(e) => {
         setStatus('loading')
@@ -94,6 +121,7 @@ function TaskManager({getFirstLoad}) {
             console.log(getalltasks)
             getalltasks.sort(compare('status'))
             setAllTasks(getalltasks)
+            sortAllTasks(getalltasks)
             setStatus('succeeded')
         }
     }
@@ -126,22 +154,25 @@ function TaskManager({getFirstLoad}) {
 
     return (
         <div className='maindiv'>
-            <form onSubmit={createNewTask}>
-                <h1>New Task</h1>
-                <textarea 
-                    name='objective'
-                    onChange={isTyping}
-                    value={inputs.objective}
-                    placeholder='Objective'
-                    required
-                />
-                <button>Add Task</button>
-            </form>
+            <h1>My Tasks</h1>
             <div className='tasklist'>
-                <h1>My Tasks</h1>
-                {allTasks ? allTasks.map((task, i) => {
-                    let nextStatus = task.status == 'created' ? 'inprogress': 'done';
-                    if(lastcat == task.status) {
+                <div className='column'>
+                    <form onSubmit={createNewTask}>
+                        <h1>New Task</h1>
+                        <textarea 
+                            name='objective'
+                            onChange={isTyping}
+                            value={inputs.objective}
+                            placeholder='Objective'
+                            required
+                        />
+                        <button>Add Task</button>
+                    </form>
+                </div>
+                <div className='column'>
+                    <div className='cat'>Newly Added Tasks</div>
+                    {sortedTasks.created.length > 0 ? sortedTasks.created.map((task, i) => {
+                        let nextStatus = task.status == 'created' ? 'inprogress': 'done';
                         return (
                             <div key={i} className='task'>
                                 <h2>Objective: {task.objective}</h2>
@@ -156,10 +187,13 @@ function TaskManager({getFirstLoad}) {
                                 </div>
                             </div>
                         )
-                    } else {
-                        lastcat = task.status;
-                        return [
-                            <div key={task.status} className='cat'>{task.status.toUpperCase()}</div>,
+                    }): <p className='info'>No Newly Created Tasks</p>}
+                </div>
+                <div className='column'>
+                    <div className='cat'>Tasks in Progress</div>
+                    {sortedTasks.inprogress.length > 0 ? sortedTasks.inprogress.map((task, i) => {
+                        let nextStatus = task.status == 'created' ? 'inprogress': 'done';
+                        return (
                             <div key={i} className='task'>
                                 <h2>Objective: {task.objective}</h2>
                                 <h3>Status: {task.status}</h3>
@@ -172,20 +206,55 @@ function TaskManager({getFirstLoad}) {
                                     <div onClick={(e) => removeThisTask(e, task.id)} className='remove'>Remove Task</div>
                                 </div>
                             </div>
-                        ]
-                    }
-                }): status == 'none' ? <h2>No Tasks yet</h2>: <div className='loading'></div>}
+                        )
+                    }): <p className='info'>No In Progress Tasks</p>}
+                </div>
+                <div className='column'>
+                    <div className='cat'>Done</div>
+                    {sortedTasks.done.length > 0 ? sortedTasks.done.map((task, i) => {
+                        let nextStatus = task.status == 'created' ? 'inprogress': 'done';
+                        return (
+                            <div key={i} className='task'>
+                                <h2>Objective: {task.objective}</h2>
+                                <h3>Status: {task.status}</h3>
+                                <img className='threedots' src='/three_dots.png'/>
+                                <div className='floater'>
+                                    <div onClick={(e) => {
+                                        task.status = nextStatus;
+                                        updateThisTask(e, task.id, nextStatus)
+                                    }} className='update'>Update Status</div>
+                                    <div onClick={(e) => removeThisTask(e, task.id)} className='remove'>Remove Task</div>
+                                </div>
+                            </div>
+                        )
+                    }): <p className='info'>No Completed Tasks</p>}
+                </div>
             </div>
             
             <img id='body_bg' src='/bg_login.png'/>
             <style jsx>{`
+                .info {
+                    float: left;
+                    font: 14px 'Open Sans';
+                }
+                .column {
+                    float: left;
+                    width: 23%;
+                    margin: 10px 1%;
+                    padding: 10px 1%;
+                    border-radius: 10px;
+                    box-shadow: ${Theme.colors.shadowlight};
+                    background: rgba(255,255,255,.7);
+                    backdrop-filter: blur(8px);
+                }
                 .cat {
                     float: left;
                     width: 90%;
-                    padding: 10px 5%;
+                    padding: 14px 5%;
                     color: white;
                     margin: 20px 0;
-                    font: 12px 'Roboto';
+                    border-radius: 10px;
+                    font: 14px 'Roboto';
                     background: ${Theme.colors.gunmetal};
                 }
                 .tasktoggle {
@@ -201,8 +270,8 @@ function TaskManager({getFirstLoad}) {
                     text-align: center;
                     font: 12px 'Open Sans';
                     opacity: .8;
+                    transition: all .3s ease;
                     background: ${Theme.colors.platinum};
-                    transition: opacity .4s ease;
                     cursor: pointer;
                 }
                 .update:hover {
@@ -217,6 +286,7 @@ function TaskManager({getFirstLoad}) {
                     font: 12px 'Open Sans';
                     opacity: .8;
                     color: white;
+                    transition: all .3s ease;
                     background: rgba(226, 70, 70,.8);
                     cursor: pointer;
                 }
@@ -226,7 +296,7 @@ function TaskManager({getFirstLoad}) {
                 .threedots {
                     position: absolute;
                     top: -5px;
-                    right: -5px;
+                    right: 3px;
                     width: 20px;
                     height: 20px;
                     padding: 15px;
@@ -238,12 +308,13 @@ function TaskManager({getFirstLoad}) {
                 }
                 .floater {
                     position: absolute;
-                    right: -10px;
+                    right: 125px;
                     top: -10px;
                     width: 120px;
                     transform: translateX(0) scale(0,0);
                     padding: 0;
                     opacity: 0;
+                    border-radius: 10px;
                     overflow: hidden;
                     transition: opacity .2s ease, transform .4s;
                     backdrop-filter: blur(8px);
@@ -256,17 +327,19 @@ function TaskManager({getFirstLoad}) {
                     width: 100%;
                     transition: all .2s ease;
                     padding: 30px 0;
-                    backdrop-filter: blur(8px);
-                    background: rgba(255, 255, 255,.8);
                     display: flex;
                     justify-content: center;
-                    flex-wrap: wrap;
                 }
                 .task {
                     float: left;
-                    width: 200px;
+                    width: 90%;
                     position: relative;
-                    padding: 10px;
+                    padding: 10px 5%;
+                    margin: 10px 0;
+                    min-height: 120px;
+                    border-radius: 30px;
+                    box-shadow: ${Theme.colors.shadowlight};
+                    background: ${Theme.colors.lightplatinum};
                 }
                 .task h2 {
                     float: left;
@@ -293,7 +366,7 @@ function TaskManager({getFirstLoad}) {
                     border: none;
                     resize: vertical;
                     max-height: 150px;
-                    min-height: 30px;
+                    min-height: 120px;
                     border-radius: 6px;
                     box-shadow: 0 0 2px rgba(20,20,20,.8);
                 }
@@ -314,7 +387,7 @@ function TaskManager({getFirstLoad}) {
                 }
                 .maindiv form {
                     float: left;
-                    width: 40%;
+                    width: 90%;
                     transition: all .2s ease;
                     padding: 10px 5%;
                 }

@@ -8,12 +8,13 @@ import { post, get , postFile} from "./restservice";
 // set up cookies
 
 async function handleAuthSSR(ctx) {
-  const { token } = nextCookie(ctx);
+  const allCookies = nextCookie(ctx);
+  const token = allCookies.accessToken;
 
   try {
-    const response = await axios.get(baseConfig.baseURL + "/user/restricted", { headers: { 'Authorization':'Bearer ' + token } });
+    const response = await axios.get(baseConfig.baseURL + "/auth/admin", { headers: { 'Authorization':'Bearer ' + token } });
     // dont really care about response, as long as it not an error
-    console.log("Golang Server Login Status ::", response.data.status)
+    console.log("Server Status:", response.status)
 
   } catch (err) {
     // in case of error
@@ -25,7 +26,7 @@ async function handleAuthSSR(ctx) {
       })
       ctx.res.end()
     } else {
-      Router.push('error', '/login')
+      await Router.push('/error', '/login')
       return null
     }
   }
@@ -41,7 +42,6 @@ export const withAuthSync = WrappedComponent =>
 
     static async getInitialProps(ctx) {
       const token = await handleAuthSSR(ctx);
-
       const componentProps =
         WrappedComponent.getInitialProps &&
         (await WrappedComponent.getInitialProps(ctx));

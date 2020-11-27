@@ -7,7 +7,7 @@ export async function createProject(title, body, tags, images) {
     
     const getCookies = cookies.getAll()
     // New Login Data request
-    const newProject = await fetch(baseConfig.baseURL + '/projects', {
+    const newProject = await fetch(baseConfig.projectURL, {
         method: 'POST',
         headers: {
             "Content-type": "application/json",
@@ -33,7 +33,7 @@ export async function createProject(title, body, tags, images) {
 
 export async function getProjects(limit) {
     // New Login Data request
-    const newTask = await fetch(baseConfig.baseURL + '/projects', {
+    const getAllProjects = await fetch(baseConfig.projectURL , {
         method: 'GET',
         headers: {
             "Content-type": "application/json"
@@ -51,15 +51,14 @@ export async function getProjects(limit) {
     .catch(function(error) {
         return error
     });
-    if(newTask) {
-        return newTask
+    if(getAllProjects) {
+        return getAllProjects
     }
 }
 
 export async function getProjectById(id) {
     // New Login Data request
-    console.log(process.env.PROJECTS_ROUTE)
-    const newTask = await fetch(process.env.PROJECTS_ROUTE + '/' + id, {
+    const newProject = await fetch(baseConfig.projectURL + id, {
         method: 'GET',
         headers: {
             "Content-type": "application/json"
@@ -74,16 +73,16 @@ export async function getProjectById(id) {
     .catch(function(error) {
         return error
     });
-    if(newTask) {
-        return newTask
+    if(newProject) {
+        return newProject
     }
 }
 
-export async function removeProject(taskId) {
+export async function removeProject(projectId) {
     
     const getCookies = cookies.getAll()
     // New Login Data request
-    const newTask = await fetch(`http://localhost:3600/projects/${taskId}`, {
+    const newProject = await fetch(baseConfig.projectURL + projectId, {
         method: 'DELETE',
         headers: {
             "Authorization": `Bearer ${getCookies.accessToken ? getCookies.accessToken: token}`
@@ -95,24 +94,22 @@ export async function removeProject(taskId) {
     .catch(function(error) {
         return error
     });
-    if(newTask) {
-        return newTask
+    if(newProject) {
+        return newProject
     }
 }
 
-export async function updateTaskStatus(taskId, newstatus) {
+export async function updateProject(projectId, title, body, images, tags) {
     
     const getCookies = cookies.getAll()
     // New Login Data request
-    const newTask = await fetch(`http://localhost:3600/tasks/${taskId}`, {
+    const newProject = await fetch(baseConfig.projectURL + projectId, {
         method: 'PATCH',
         headers: {
             "Content-type": "application/json",
             "Authorization": `Bearer ${getCookies.accessToken ? getCookies.accessToken: token}`
         },
-        body: JSON.stringify({
-            "status": newstatus
-        })
+        body: JSON.stringify({ title: title, body: body, tags: tags, images: images})
     })
     .then(function(response) {
         return response.json();
@@ -120,7 +117,7 @@ export async function updateTaskStatus(taskId, newstatus) {
     .catch(function(error) {
         return error
     });
-    if(newTask) {
-        return newTask
+    if(newProject) {
+        return newProject
     }
 }
