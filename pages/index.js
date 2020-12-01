@@ -86,11 +86,27 @@ function Index() {
                     </div>
                 </Col>
             </Row>
+            <Row height='600px' overflow='hidden' background={Theme.colors.lightplatinum}>
+                <Col>
+                    <div className='center'>
+                        <p className='abp'></p>
+                    </div>
+                </Col>
+                <Col>
+                    <div className='center'>
+                        <img className='abimg' src='/icons/group.png'/>
+                        <h2 className='servicetitle'>Contact Us Directly</h2>
+                        <div className='sep'></div>
+                        <p className='abp'>Contact us Today! Want to find out how we could re-create your home, click the link below and we can start planning!</p>
+                        <Link href='/contact'><div className='ablink'>Contact Us</div></Link>
+                    </div>
+                </Col>
+            </Row>
             <style jsx>{`
                 .abimg {
                     float: left;
-                    width: 150px;
-                    height: 150px;
+                    width: 170px;
+                    height: 170px;
                     margin-left: 50%;
                     margin-top: -90px;
                     transform: translateX(-50%);
@@ -149,9 +165,10 @@ function Index() {
                 .kitchen {
                     float: left;
                     width: 200%;
+                    backface-visibility: false;
                     transform: scale(1.4,1.4) translate3d(0,0,0);
-                    transition: all .3s ease;
-                    margin-top: -${newscroll.scrollY > 800 ? ((newscroll.scrollY - 800) / 3): 0||0}px;
+                    transition: all .2s ease;
+                    margin-top: -${newscroll.scrollY > 500 && newscroll.scrollY < 1650 ? ((newscroll.scrollY - 500) / 5): (1650-500)/5||0}px;
                 }
                 .kitchenframe {
                     position: absolute;

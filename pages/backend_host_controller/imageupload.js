@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { baseConfig } from '../../services/restservice'
 import Theme from '../../styles/theme'
+import { withAuthSync } from '../../services/auth'
 
 function UploadImage({firstLoadImages}) {
 
@@ -8,7 +9,8 @@ function UploadImage({firstLoadImages}) {
     const [file, setFile] = useState(null)
     const [preview, setPreview] = useState(null)
     const [multipreview, setMultiPreview] = useState(null)
-    const [loadingImages, setLoadingImages] = useState(false)
+    const [loadingImages, setLoadingImages] = useState(true)
+    const [editing, setEditing] = useState(false)
 
     const uploadImageSingle = async(e) => {
         e.preventDefault()
@@ -103,19 +105,15 @@ function UploadImage({firstLoadImages}) {
         }
     }
 
-    const doneLoading = (e) => {
-        e.persist()
-        setLoadingImages(false)
-    }
-
     return (
         <div className='body'>
+            <img id='body_bg' src='/bg_login.png'/>
             <div id="left">
                 <h2>Single Image Upload</h2>
                 <div className='uploadform'>
                     <form onSubmit={uploadImageSingle}>
                         <div className='previewframe'><img className='preview' src={preview ? preview: '/imageplaceholder.png'} /></div>
-                        <label htmlFor='fileid'>{file ? file.name: 'Select image'}</label>
+                        <label htmlFor='fileid'>Select Single Image</label>
                         <input id='fileid' type='file' accept='image/*' onChange={handleFileChangeSingle} required />
                         <button type='submit'>Upload Image</button>
                     </form>
@@ -128,7 +126,7 @@ function UploadImage({firstLoadImages}) {
                                 return <div className='imgframepreview'><img src={image} /></div>
                             })}
                         </div>
-                        <label htmlFor='fileidmulti'>Select images</label>
+                        <label htmlFor='fileidmulti'>Select Multiple Images</label>
                         <input id='fileidmulti' type='file' accept='image/*' onChange={handleFileChangeMulti} required multiple/>
                         <button type='submit'>Upload Images</button>
                     </form>
@@ -136,13 +134,19 @@ function UploadImage({firstLoadImages}) {
             </div>
             <div className='images'>
                     <h1>My Images</h1>
+                    <div className='edit'>
+                        <h3 onClick={()=> {
+                            if(editing == true) setEditing(false)
+                            else setEditing(true)
+                        }}>{editing == true ? 'Stop Editing Images': 'Edit/Remove Images'}</h3>
+                    </div>
                     <div className='imageholder'>
                         {images != null ? images.map((image, i) => {
                             if(i == images.length - 1) {
                                 return (
                                     <div key={i} className='imgframe'>
                                         <div onClick={(e) => removeImage(e, image)} className='x'>x</div>
-                                        <img onLoad={doneLoading} src={baseConfig.backendImages + image} />
+                                        <img onLoad={()=>setLoadingImages(false)} src={baseConfig.backendImages + image} />
                                         <h3>{image.split('').map((char, i) => {
                                             if(i > 13) return char
                                         })}</h3>
@@ -164,13 +168,33 @@ function UploadImage({firstLoadImages}) {
                     </div>
                 </div>
             <style jsx>{`
+                .edit {
+                    position: absolute;
+                    top: 30px;
+                    right: 40px;
+                }
+                .edit h3 {
+                    float: left;
+                    font: 16px 'Roboto';
+                    margin: 0;
+                    padding: 8px;
+                    background: ${Theme.colors.lightplatinum};
+                    box-shadow: ${Theme.shadows.mat};
+                    border-radius: 4px;
+                    cursor: pointer;
+                }
                 .imageholder {
                     float: left;
                     width: 90%;
-                    padding: 20px 5%;
-                    height: 500px;
-                    overflow-y: scroll;
+                    margin: 20px 5%;
+                    padding: 10px 0;
+                    border-radius: 3px;
+                    height: ${loadingImages == true ? '400px': 'auto'};
+                    min-height: 400px;
                     position: relative;
+                    box-shadow: inset ${Theme.colors.shadowlight};
+                    backdrop-filter: blur(12px);
+                    background: rgba(255,255,255,.8);
                     margin-top: 20px;
                     display: flex;
                     flex-wrap: wrap;
@@ -181,9 +205,9 @@ function UploadImage({firstLoadImages}) {
                     top: 50%;
                     left: 50%;
                     transform: translate(-50%, -50%);
-                    display: ${loadingImages ? 'block': 'none'};
-                    width: 52px;
-                    height: 52px;
+                    display: ${loadingImages == true ? 'block': 'none'};
+                    width: 60px;
+                    height: 60px;
                 }
                 .imgframe {
                     float: left;
@@ -192,6 +216,8 @@ function UploadImage({firstLoadImages}) {
                     margin: 8px;
                     overflow: hidden;
                     position: relative;
+                    transition: all .3s ease;
+                    opacity: ${loadingImages == true ? '0': '1'};
                     background: rgba(200,200,200,.2);
                     box-shadow: 0 0 1px ${Theme.colors.gunmetal};
                 }
@@ -224,6 +250,7 @@ function UploadImage({firstLoadImages}) {
                     font: 18px 'Roboto';
                     cursor: pointer;
                     opacity: .7;
+                    display: ${editing == true ? 'block': 'none'};
                     transition: all .3s ease;
                     z-index: 999;
                     background: rgba(255,255,255,1);
@@ -234,6 +261,7 @@ function UploadImage({firstLoadImages}) {
                 .images {
                     float: left;
                     width: 60%;
+                    position: relative;
                 }
                 .images h1 {
                     float: left;
@@ -264,9 +292,16 @@ function UploadImage({firstLoadImages}) {
                     left: 20px;
                     padding: 10px;
                     cursor: pointer;
+                    border: none;
+                    border-radius: 6px;
                     opacity: .7;
                     transition: all .3s ease;
-                    font: 14px 'Roboto';
+                    font: 16px 'Roboto';
+                }
+                .uploadform button:hover {
+                    opacity: 1;
+                    transform: scale(1.05,1.05) translateY(-2px);
+                    box-shadow: ${Theme.shadows.neo};
                 }
                 .uploadform .previewframe {
                     position: absolute;
@@ -316,19 +351,32 @@ function UploadImage({firstLoadImages}) {
                     margin: 0;
                     width: 90%;
                     padding: 10px 5%;
-                    box-shadow: 0 0 1px ${Theme.colors.charcoal};
+                    background: ${Theme.colors.lightplatinum};
+                    box-shadow: ${Theme.colors.shadowlight};
                     font: 22px ${Theme.fonts.title};
                 }
                 #left {
                     float: left;
                     width: 40%;
                     height: 100%;
+                    backdrop-filter: blur(12px);
+                    box-shadow: ${Theme.colors.shadowlight};
+                    background: rgba(255,255,255,.8);
+                    border-radius: 4px;
                 }
                 .body {
                     float: left;
                     width: 100%;
                     height: 100%;
                     margin-top: 90px;
+                }
+                #body_bg {
+                    width: 100%;
+                    z-index: -20;
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) scale(1.1,1.1);
                 }
             `}</style>
         </div>
@@ -345,4 +393,4 @@ UploadImage.getInitialProps = async(e) => {
     return {firstLoadImages: getimg.images}
 }
 
-export default UploadImage
+export default withAuthSync(UploadImage)

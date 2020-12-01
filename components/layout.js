@@ -125,7 +125,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                     display: flex;
                     transition: all .8s ease;
                     background: rgba(255,255,255, .85);
-                    backdrop-filter: blur(8px);
+                    backdrop-filter: blur(12px);
                     box-shadow: ${theme.colors.shadowlight};
                     opacity: ${hideNav == false ? '1': '0'};
                 }
@@ -485,7 +485,7 @@ function Layout({children, links, title, path}) {
                     width: 50%;
                     position: absolute;
                     left: 50%;
-                    top: 10%;
+                    top: 20%;
                     transform: translateX(-50%);
                     padding: 0;
                     margin: 0;
@@ -515,7 +515,7 @@ function Layout({children, links, title, path}) {
                 #footer {
                     float: left;
                     width: 100%;
-                    min-height: 500px;
+                    min-height: 600px;
                     height: auto;
                     background: ${theme.colors.onxy};
                     position: relative;
@@ -532,9 +532,10 @@ function Layout({children, links, title, path}) {
                 }
                 #copyw {
                     position: absolute;
-                    width: 100%;
+                    width: 90%;
                     left: 0;
                     bottom: 0;
+                    padding: 10px 5%;
                     background: ${theme.colors.darkonxy};
                     min-height: 80px;
                 }
@@ -562,6 +563,7 @@ function Layout({children, links, title, path}) {
                     padding: 10px;
                     cursor: pointer;
                     background: white;
+                    box-shadow: ${theme.shadows.mat};
                     opacity: ${newscroll.scrollY >= 850 ? '1': '0'};
                     transform: rotate(90deg);
                     z-index: 9999;

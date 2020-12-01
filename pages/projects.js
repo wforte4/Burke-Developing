@@ -87,7 +87,6 @@ function Portfolio({projects, searchQuery}) {
                     font: 16px 'Roboto';
                     color: white;
                     background: ${Theme.colors.charcoal};
-                    box-shadow: ${Theme.shadows.neo};
                     padding: 10px;
                     margin-left: 10px;
                     cursor: pointer;
@@ -97,6 +96,7 @@ function Portfolio({projects, searchQuery}) {
                 }
                 .project h4:hover {
                     opacity: 1;
+                    box-shadow: ${Theme.shadows.neo};
                 }
                 .project h4:active {
                     box-shadow: ${Theme.shadows.inset};
@@ -126,15 +126,16 @@ function Portfolio({projects, searchQuery}) {
                     padding: 10px 5%;
                     margin: 10px 0;
                     cursor: pointer;
-                    color: white;
+                    color: ${Theme.colors.charcoal};
                     text-align: center;
                     font: 17px 'Montserrat';
-                    color: white;
                     transition: all .3s ease;
-                    background: ${Theme.colors.gunmetal};
+                    background: ${Theme.colors.lightplatinum};
                 }
                 .project h2:hover {
-                    transform: scale(1.05,1.05) translateY(-2px);
+                    transform: scale(1.1,1.1) translateY(-2px);
+                    border-radius: 8px;
+                    box-shadow: ${Theme.shadows.mat};
                 }
                 .project p {
                     float: left;

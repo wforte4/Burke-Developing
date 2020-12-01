@@ -30,8 +30,8 @@ const Theme = {
         alice: "#F4FAFF"
     },
     shadows: {
-        neo: "3px 3px 10px #000000, -3px -3px 10px #ffffff",
-        inset: "inset 3px 3px 10px #000000, inset -3px -3px 10px #ffffff",
+        neo: "1px 1px 4px #000000, -1px -1px 4px #ffffff",
+        inset: "inset 1px 1px 4px #000000, inset -1px -1px 4px #ffffff",
         mat: "0 0 2px rgba(20,20,20,.3)"
     }
 }

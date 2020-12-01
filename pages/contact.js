@@ -149,7 +149,7 @@ function Contact() {
                     width: 35%;
                     float: left;
                     min-height: 400px;
-                    max-height: 900px;
+                    max-height: 700px;
                     margin: 10px 1%;
                     padding: 10px 1%;
                     border-radius: 8px;
@@ -252,6 +252,20 @@ function Contact() {
                     float: left;
                     width: 100%;
                     margin-top: 80px;
+                }
+                @media screen and (max-width: 480px) {
+                    .cinfo {
+                        width: 100%;
+                    }
+                    .cinfo ul {
+                        margin-top: 0;
+                    }
+                    .column {
+                        width: 100%;
+                    }
+                    .content {
+                        flex-wrap: wrap;
+                    }
                 }
             `}</style>
         </div>

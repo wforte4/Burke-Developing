@@ -1,5 +1,4 @@
 import Theme from '../../styles/theme'
-import { backendImages } from '../../services/apiservice'
 import { useState } from 'react'
 import { createProject, getProjects, removeProject, updateProject } from '../../services/projectservice'
 import { baseConfig } from '../../services/restservice'
@@ -183,7 +182,7 @@ function Backend({initialProjectsLoad}) {
                                             if(i == images.length - 1) {
                                                 return (
                                                     <div key={i} name={isSelected == true ? 'green': 'none'} className='imgframe'>
-                                                        <img onLoad={()=> setImagesLoaded(true)} onClick={(e) => toggleImageSelection(e, image, isSelected)} src={backendImages + image} />
+                                                        <img onLoad={()=> setImagesLoaded(true)} onClick={(e) => toggleImageSelection(e, image, isSelected)} src={baseConfig.backendImages + image} />
                                                         <h3>{image.split('').map((char, i) => {
                                                             if(i > 13) return char
                                                         })}</h3>
@@ -192,7 +191,7 @@ function Backend({initialProjectsLoad}) {
                                             }
                                             return (
                                                 <div key={i} name={isSelected == true ? 'green': 'none'} className='imgframe'>
-                                                    <img onClick={(e) => toggleImageSelection(e, image, isSelected)} src={backendImages + image} />
+                                                    <img onClick={(e) => toggleImageSelection(e, image, isSelected)} src={baseConfig.backendImages + image} />
                                                     <h3>{image.split('').map((char, i) => {
                                                         if(i > 13) return char
                                                     })}</h3>
@@ -476,7 +475,7 @@ function Backend({initialProjectsLoad}) {
                     padding: 5px 1%;
                     border-radius: 8px;
                     background: rgba(255,255,255,.7);
-                    backdrop-filter: blur(8px);
+                    backdrop-filter: blur(10px);
                     min-height: 500px;
                     z-index: -10;
                     box-shadow: ${Theme.colors.shadowlight};
@@ -485,14 +484,14 @@ function Backend({initialProjectsLoad}) {
                     float: left;
                     width: 100%;
                     text-align: center;
-                    padding: 10px 0;
+                    padding: 14px 0;
                     margin: 20px 0;
+                    border-bottom: 2px solid ${Theme.colors.royalblue};
                     margin-bottom: 35px;
                     border-radius: 3px;
                     box-shadow: ${Theme.colors.shadowlight};
-                    color: white;
-                    font: 20px ${Theme.fonts.title};
-                    background: ${Theme.colors.gunmetal};
+                    font: 22px ${Theme.fonts.title};
+                    background: ${Theme.colors.lightplatinum};
                 }
                 .centerbox {
                     position: absolute;
@@ -648,9 +647,9 @@ function Backend({initialProjectsLoad}) {
                     padding: 5px 1%;
                     position: relative;
                     border-radius: 10px;
-                    backdrop-filter: blur(8px);
+                    backdrop-filter: blur(10px);
+                    background: rgba(255,255,255,.7);
                     transition: all .3s ease;
-                    background: ${editPost ? 'rgba(214, 248, 214, .7)': 'rgba(255, 255, 255, .7)'};
                     box-shadow: ${Theme.colors.shadowlight};
                     min-height: 300px;
                 }
@@ -670,7 +669,7 @@ function Backend({initialProjectsLoad}) {
                     font: 16px 'Roboto';
                     border: none;
                     border-radius: 8px;
-                    box-shadow: 0 0 2px ${Theme.colors.onxy};
+                    box-shadow: ${Theme.shadows.mat};
                 }
                 .projectsform textarea {
                     float: left;
@@ -682,7 +681,7 @@ function Backend({initialProjectsLoad}) {
                     font: 16px 'Roboto';
                     border: none;
                     border-radius: 8px;
-                    box-shadow: 0 0 2px ${Theme.colors.onxy};
+                    box-shadow: ${Theme.shadows.mat};
                     min-height: 150px;
                     max-height: 250px;
                     resize: vertical;
