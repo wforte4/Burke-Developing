@@ -15,7 +15,7 @@ const Theme = {
         onxy: "rgba(57, 57, 58, 1)",
         darkonxy: "rgba(37, 37, 38, 1)",
         opaq: "rgba(255, 255, 255, .0)",
-        shadow: "0 0 2px rgba(20,20,20,.6)",
+        shadow: "0 0 20px rgba(20,20,20,.1)",
         shadowlight: "0 0 2px rgba(20,20,20,.2)",
         white: "rgba(255, 255, 255, 1)",
         royalblue: "rgba(37, 67, 158, 1)",
@@ -31,8 +31,9 @@ const Theme = {
     },
     shadows: {
         neo: "1px 1px 4px #000000, -1px -1px 4px #ffffff",
-        inset: "inset 1px 1px 4px #000000, inset -1px -1px 4px #ffffff",
-        mat: "0 0 2px rgba(20,20,20,.3)"
+        inset: "inset 1px 1px 5px #000000, inset -1px -1px 5px #ffffff",
+        mat: "0 0 2px rgba(20,20,20,.3)",
+        light: "0 0 20px rgba(20,20,20,.1)"
     }
 }
 

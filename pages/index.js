@@ -88,8 +88,11 @@ function Index() {
             </Row>
             <Row height='600px' overflow='hidden' background={Theme.colors.lightplatinum}>
                 <Col>
-                    <div className='center'>
-                        <p className='abp'></p>
+                    <div className='imgcollage'>
+                        <img src='/display/1605307370593-14familyroom.jpg'/>
+                        <img src='/display/1605311538665-8kitchen.jpg'/>
+                        <img src='/display/1605311560545-11kitchen.jpg'/>
+                        <img src='/display/1605311898012-15bedroom1.jpg'/>
                     </div>
                 </Col>
                 <Col>
@@ -103,6 +106,23 @@ function Index() {
                 </Col>
             </Row>
             <style jsx>{`
+                .imgcollage {
+                    width: 70%;
+                    position: absolute;
+                    padding: 25px 0;
+                    border-radius: 6px;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%,-50%);
+                    box-shadow: ${Theme.shadows.light};
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: space-evenly;
+                }
+                .imgcollage img {
+                    width: 200px;
+                    margin: 1px;
+                }
                 .abimg {
                     float: left;
                     width: 170px;

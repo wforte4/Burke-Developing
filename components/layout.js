@@ -100,16 +100,16 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
             <div className='right'>
                 {user == null ? null:
                     <div className='username'>
-                        <img src='/logo_arrow_left.png'/>
+                        <img className='flip' src='/logo_arrow_left.png'/>
                         <h2>Welcome, {user}</h2>
                         <div className='dropdown'>
                             <ul>
                                 {permission > 2000 ? <>
-                                    <Link href="/backend_host_controller"><li>Upload Project</li></Link>
-                                    <Link href="/backend_host_controller/imageupload"><li>Upload Images</li></Link>
-                                    <Link href="/backend_host_controller/taskmanager"><li>View Tasks</li></Link>
+                                    <Link href="/backend_host_controller"><li><img src="/icons/projects.png"/>Upload Project</li></Link>
+                                    <Link href="/backend_host_controller/imageupload"><li><img src="/icons/uploadimg.png"/>Upload Images</li></Link>
+                                    <Link href="/backend_host_controller/taskmanager"><li><img src="/icons/tasklist.png"/>View Tasks</li></Link>
                                     </>: null}
-                                <li onClick={clearUserInfo}>Logout</li>
+                                <li onClick={clearUserInfo}><img src="/icons/logout.png"/>Logout</li>
                             </ul>
                         </div>
                     </div>
@@ -173,7 +173,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                     min-width: 200px;
                     position: relative;
                 }
-                .username img {
+                .username .flip {
                     position: absolute;
                     left: 10px;
                     top: 32px;
@@ -183,7 +183,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                     transition: all .3s ease-in-out;
                     transform: rotate(180deg);
                 }
-                .username:hover img {
+                .username:hover .flip {
                     transform: rotate(-90deg);
                 }
                 .username h2 {
@@ -216,18 +216,31 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                     border-radius: 8px;
                     box-shadow: ${theme.colors.shadowlight};
                 }
+                .dropdown ul li img {
+                    width: 20px;
+                    height: 20px;
+                    opacity: .7;
+                    transition: all .4s ease;
+                    margin-bottom: -5px;
+                    margin-right: 7px;
+                }
                 .dropdown ul li {
                     float: left;
-                    width: 100%;
-                    padding: 10px 0;
+                    width: 90%;
+                    padding: 10px 5%;
                     cursor: pointer;
-                    font: 14px 'Open Sans';
-                    text-align: center;
+                    font: 16px 'Roboto';
                     list-style: none;
-                    transition: all .3s ease;
+                    transition: background .2s ease;
                 }
                 .dropdown ul li:hover {
                     background: ${theme.colors.platinum};
+                }
+                .dropdown ul li:hover img {
+                    opacity: 1;
+                }
+                .dropdown ul li:active {
+                    box-shadow: ${theme.shadows.inset};
                 }
                 .dropdown ul {
                     float: left;
@@ -247,34 +260,6 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                     min-height: 80px;
                     margin-right: 10px;
                     display: ${isMobile == true ? 'none': 'block'}
-                }
-                .login {
-                    float: left;
-                    font: 15px ${theme.fonts.subheader};
-                    padding: 30px 10px;
-                    height: 18px;
-                    border-bottom: 2px solid ${theme.colors.opaq};
-                    transition: all .3s ease;
-                    opacity: .8;
-                    cursor: pointer;
-                }
-                .login:hover {
-                    border-bottom: 2px solid ${theme.colors.coral};
-                    opacity: 1;
-                }
-                .create {
-                    float: left;
-                    font: 15px ${theme.fonts.subheader};
-                    padding: 30px 10px;
-                    height: 18px;
-                    border-bottom: 2px solid ${theme.colors.opaq};
-                    transition: all .3s ease;
-                    opacity: .8;
-                    cursor: pointer;
-                }
-                .create:hover {
-                    border-bottom: 2px solid ${theme.colors.coral};
-                    opacity: 1;
                 }
                 h1 {
                     float: left;

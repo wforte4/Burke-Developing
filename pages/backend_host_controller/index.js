@@ -240,12 +240,12 @@ function Backend({initialProjectsLoad}) {
                                     <Link href={`/posts/${project.id}`} ><h2>{project.title}</h2></Link>
                                     <img className='threedots' src='/threedots.png' />
                                     <ul className='dropdown'>
-                                        <Link href={`/posts/${project.id}`} ><li>View Post</li></Link>
-                                        <li onClick={function(e) {newPostEdit(e, project.id)}}>Edit Post</li>
+                                        <Link href={`/posts/${project.id}`} ><li>View</li></Link>
+                                        <li onClick={function(e) {newPostEdit(e, project.id)}}>Edit</li>
                                         <li onClick={function(e) {
                                             const thisProject = projects.filter((pj) => pj.id == project.id)
                                             setYourSure(thisProject[0])
-                                        }}>Remove Post</li>
+                                        }}>Remove</li>
                                     </ul>
                                 </div>
                             )
@@ -407,12 +407,12 @@ function Backend({initialProjectsLoad}) {
                 }
                 .dropdown {
                     position: absolute;
-                    top: 16px;
-                    right: 0px;
+                    top: 24px;
+                    right: 4px;
                     width: 100px;
-                    border-radius: 8px;
+                    border-radius: 2px;
                     overflow: hidden;
-                    box-shadow: ${Theme.colors.shadowlight};
+                    box-shadow: ${Theme.colors.shadow};
                     padding: 0;
                     margin: 0;
                     z-index: 99;
@@ -428,24 +428,24 @@ function Backend({initialProjectsLoad}) {
                 .dropdown li {
                     float: left;
                     width: 100%;
-                    padding: 10px 0;
+                    padding: 6px 0;
                     text-align: center;
                     cursor: pointer;
                     list-style: none;
-                    font: 12px ${Theme.fonts.subheader};
+                    font: 13px ${Theme.fonts.subheader};
                 }
                 .dropdown li:hover {
                     background: ${Theme.colors.lightplatinum};
                 }
                 .singleproject .threedots {
                     position: absolute;
-                    top: 10px;
-                    right: 10px;
+                    top: 5px;
+                    right: 5px;
                     width: 15px;
                     height: 15px;
                     border-radius: 50%;
                     cursor: pointer;
-                    padding: 5px;
+                    padding: 10px;
                 }
                 .singleproject .sinpreview {
                     float: left;
@@ -580,15 +580,6 @@ function Backend({initialProjectsLoad}) {
                     width: 15px;
                     height: 15px;
                 }
-                .tri {
-                    position: absolute;
-                    top: -15px;
-                    right: 25%;
-                    width: 30px;
-                    height: 30px;
-                    transform: rotate(45deg);
-                    background: white;
-                }
                 .chooseImages {
                     position: absolute;
                     right: 10px;
@@ -669,7 +660,7 @@ function Backend({initialProjectsLoad}) {
                     font: 16px 'Roboto';
                     border: none;
                     border-radius: 8px;
-                    box-shadow: ${Theme.shadows.mat};
+                    box-shadow: ${Theme.shadows.light};
                 }
                 .projectsform textarea {
                     float: left;
@@ -681,7 +672,7 @@ function Backend({initialProjectsLoad}) {
                     font: 16px 'Roboto';
                     border: none;
                     border-radius: 8px;
-                    box-shadow: ${Theme.shadows.mat};
+                    box-shadow: ${Theme.shadows.light};
                     min-height: 150px;
                     max-height: 250px;
                     resize: vertical;

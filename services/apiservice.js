@@ -32,7 +32,7 @@ export async function createProfile(firstname, lastname, email, password) {
 
 export async function loginRequest(email, password) {
     // New Login Data request
-    const newLogin = await fetch('http://localhost:3600/auth', {
+    const newLogin = await fetch(baseConfig.baseURL + '/auth', {
         method: 'POST',
         headers: {
             "Content-type": "application/json"
