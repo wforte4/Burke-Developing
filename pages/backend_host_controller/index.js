@@ -472,7 +472,7 @@ function Backend({initialProjectsLoad}) {
                     position: relative;
                     width: 28%;
                     margin: 20px 1%;
-                    padding: 5px 1%;
+                    padding: 0;
                     border-radius: 8px;
                     background: rgba(255,255,255,.7);
                     backdrop-filter: blur(10px);
@@ -482,15 +482,15 @@ function Backend({initialProjectsLoad}) {
                 }
                 .subheader {
                     float: left;
-                    width: 100%;
-                    text-align: center;
-                    padding: 14px 0;
-                    margin: 20px 0;
+                    width: 90%;
+                    padding: 14px 5%;
+                    margin: 0px 0;
+                    border-top-right-radius: 8px;
+                    border-top-left-radius: 8px;
                     border-bottom: 2px solid ${Theme.colors.royalblue};
                     margin-bottom: 35px;
-                    border-radius: 3px;
                     box-shadow: ${Theme.colors.shadowlight};
-                    font: 22px ${Theme.fonts.title};
+                    font: 16px ${Theme.fonts.title};
                     background: ${Theme.colors.lightplatinum};
                 }
                 .centerbox {
@@ -633,9 +633,9 @@ function Backend({initialProjectsLoad}) {
                 }
                 .projects {
                     float: left;
-                    width: 58%;
+                    width: 59%;
                     margin: 20px 1%;
-                    padding: 5px 1%;
+                    padding: 0px 0%;
                     position: relative;
                     border-radius: 10px;
                     backdrop-filter: blur(10px);
@@ -658,9 +658,9 @@ function Backend({initialProjectsLoad}) {
                     margin: 2px 5%;
                     color: ${Theme.colors.onxy};
                     font: 16px 'Roboto';
-                    border: none;
+                    border: ${Theme.shadows.border};
+                    box-shadow: ${Theme.colors.shadowlight};
                     border-radius: 8px;
-                    box-shadow: ${Theme.shadows.light};
                 }
                 .projectsform textarea {
                     float: left;
@@ -670,7 +670,7 @@ function Backend({initialProjectsLoad}) {
                     margin-bottom: 0;
                     color: ${Theme.colors.onxy};
                     font: 16px 'Roboto';
-                    border: none;
+                    border: ${Theme.shadows.border};
                     border-radius: 8px;
                     box-shadow: ${Theme.shadows.light};
                     min-height: 150px;
@@ -692,7 +692,7 @@ function Backend({initialProjectsLoad}) {
                     padding: 2px 5%;
                     margin: 0;
                     color: ${Theme.colors.onxy};
-                    font: 13px ${Theme.fonts.timesnew};
+                    font: 13px ${Theme.fonts.subheader};
                 }
                 .projectsform button {
                     float: left;
@@ -740,11 +740,11 @@ function Backend({initialProjectsLoad}) {
                     background: ${Theme.colors.royalblue};
                 }
                 .upper {
-                    width: 100%;
+                    width: 90%;
                     min-height: 220px;
                     position: relative;
                     float: left;
-                    padding: 10px 0;
+                    padding: 10px 5%;
                     padding-bottom: 20px;
                     border-bottom: 1px solid ${Theme.colors.royalblue};
                 }

@@ -47,6 +47,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
     const scroll = useScroll();
     const router = useRouter()
     const searchRef = useRef()
+    const _element = useRef()
     const [searchFocused, setFocused] = useState(false)
     const [mobileactive, setActive] = useState(false)
     const toggleActive = (e) => {
@@ -75,7 +76,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
         <div id='nav'>
             <img className='hamburg' src='/ham.png' onClick={toggleActive} />
             <Link href="/"><h1>{title}</h1></Link>
-            <ul className='barlink'>
+            <ul ref={_element} className='barlink'>
                 {links.map((link, i) => {
                     return <Link key={i} href={link.url}><li title={link.url}>{link.name}</li></Link>
                 })}
@@ -259,11 +260,10 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                     width: 270px;
                     min-height: 80px;
                     margin-right: 10px;
-                    display: ${isMobile == true ? 'none': 'block'}
                 }
                 h1 {
                     float: left;
-                    font: 38px ${theme.fonts.bigtitle};
+                    font: 32px ${theme.fonts.title};
                     color: ${theme.colors.onxy};
                     margin: 0 10px;
                     cursor: pointer;
@@ -311,10 +311,29 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                         width: 100%;
                         background: white;
                         position: absolute;
-                        top: 80px;
+                        top: 130px;
+                        left: 0;
                         margin: 0;
                         padding: 10px 0;
                         transform: translateX(${mobileactive ? 0: '-100%'});
+                    }
+                    .search {
+                        width: 90%;
+                        background: white;
+                        position: absolute;
+                        top: 80px;
+                        left: 0;
+                        margin: 0;
+                        z-index: 99;
+                        padding: 10px 5%;
+                        transition: all .3s ease;
+                        transform: translateX(${mobileactive ? 0: '-100%'});
+                    }
+                    .search input {
+                        width: 80%;
+                    }
+                    .search input:focus {
+                        width: 80%;
                     }
                     .barlink li {
                         width: 90%;
@@ -323,11 +342,19 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                     .hamburg {
                         display: block;
                     }
-                    .username {
-                        display: none;
-                    }
                     .right {
-                        display: none;
+                        width: 90%;
+                        display: block;
+                        background: white;
+                        position: absolute;
+                        top: ${_element.current ? 120 + _element.current.clientHeight: 0}px;
+                        left: 0;
+                        right: none;
+                        margin: 0;
+                        z-index: 99;
+                        padding: 10px 5%;
+                        transition: all .7s ease;
+                        transform: translateX(${mobileactive ? 0: '-100%'});
                     }
                 }
             `}</style>
@@ -583,6 +610,13 @@ function Layout({children, links, title, path}) {
                     height: 100%;
                     padding: 0;
                     margin: 0;
+                }
+                @media only screen and (max-width: 800px) {
+                    #copyw {
+                        float: left;
+                        top: auto;
+                        position: relative;
+                    }
                 }
             `}</style>
         </div>

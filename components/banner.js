@@ -152,7 +152,7 @@ export default function BannerSlider({hideMovement, cover, defaultBackground, im
                     left: 0;
                     top: 0;
                     transform: translate3d(0,0,0);
-                    margin-top: ${usePosition.scrollY > 0 ? -usePosition.scrollY / 3: 0 || 0}px;
+                    margin-top: ${usePosition.scrollY > 0 ? -usePosition.scrollY / 5: 0 || 0}px;
                     transition: top .3s ease;
                 }
                 .dots {

@@ -87,22 +87,28 @@ function Login() {
                         width: 80%;
                         padding: 10px 5%;
                         margin: 4px 5%;
-                        font: 14px ${Theme.fonts.subheader};
+                        color: rgb(63, 63, 63);
+                        font: 16px ${Theme.fonts.subheader};
                     }
                     .formbody input {
                         float: left;
                         width: 60%;
                         padding: 10px 5%;
-                        margin: 2px 15%;
-                        font: 14px ${Theme.fonts.paragraph};
+                        margin: 5px 15%;
+                        border-radius: 8px;
+                        border: ${Theme.shadows.border};
+                        font: 14px 'Open Sans';
+                        margin-bottom: 15px;
+                        box-shadow: ${Theme.colors.shadowlight};
                     }
                     .formbody button {
                         float: left;
                         width: 60%;
                         padding: 10px 5%;
                         margin: 2px 20%;
-                        margin-top: 30px;
-                        font: 14px ${Theme.fonts.subheader};
+                        margin-top: 20px;
+                        border-radius: 8px;
+                        font: 16px ${Theme.fonts.subheader};
                         border: none;
                         cursor: pointer;
                         transition: all .3s ease;

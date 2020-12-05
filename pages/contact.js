@@ -170,11 +170,11 @@ function Contact() {
                 }
                 .loader {
                     position: absolute;
-                    top: 70%;
+                    top: 50%;
                     left: 50%;
                     transform: translate(-50%,-50%);
-                    width: 25px;
-                    height: 25px;
+                    width: 60px;
+                    height: 60px;
                     display: ${loading == true ? 'block': 'none'};
                 }
                 .contactform button {
@@ -204,8 +204,8 @@ function Contact() {
                     padding: 10px 5%;
                     margin: 5px 5%;
                     border-radius: 8px;
-                    border: none;
-                    font: 14px 'Open Sans';
+                    font: 14px 'Roboto';
+                    border: ${Theme.shadows.border};
                     box-shadow: ${Theme.colors.shadowlight};
                 }
                 .contactform label {
@@ -222,7 +222,7 @@ function Contact() {
                     margin: 5px 5%;
                     border-radius: 8px;
                     font: 14px 'Open Sans';
-                    border: none;
+                    border: ${Theme.shadows.border};
                     min-height: 140px;
                     resize: vertical;
                     box-shadow: ${Theme.colors.shadowlight};

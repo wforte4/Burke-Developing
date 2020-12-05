@@ -29,7 +29,7 @@ function Index() {
                 <Col background={Theme.colors.white}>
                     <div className='center'>
                         <img className='icon' src='/icons/gear.png'/>
-                        <div className='subtitle'>Building Services</div>
+                        <div className='servicetitle'>Building Services</div>
                         <div className='sep'></div>
                         <div className='pg'>Our subcontractors are reliable and responsive. They are the collective workforce that make up the Burke Developing team.</div>
                     </div>    
@@ -37,7 +37,7 @@ function Index() {
                 <Col background={Theme.colors.white}>
                     <div className='center'>
                         <img className='icon' src='/icons/house.png'/>
-                        <div className='subtitle'>Home Renovations</div>
+                        <div className='servicetitle'>Home Renovations</div>
                         <div className='sep'></div>
                         <div className='pg'>Our specialty is complete home renovations. Through our primary business of buying and selling homes, one of our biggest assets has become our roladex of specialized subcontractors.</div>
                     </div>
@@ -45,7 +45,7 @@ function Index() {
                 <Col background={Theme.colors.white}>
                     <div className='center'>
                         <img className='icon' src='/icons/hardhat.png'/>
-                        <div className='subtitle'>On-Site Management</div>
+                        <div className='servicetitle'>On-Site Management</div>
                         <div className='sep'></div>
                         <div className='pg'>This advantage, along with our experience of being on site providing direction toward each order of operations, necessary to complete a project, helps our clients projects run smoother and more cost effective, resulting in a professional project completed.</div>
                     </div>
@@ -53,7 +53,7 @@ function Index() {
             </Row>
             <Row
             height='580px' overflow='hidden'>
-                <Col background={Theme.colors.lightplatinum}>
+                <Col mobileDisplay={false} background={Theme.colors.lightplatinum}>
                     <div className='kitchenframe'>
                         <img src='/9kitchen.jpg' className='kitchen'/>
                     </div>
@@ -87,7 +87,7 @@ function Index() {
                 </Col>
             </Row>
             <Row height='600px' overflow='hidden' background={Theme.colors.lightplatinum}>
-                <Col>
+                <Col mobileDisplay={false}>
                     <div className='imgcollage'>
                         <img src='/display/1605307370593-14familyroom.jpg'/>
                         <img src='/display/1605311538665-8kitchen.jpg'/>
@@ -100,7 +100,7 @@ function Index() {
                         <img className='abimg' src='/icons/group.png'/>
                         <h2 className='servicetitle'>Contact Us Directly</h2>
                         <div className='sep'></div>
-                        <p className='abp'>Contact us Today! Want to find out how we could re-create your home, click the link below and we can start planning!</p>
+                        <p className='abp'>Contact us today! Want to find out how we could re-create your home, click the link below and we can start planning!</p>
                         <Link href='/contact'><div className='ablink'>Contact Us</div></Link>
                     </div>
                 </Col>
@@ -109,15 +109,16 @@ function Index() {
                 .imgcollage {
                     width: 70%;
                     position: absolute;
-                    padding: 25px 0;
+                    padding: 40px 0;
                     border-radius: 6px;
                     top: 50%;
                     left: 50%;
+                    background: white;
                     transform: translate(-50%,-50%);
-                    box-shadow: ${Theme.shadows.light};
+                    box-shadow: ${Theme.shadows.mat};
                     display: flex;
                     flex-wrap: wrap;
-                    justify-content: space-evenly;
+                    justify-content: center;
                 }
                 .imgcollage img {
                     width: 200px;
@@ -187,8 +188,7 @@ function Index() {
                     width: 200%;
                     backface-visibility: false;
                     transform: scale(1.4,1.4) translate3d(0,0,0);
-                    transition: all .2s ease;
-                    margin-top: -${newscroll.scrollY > 500 && newscroll.scrollY < 1650 ? ((newscroll.scrollY - 500) / 5): (1650-500)/5||0}px;
+                    margin-top: -${newscroll.scrollY > 500 && newscroll.scrollY < 1650 ? ((newscroll.scrollY - 500) / 7): (1650-500)/7||0}px;
                 }
                 .kitchenframe {
                     position: absolute;

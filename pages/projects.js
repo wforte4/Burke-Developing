@@ -49,26 +49,44 @@ function Portfolio({projects, searchQuery}) {
                 .searchQuery h1 {
                     float: left;
                     margin: 0;
-                    font: 30px ${Theme.fonts.timesnew};
+                    font: 30px ${Theme.fonts.title};
                 }
                 .searchQuery h2 {
                     float: left;
                     margin: 8px 0;
                     margin-left: 40px;
-                    font: 20px 'Open Sans';
+                    font: 20px 'Roboto';
                 }
                 .tagholder {
                     float: left;
                     width: 90%;
                     padding: 3px 5%;
                 }
+                .frame {
+                    float: left;
+                    display: flex;
+                    justify-content: center;
+                    align-content: center;
+                    width: 100%;
+                    margin: 20px 0;
+                    margin-top: 0;
+                    height: 280px;
+                    overflow: hidden;
+                }
+                .frame img {
+                    float: left;
+                    width: 100%;
+                    height: auto;
+                    transition: all .3s ease-in-out;
+                }
                 .project {
                     float: left;
                     position: relative;
                     width: 380px;
-                    height: 560px;
-                    padding: 30px 0px;
+                    height: 590px;
+                    padding: 0px 0px;
                     margin: 10px 25px;
+                    overflow: hidden;
                     box-shadow: 0 0 1px ${Theme.colors.gunmetal};
                     border-radius: 14px;
                     border-bottom: 1px solid ${Theme.colors.gunmetal};
@@ -86,7 +104,7 @@ function Portfolio({projects, searchQuery}) {
                     left: 10px;
                     font: 16px 'Roboto';
                     color: white;
-                    background: ${Theme.colors.charcoal};
+                    background: ${Theme.colors.tar};
                     padding: 10px;
                     margin-left: 10px;
                     cursor: pointer;
@@ -101,39 +119,23 @@ function Portfolio({projects, searchQuery}) {
                 .project h4:active {
                     box-shadow: ${Theme.shadows.inset};
                 }
-                .frame {
-                    float: left;
-                    display: flex;
-                    justify-content: center;
-                    align-content: center;
-                    width: 100%;
-                    margin: 20px 0;
-                    height: 220px;
-                    overflow: hidden;
-                }
-                .frame img {
-                    float: left;
-                    width: 100%;
-                    height: auto;
-                    transition: all .3s ease-in-out;
-                }
-                .frame:hover img {
-                    transform: scale(1.1,1.1);
-                }
                 .project h2 {
-                    float: left;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
                     width: 90%;
                     padding: 10px 5%;
-                    margin: 10px 0;
+                    margin: 0px 0;
                     cursor: pointer;
-                    color: ${Theme.colors.charcoal};
+                    color: white;
+                    z-index: 10;
+                    background: ${Theme.colors.tar};
                     text-align: center;
                     font: 17px 'Montserrat';
                     transition: all .3s ease;
-                    background: ${Theme.colors.lightplatinum};
                 }
                 .project h2:hover {
-                    transform: scale(1.1,1.1) translateY(-2px);
+                    transform: scale(1.05,1.05);
                     border-radius: 8px;
                     box-shadow: ${Theme.shadows.mat};
                 }

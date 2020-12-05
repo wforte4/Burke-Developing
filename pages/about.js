@@ -8,7 +8,11 @@ function About() {
 
     return (
         <div className='body'>
-            <Row height='1000px' margin='40px' padding='5' >
+            <div className='banner'>
+                <img src='/display/blurabout.jpg' />
+                <h1>About Burke Developing</h1>
+            </div>
+            <Row height='1000px' margin='60px' padding='5' >
                 <Col>
                     <div className='center sty'>
                         <h2 className='servicetitle'>Services</h2>
@@ -43,23 +47,50 @@ function About() {
                 })}
             </div>
             <style jsx>{`
+                .banner {
+                    float: left;
+                    width: 100%;
+                    height: 400px;
+                    overflow: hidden;
+                    position: relative;
+                }
+                .banner img {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    width: 100%;
+                    transform: translate(-50%,-50%) scale(1.1,1.1);
+                }
+                .banner h1 {
+                    margin: 0;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%,-50%);
+                    font: 60px ${Theme.fonts.title};
+                    color: white;
+                    width: 100%;
+                    text-align: center;
+                }
                 #spanner {
                     float: left;
                     width: 100%;
                     text-align: center;
                     background: ${Theme.colors.lightplatinum};
                     font: 16px 'Roboto';
-                    padding: 65px 0;
+                    padding: 70px 0;
                 }
                 .simplelink {
-                    text-decoration: none;
+                    float: left;
                     color: ${Theme.colors.gunmetal};
                     font: 16px 'Roboto';
+                    text-decoration: none;
                     cursor: pointer;
                     padding: 5px;
                     margin: 10px 0;
                 }
                 a {
+                    text-decoration: none;
                 }
                 .arrowimg {
                     width: 20px;
@@ -82,7 +113,7 @@ function About() {
                 .imgcontainer {
                     float: left;
                     width: 90%;
-                    padding: 30px 5%;
+                    padding: 60px 5%;
                     display: flex;
                     flex-wrap: wrap;
                     justify-content: center;
@@ -124,9 +155,9 @@ function About() {
                 }
                 .sty {
                     box-shadow: ${Theme.shadows.mat};
-                    width: 70%;
+                    width: 80%;
                     border-radius: 20px;
-                    padding: 20px;
+                    padding: 40px 20px;
                 }
                 .sep {
                     float: left;
@@ -138,12 +169,15 @@ function About() {
                 .services {
                     float: left;
                     width: 80%;
+                    padding: 0;
                 }
                 .services li {
                     float: left;
                     width: 100%;
-                    margin: 2px 0;
-                    font: 16px 'Roboto';
+                    margin: 3px 0;
+                    text-align: center;
+                    list-style: none;
+                    font: 17px 'Roboto';
                 }
                 .serviceimg {
                     float: left;
@@ -154,14 +188,14 @@ function About() {
                     float: left;
                     width: auto;
                     margin: 0;
-                    padding: 10px 5%;
+                    padding: 0px 5%;
                     text-align: center;
                     font: 22px ${Theme.fonts.title};
                 }
                 .body {
                     float: left;
                     width: 100%;
-                    margin-top: 90px;
+                    margin-top: 80px;
                 }
             `}</style>
         </div>

@@ -51,7 +51,7 @@ export class Row extends React.Component {
     }
 }
 
-export const Col = ({padding, children, background, margin, width, height}) => {
+export const Col = ({padding, children, background, margin, width, height, mobileDisplay}) => {
     return (
         <div className='col'>
             {children}
@@ -69,6 +69,7 @@ export const Col = ({padding, children, background, margin, width, height}) => {
                 @media only screen and (max-width: 600px) {
                     .col {
                         width: 100%;
+                        display: ${mobileDisplay == false ? 'none': 'block'};
                     }
                 }
             `}</style>
