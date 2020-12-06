@@ -107,7 +107,7 @@ export async function createTask(objective, status) {
     
     const getCookies = cookies.getAll()
     // New Login Data request
-    const newTask = await fetch('http://localhost:3600/tasks', {
+    const newTask = await fetch(baseConfig.baseURL + '/tasks', {
         method: 'POST',
         headers: {
             "Content-type": "application/json",
@@ -133,7 +133,7 @@ export async function getTasks(limit, token) {
     
     const getCookies = cookies.getAll()
     // New Login Data request
-    const newTask = await fetch('http://localhost:3600/tasks', {
+    const newTask = await fetch(baseConfig.baseURL + '/tasks', {
         method: 'GET',
         headers: {
             "Content-type": "application/json",
@@ -161,7 +161,7 @@ export async function removeTask(taskId) {
     
     const getCookies = cookies.getAll()
     // New Login Data request
-    const newTask = await fetch(`http://localhost:3600/tasks/${taskId}`, {
+    const newTask = await fetch(baseConfig.baseURL + `/tasks/${taskId}`, {
         method: 'DELETE',
         headers: {
             "Authorization": `Bearer ${getCookies.accessToken ? getCookies.accessToken: token}`
@@ -182,7 +182,7 @@ export async function updateTaskStatus(taskId, newstatus) {
     
     const getCookies = cookies.getAll()
     // New Login Data request
-    const newTask = await fetch(`http://localhost:3600/tasks/${taskId}`, {
+    const newTask = await fetch(baseConfig.baseURL + `/tasks/${taskId}`, {
         method: 'PATCH',
         headers: {
             "Content-type": "application/json",
