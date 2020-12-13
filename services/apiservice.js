@@ -103,7 +103,7 @@ export async function submitContact(name, message, email, cellphone) {
     }
 }
 
-export async function createTask(objective, status) {
+export async function createTask(objective, status, priority, assignee) {
     
     const getCookies = cookies.getAll()
     // New Login Data request
@@ -115,7 +115,9 @@ export async function createTask(objective, status) {
         },
         body: JSON.stringify({
             "objective": objective,
-            "status": status
+            "status": status,
+            "priority": priority,
+            "assignee": assignee,
         })
     })
     .then(function(response) {
@@ -133,15 +135,12 @@ export async function getTasks(limit, token) {
     
     const getCookies = cookies.getAll()
     // New Login Data request
-    const newTask = await fetch(baseConfig.baseURL + '/tasks', {
+    const newTask = await fetch(baseConfig.baseURL + '/tasks?limit=' + limit, {
         method: 'GET',
         headers: {
             "Content-type": "application/json",
             "Authorization": `Bearer ${getCookies.accessToken ? getCookies.accessToken: token}`
-        },
-        query: JSON.stringify({
-            "limit": limit
-        })
+        }
     })
     .then(function(response) {
         if(response.status == 403) {

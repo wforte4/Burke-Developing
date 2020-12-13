@@ -2,30 +2,30 @@ import { getProjectById } from "../../services/projectservice"
 import BannerSlider from '../../components/banner'
 import { baseConfig } from "../../services/restservice"
 import Theme from '../../styles/theme'
-import { Row, Col } from '../../components/elements'
+import { Row, Col, Date } from '../../components/elements'
 import Link from 'next/link'
 
 function Project({project}) {
     return (
         <div id='body'>
-            <h1>{project.title}</h1>
             <BannerSlider height={600} images={project.images} backendImageRoute={baseConfig.backendImages}/>
+            <div className='title'>{project.title}</div>
             <div className='tagholder'>
                 {project.tags.map((tag, i) => {
                     return <h3 key={i}>{tag.toUpperCase() + (i == project.tags.length - 1 ? '': ',')}</h3>
                 })}
             </div>
-            <div className='title'>{project.title}</div>
-            <Row height='600px'>
+            <Row height='auto'>
                 <Col>
                     <h3 className='subheader'>About this project</h3>
+                    <div className='date'><strong>Build Date: </strong><Date datetime={project.date}/></div>
                     <p>{project.body}</p>
                 </Col>
                 <Col>
                     <div className='imgcontainer'>
                         {project.images.map((image, i) => {
                             return (
-                                <div className='frame'>
+                                <div key={i} className='frame'>
                                     <img src={baseConfig.backendImages + image}/>
                                 </div>
                             )
@@ -57,8 +57,6 @@ function Project({project}) {
                     flex-wrap: wrap;
                     justify-content: center;
                     align-content: stretch;
-                    max-height: 500px;
-                    overflow-y: scroll;
                 }
                 .ban {
                     float: left;
@@ -91,17 +89,24 @@ function Project({project}) {
                 }
                 .subheader {
                     float: left;
-                    font: 14px 'Montserrat';
-                    margin: 10px;
-                    margin-left: 30px;
-                    border-bottom: 1px solid ${Theme.colors.gunmetal};
+                    width: 90%;
+                    padding: 30px 5%;
+                    margin: 0;
+                    font: 16px 'Montserrat';
                 }
                 .title {
                     float: left;
-                    width: 95%;
-                    padding: 30px 2.5%;
+                    width: 90%;
+                    padding: 30px 5%;
                     margin: 0;
                     font: 32px 'Montserrat';
+                }
+                .date {
+                    float: left;
+                    width: 80%;
+                    padding: 30px 10%;
+                    margin: 0;
+                    font: 14px 'Roboto';
                 }
                 h1 {
                     position: fixed;
@@ -147,17 +152,13 @@ function Project({project}) {
                 .tagholder h3:after{ transform-origin: 100% 50%; }
                 .tagholder h3:hover:after{ transform: scaleX(1); transform-origin: 0% 50%; }
                 p {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%,-50%);
+                    float: left;
                     width: 80%;
                     padding: 40px 5%;
-                    max-height: 420px;
+                    margin: 5px 5%;
                     box-shadow: ${Theme.colors.shadowlight};
                     background: rgba(244,244,244,.6);
                     border-radius: 16px;
-                    overflow-y: scroll;
                     font: 16px 'Open Sans';
                 }
                 #body {
@@ -172,6 +173,7 @@ function Project({project}) {
 
 Project.getInitialProps = async(ctx) => {
     const getNewProject = await getProjectById(ctx.query.id)
+    console.log(getNewProject)
     return {project: getNewProject}
 }
 

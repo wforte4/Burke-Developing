@@ -253,7 +253,7 @@ function Contact() {
                     width: 100%;
                     margin-top: 80px;
                 }
-                @media screen and (max-width: 480px) {
+                @media screen and (max-width: 650px) {
                     .cinfo {
                         width: 100%;
                     }

@@ -2,18 +2,46 @@ import Theme from '../styles/theme';
 import { getProjects } from '../services/projectservice';
 import Link from 'next/link';
 import { baseConfig } from '../services/restservice'
+import { useEffect, useState } from 'react';
 
-function Portfolio({projects, searchQuery}) {
+function getCategories(projects) {
+    const cats = []
+    projects.map((project, i) => {
+        project.tags.map((tag, k) => {
+            if(!cats.some(cat => cat === tag)) {
+                cats.push(tag)
+            }
+        })
+    })
+    return cats
+}
+
+function Portfolio({load, searchQuery}) {
+
+    const [categories, setCategories] = useState(getCategories(load))
+    const [projects, setProjects] = useState(load)
+    const [painted, setPainted] = useState([])
+
     return (
         <div className='body'>
+            <img id='body_bg' src='/bg_login.png'/>
             <h1 id='title'>Home Improvement Projects</h1>
             <div className='searchQuery'>
                 <h1>Search Result:</h1>
                 <h2>{searchQuery ? searchQuery: null}</h2>
             </div>
+            <div className='categories'>
+                {categories ? categories.map((cat, i) => {
+                    return <h4 key={i}>{cat}</h4>
+                }): null}
+            </div>
+            <div className='searching'>
+                <p>Sorry, no results </p>
+            </div>
             <div id='projectcontainer'>
                 {projects == null ? null: projects.map((project, i) => {
                     if(searchQuery && project.title.toUpperCase().indexOf(searchQuery.toUpperCase()) == -1) return
+                    
                     return (
                         <div className='project' key={i}>
                             <Link href={`/posts/${project.id}`}><h2>{project.title}</h2></Link>
@@ -39,6 +67,26 @@ function Portfolio({projects, searchQuery}) {
                 })}
             </div>
             <style jsx>{`
+                .categories {
+                    float: left;
+                    width: 80%;
+                    padding: 10px 10%;
+                    display: flex;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                }
+                .categories h4 {
+                    float: left;
+                    font: 16px 'Roboto';
+                    cursor: pointer;
+                    padding: 10px 15px;
+                    opacity: .6;
+                    transition: all .3s ease;
+                }
+                .categories h4:hover {
+                    transform: translateY(-2px);
+                    opacity: 1;
+                }
                 .searchQuery {
                     float: left;
                     width: 90%;
@@ -48,19 +96,38 @@ function Portfolio({projects, searchQuery}) {
                 }
                 .searchQuery h1 {
                     float: left;
-                    margin: 0;
-                    font: 30px ${Theme.fonts.title};
+                    margin: 10px 0;
+                    font: 24px ${Theme.fonts.title};
                 }
                 .searchQuery h2 {
                     float: left;
-                    margin: 8px 0;
+                    margin: 10px 0;
                     margin-left: 40px;
                     font: 20px 'Roboto';
                 }
-                .tagholder {
+                .searching {
+                    float: left;
+                    margin-left: 50%;
+                    transform: translateX(-50%);
+                    width: 40%;
+                    padding: 10px 5%;
+                    margin-top: 50px 0;
+                    display: none;
+                    background: white;
+                    box-shadow: ${Theme.shadows.mat};
+                }
+                .searching p {
                     float: left;
                     width: 90%;
-                    padding: 3px 5%;
+                    padding: 10px 5%;
+                    font: 16px 'Roboto';
+                    background: white;
+                    text-align: center;
+                }
+                .tagholder {
+                    float: left;
+                    width: 95%;
+                    padding: 3px 2.5%;
                 }
                 .frame {
                     float: left;
@@ -87,8 +154,9 @@ function Portfolio({projects, searchQuery}) {
                     padding: 0px 0px;
                     margin: 10px 25px;
                     overflow: hidden;
+                    background: white;
                     box-shadow: 0 0 1px ${Theme.colors.gunmetal};
-                    border-radius: 14px;
+                    border-radius: 4px;
                     border-bottom: 1px solid ${Theme.colors.gunmetal};
                 }
                 .project h3 {
@@ -124,7 +192,7 @@ function Portfolio({projects, searchQuery}) {
                     top: 0;
                     left: 0;
                     width: 90%;
-                    padding: 10px 5%;
+                    padding: 18px 5%;
                     margin: 0px 0;
                     cursor: pointer;
                     color: white;
@@ -160,6 +228,8 @@ function Portfolio({projects, searchQuery}) {
                     width: 100%;
                     height: 100%;
                     margin-top: 80px;
+                    position: relative;
+                    overflow: hidden;
                 }
                 #title {
                     float: left;
@@ -169,6 +239,14 @@ function Portfolio({projects, searchQuery}) {
                     margin: 40px 0;
                     text-align: center;
                 }
+                #body_bg {
+                    width: 100%;
+                    z-index: -20;
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) scale(1.1,1.1);
+                }
             `}</style>
         </div>
     )
@@ -177,7 +255,7 @@ function Portfolio({projects, searchQuery}) {
 Portfolio.getInitialProps = async(ctx) => {
     const getAllProjects = await getProjects(50);
     const searchresult = await ctx.query.searchProjects
-    return {projects: getAllProjects, searchQuery: searchresult}
+    return {load: getAllProjects, searchQuery: searchresult}
 }
 
 export default Portfolio

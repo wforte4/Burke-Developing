@@ -1,5 +1,5 @@
 import { createTask, getTasks, removeTask, updateTaskStatus } from '../../services/apiservice'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useReducer } from 'react'
 import Router from 'next/router'
 import nextCookie from 'next-cookies'
 import Theme from '../../styles/theme'
@@ -25,6 +25,19 @@ export function compare(key, order = 'asc') {
 	    result = 1;
 	return (order === 'desc') ? ~result : result
     };
+}
+
+function getPriorityColor(priority) {
+    switch(priority) {
+        case 'Urgent':
+            return 'rgb(252, 106, 15)';
+        case 'High':
+            return 'rgb(252, 204, 15)';
+        case 'Medium':
+            return 'rgb(46, 252, 15)';
+        case 'Low':
+            return 'rgb(43, 255, 205)';
+    }
 }
 
 const HamEx = ({onClick, color, width, height, active}) => {
@@ -70,6 +83,8 @@ function TaskManager({getFirstLoad}) {
     const [inputs, setInputs] = useState({
         objective: '',
         status: 'created',
+        priority: 'Medium',
+        assignee: 'Full Team'
     })
     const [sortedTasks, setSortedTasks] = useState({
         inprogress: [],
@@ -84,7 +99,7 @@ function TaskManager({getFirstLoad}) {
     // Create a new Task DEFAULT: status: 'created'
     const createNewTask = async(e) => {
         e.preventDefault();
-        const newTask = await createTask(inputs.objective, inputs.status)
+        const newTask = await createTask(inputs.objective, inputs.status, inputs.priority, inputs.assignee)
         if(newTask) {
             console.log(newTask)
             setInputs({...inputs, objective: ''})
@@ -116,7 +131,7 @@ function TaskManager({getFirstLoad}) {
     // Updating Tasks with Backend
     const updateTasks = async(e) => {
         setStatus('loading')
-        const getalltasks = await getTasks(50, null)
+        const getalltasks = await getTasks(75, null)
         if(getalltasks) {
             console.log(getalltasks)
             getalltasks.sort(compare('status'))
@@ -154,11 +169,15 @@ function TaskManager({getFirstLoad}) {
 
     return (
         <div className='maindiv'>
-            <h1>My Tasks</h1>
+            <div className='nav'>
+                <h1>Task Manager</h1>
+                <p>Welcome to the task manager, please submit bugs and assign to proper developer.</p>
+            </div>
             <div className='tasklist'>
                 <div className='column'>
                     <form onSubmit={createNewTask}>
-                        <h1>New Task</h1>
+                        <h2 className='newtasktitle'>New Task</h2>
+                        <label>Task objective</label>
                         <textarea 
                             name='objective'
                             onChange={isTyping}
@@ -166,44 +185,62 @@ function TaskManager({getFirstLoad}) {
                             placeholder='Objective'
                             required
                         />
-                        <button>Add Task</button>
+                        <label>Priority</label>
+                        <div className='customselect'>
+                            <select value={inputs.priority} name='priority' onChange={isTyping}>
+                                <option value="Urgent">Urgent</option>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+                        <label>Assignee</label>
+                        <div className='customselect'>
+                            <select value={inputs.assignee} name='assignee' onChange={isTyping}>
+                                <option value="William Forte">William Forte</option>
+                                <option value="Full Team">Full Team</option>
+                            </select>
+                        </div>
+                        <button type='submit'>Add Task</button>
                     </form>
                 </div>
                 <div className='column'>
-                    <div className='cat'>Newly Added Tasks</div>
+                    <div className='cat'>To Do</div>
                     {sortedTasks.created.length > 0 ? sortedTasks.created.map((task, i) => {
                         let nextStatus = task.status == 'created' ? 'inprogress': 'done';
                         return (
                             <div key={i} className='task'>
-                                <h2>Objective: {task.objective}</h2>
-                                <h3>Status: {task.status}</h3>
-                                <img className='threedots' src='/three_dots.png'/>
+                                <h2>{task.objective}</h2>
+                                <h3 style={{background: getPriorityColor(task.priority)}}>{task.priority}</h3>
+                                <h4>{task.assignee}</h4>
+                                <img className='threedots' src='/icons/taskedit.png'/>
                                 <div className='floater'>
                                     <div onClick={(e) => {
                                         task.status = nextStatus;
                                         updateThisTask(e, task.id, nextStatus)
-                                    }} className='update'>Update Status</div>
-                                    <div onClick={(e) => removeThisTask(e, task.id)} className='remove'>Remove Task</div>
+                                    }} className='update'>Status</div>
+                                    <div onClick={(e) => removeThisTask(e, task.id)} className='remove'>Remove</div>
                                 </div>
                             </div>
                         )
                     }): <p className='info'>No Newly Created Tasks</p>}
                 </div>
                 <div className='column'>
-                    <div className='cat'>Tasks in Progress</div>
+                    <div className='cat'>Doing</div>
                     {sortedTasks.inprogress.length > 0 ? sortedTasks.inprogress.map((task, i) => {
                         let nextStatus = task.status == 'created' ? 'inprogress': 'done';
                         return (
                             <div key={i} className='task'>
-                                <h2>Objective: {task.objective}</h2>
-                                <h3>Status: {task.status}</h3>
-                                <img className='threedots' src='/three_dots.png'/>
+                                <h2>{task.objective}</h2>
+                                <h3 style={{background: getPriorityColor(task.priority)}}>{task.priority}</h3>
+                                <h4>{task.assignee}</h4>
+                                <img className='threedots' src='/icons/taskedit.png'/>
                                 <div className='floater'>
                                     <div onClick={(e) => {
                                         task.status = nextStatus;
                                         updateThisTask(e, task.id, nextStatus)
-                                    }} className='update'>Update Status</div>
-                                    <div onClick={(e) => removeThisTask(e, task.id)} className='remove'>Remove Task</div>
+                                    }} className='update'>Status</div>
+                                    <div onClick={(e) => removeThisTask(e, task.id)} className='remove'>Remove</div>
                                 </div>
                             </div>
                         )
@@ -215,15 +252,16 @@ function TaskManager({getFirstLoad}) {
                         let nextStatus = task.status == 'created' ? 'inprogress': 'done';
                         return (
                             <div key={i} className='task'>
-                                <h2>Objective: {task.objective}</h2>
-                                <h3>Status: {task.status}</h3>
-                                <img className='threedots' src='/three_dots.png'/>
+                                <h2>{task.objective}</h2>
+                                <h3 style={{background: getPriorityColor(task.priority)}}>{task.priority}</h3>
+                                <h4>{task.assignee}</h4>
+                                <img className='threedots' src='/icons/taskedit.png'/>
                                 <div className='floater'>
                                     <div onClick={(e) => {
                                         task.status = nextStatus;
                                         updateThisTask(e, task.id, nextStatus)
-                                    }} className='update'>Update Status</div>
-                                    <div onClick={(e) => removeThisTask(e, task.id)} className='remove'>Remove Task</div>
+                                    }} className='update'>Status</div>
+                                    <div onClick={(e) => removeThisTask(e, task.id)} className='remove'>Remove</div>
                                 </div>
                             </div>
                         )
@@ -233,6 +271,12 @@ function TaskManager({getFirstLoad}) {
             
             <img id='body_bg' src='/bg_login.png'/>
             <style jsx>{`
+                .customselect {
+                    float: left;
+                    width: 300px;
+                    padding: 10px 5%;
+                    margin: 5px 0;
+                }
                 .info {
                     float: left;
                     font: 14px 'Open Sans';
@@ -243,18 +287,20 @@ function TaskManager({getFirstLoad}) {
                     margin: 10px 1%;
                     padding: 10px 1%;
                     border-radius: 10px;
+                    height: auto;
                     box-shadow: ${Theme.colors.shadowlight};
-                    background: rgba(255,255,255,.7);
-                    backdrop-filter: blur(8px);
+                    background: rgba(255,255,255,1);
                 }
                 .cat {
                     float: left;
                     width: 90%;
                     padding: 14px 5%;
                     color: white;
-                    margin: 20px 0;
-                    border-radius: 10px;
-                    font: 14px 'Roboto';
+                    margin: 0px 0;
+                    margin-bottom: 5px;
+                    border-radius: 4px;
+                    box-shadow: ${Theme.shadows.mat};
+                    font: 16px 'Roboto';
                     background: ${Theme.colors.gunmetal};
                 }
                 .tasktoggle {
@@ -266,28 +312,26 @@ function TaskManager({getFirstLoad}) {
                 .update {
                     float: left;
                     width: 100%;
-                    padding: 8px 0;
+                    padding: 5px 0;
                     text-align: center;
-                    font: 12px 'Open Sans';
-                    opacity: .8;
+                    font: 14px 'Roboto';
+                    opacity: .5;
                     transition: all .3s ease;
-                    background: ${Theme.colors.platinum};
+                    background: white;
                     cursor: pointer;
                 }
                 .update:hover {
                     opacity: 1;
-                    background: white;
                 }
                 .remove {
                     float: left;
                     width: 100%;
-                    padding: 8px 0;
+                    padding: 5px 0;
                     text-align: center;
-                    font: 12px 'Open Sans';
-                    opacity: .8;
-                    color: white;
+                    font: 14px 'Roboto';
+                    opacity: .5;
                     transition: all .3s ease;
-                    background: rgba(226, 70, 70,.8);
+                    background: white;
                     cursor: pointer;
                 }
                 .remove:hover {
@@ -295,95 +339,119 @@ function TaskManager({getFirstLoad}) {
                 }
                 .threedots {
                     position: absolute;
-                    top: -5px;
-                    right: 3px;
-                    width: 20px;
-                    height: 20px;
-                    padding: 15px;
+                    top: 2px;
+                    right: 2px;
+                    width: 14px;
+                    height: 14px;
+                    padding: 2px;
+                    opacity: 0;
+                    transition: all .2s ease;
                     cursor: pointer;
                 }
                 .threedots:hover ~ .floater, .floater:hover {
-                    opacity: 1;
-                    transform: translateX(100%) scale(1,1);
+                    display: block;
                 }
                 .floater {
                     position: absolute;
-                    right: 125px;
-                    top: -10px;
-                    width: 120px;
-                    transform: translateX(0) scale(0,0);
+                    right: 5px;
+                    top: 10px;
+                    display: none;
                     padding: 0;
-                    opacity: 0;
-                    border-radius: 10px;
+                    border-radius: 4px;
                     overflow: hidden;
-                    transition: opacity .2s ease, transform .4s;
-                    backdrop-filter: blur(8px);
-                    background: rgba(255, 255, 255,.8);
-                    box-shadow: 0 0 2px rgba(20,20,20,.6);
+                    background: rgba(255, 255, 255,1);
+                    box-shadow: ${Theme.shadows.light};
                     z-index: 9999;
                 }
                 .tasklist {
                     float: left;
                     width: 100%;
                     transition: all .2s ease;
-                    padding: 30px 0;
+                    padding: 20px 0;
                     display: flex;
-                    justify-content: center;
+                    align-items: flex-start;
                 }
                 .task {
                     float: left;
-                    width: 90%;
+                    width: 98%;
                     position: relative;
-                    padding: 10px 5%;
-                    margin: 10px 0;
-                    min-height: 120px;
-                    border-radius: 30px;
-                    box-shadow: ${Theme.colors.shadowlight};
+                    padding: 5px 1%;
+                    margin: 5px 0;
+                    min-height: 50px;
+                    border-radius: 8px;
+                    box-shadow: ${Theme.shadows.mat};
                     background: ${Theme.colors.lightplatinum};
+                }
+                .task:hover .threedots {
+                    opacity: 1;
                 }
                 .task h2 {
                     float: left;
                     width: 90%;
-                    padding: 5px 5%;
+                    padding: 5px 2.5%;
+                    padding-bottom: 25px;
                     margin: 0;
-                    font: 13px 'Open Sans';
-                    margin-top: 10px;
+                    font: 15px 'Roboto';
+                }
+                .task h4 {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    padding: 4px;
+                    margin: 0;
+                    opacity: .7;
+                    font: 11px 'Roboto';
                 }
                 .task h3 {
-                    float: left;
-                    width: 90%;
-                    padding: 5px 5%;
+                    position: absolute;
+                    bottom: 5px;
+                    right: 5px;
+                    padding: 5px;
                     margin: 0;
+                    border-radius: 3px;
                     font: 12px 'Roboto';
-                    opacity: .8;
+                }
+                .newtasktitle {
+                    float: left;
+                    margin: 10px 5%;
+                    width: 90%;
+                    text-align: center;
+                    font: 20px ${Theme.fonts.title};
                 }
                 .maindiv textarea {
                     float: left;
                     margin: 10px 2.5%;
                     padding: 10px 2.5%;
                     width: 90%;
-                    font: 18px 'Roboto';
+                    font: 15px 'Roboto';
                     border: none;
                     resize: vertical;
                     max-height: 150px;
-                    min-height: 120px;
+                    min-height: 40px;
                     border-radius: 6px;
                     box-shadow: 0 0 2px rgba(20,20,20,.8);
+                }
+                .maindiv label {
+                    float: left;
+                    margin: 2px 0;
+                    width: 95%;
+                    padding: 0 2.5%;
+                    text-decoration: underline;
+                    font: 12px 'Roboto';
                 }
                 .maindiv {
                     float: left;
                     width: 100%;
-                    z-index: 9999;
+                    z-index: 99;
                     margin: 20px 0;
-                    margin-top: 90px;
-                    backdrop-filter: blur(8px);
-                    background: rgba(255, 255, 255, .9);
+                    margin-top: 80px;
+                    overflow: hidden;
                 }
                 .maindiv h1 {
                     float: left;
                     margin: 10px 5%;
                     width: 90%;
-                    font: 20px 'Montserrat';
+                    font: 30px ${Theme.fonts.title};
                 }
                 .maindiv form {
                     float: left;
@@ -403,6 +471,7 @@ function TaskManager({getFirstLoad}) {
                     float: left;
                     width: 90%;
                     padding: 10px 5%;
+                    font: 16px 'Roboto';
                     background: ${Theme.colors.royalblue};
                     color: white;
                     cursor: pointer;
@@ -417,7 +486,7 @@ function TaskManager({getFirstLoad}) {
 
 TaskManager.getInitialProps = async(ctx) => {
     const cookies = await nextCookie(ctx)
-    const getfirsttasks = await getTasks(50, cookies.accessToken)
+    const getfirsttasks = await getTasks(75, cookies.accessToken)
     if(getfirsttasks == 'Not Authorized') {
         if (ctx.res) {
             ctx.res.writeHead(301, {

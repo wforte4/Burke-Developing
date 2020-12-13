@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { createProject, getProjects, removeProject, updateProject } from '../../services/projectservice'
 import { baseConfig } from '../../services/restservice'
 import { withAuthSync } from '../../services/auth'
+import { Date, getDate } from '../../components/elements'
 import Link from 'next/link' 
 
 function Backend({initialProjectsLoad}) {
@@ -19,7 +20,8 @@ function Backend({initialProjectsLoad}) {
         title: '',
         body: '',
         images: [],
-        tag: ''
+        tag: '',
+        date: ''
     })
 
     const loadProjects = async(e) => {
@@ -82,7 +84,7 @@ function Backend({initialProjectsLoad}) {
     const createNewProject = async(e) => {
         e.preventDefault()
         setFormState('loading')
-        const newPost = await createProject(inputs.title, inputs.body, tags, inputs.images)
+        const newPost = await createProject(inputs.title, inputs.body, tags, inputs.images, inputs.date)
         if(newPost) {
             console.log(newPost)
             setNewProject(newPost.id)
@@ -114,12 +116,14 @@ function Backend({initialProjectsLoad}) {
         e.persist()
         const thisProject = projects.filter((project) => project.id == pid)
         setEditPost(thisProject[0])
+        const newdate = getDate(thisProject[0].date)
+        console.log(newdate.date)
         setInputs({
             ...inputs,
             title: thisProject[0].title,
             body: thisProject[0].body,
             images: thisProject[0].images,
-            tags: thisProject[0].tags
+            date: newdate.date
         })
         setTags(thisProject[0].tags)
     }
@@ -132,6 +136,14 @@ function Backend({initialProjectsLoad}) {
             console.log(newEdits)
             setFormState('newedit')
         }
+    }
+
+    const moveToFront = (image) => {
+        const removeimage = inputs.images.filter(img => img !== image)
+        setInputs({...inputs, images: removeimage})
+        const newimages = removeimage.unshift(image)
+        console.log(removeimage)
+        setInputs({...inputs, images: removeimage})
     }
 
     return (
@@ -147,6 +159,7 @@ function Backend({initialProjectsLoad}) {
                                 name='title'
                                 value={inputs.title}
                                 onChange={handleTypeing}
+                                placeholder="Ex: 'Hanson Project'"
                                 required
                             />
                             <p className='info'>Main title for the post</p>
@@ -156,6 +169,7 @@ function Backend({initialProjectsLoad}) {
                                 value={inputs.tag}
                                 onChange={handleTypeing}
                                 onKeyPress={addTagToList}
+                                placeholder="Ex. 'Construction'"
                                 tabIndex={0}
                                 autoComplete='off'
                              />
@@ -164,8 +178,17 @@ function Backend({initialProjectsLoad}) {
                             <div className='tagholder'>
                                 {tags.length !== 0 ? tags.map((tag, i) => {
                                     return <h3 key={i}>{tag}<img onClick={(e) => removeTag(e, tag)} src='logo_exx.png'/></h3>
-                                }): <p className='info'>No tag's yet...</p>}
+                                }): <p className='info'>~~~</p>}
                             </div>
+                            <label>Build Date</label>
+                            <input 
+                                name='date'
+                                type='date'
+                                value={inputs.date}
+                                onChange={handleTypeing}
+                                required
+                             />
+                             <p className='info'>Date the Project was built</p>
                             <div className='chooseImages'>
                                 <h2 onClick={(e)=> {
                                     if(images == null) loadImages(e)
@@ -181,8 +204,8 @@ function Backend({initialProjectsLoad}) {
                                             const isSelected = inputs.images.indexOf(image) >= 0 ? true: false
                                             if(i == images.length - 1) {
                                                 return (
-                                                    <div key={i} name={isSelected == true ? 'green': 'none'} className='imgframe'>
-                                                        <img onLoad={()=> setImagesLoaded(true)} onClick={(e) => toggleImageSelection(e, image, isSelected)} src={baseConfig.backendImages + image} />
+                                                    <div onClick={(e) => toggleImageSelection(e, image, isSelected)} key={i} name={isSelected == true ? 'green': 'none'} className='imgframe'>
+                                                        <img onLoad={()=> setImagesLoaded(true)} src={baseConfig.backendImages + image} />
                                                         <h3>{image.split('').map((char, i) => {
                                                             if(i > 13) return char
                                                         })}</h3>
@@ -190,8 +213,8 @@ function Backend({initialProjectsLoad}) {
                                                 )
                                             }
                                             return (
-                                                <div key={i} name={isSelected == true ? 'green': 'none'} className='imgframe'>
-                                                    <img onClick={(e) => toggleImageSelection(e, image, isSelected)} src={baseConfig.backendImages + image} />
+                                                <div onClick={(e) => toggleImageSelection(e, image, isSelected)} key={i} name={isSelected == true ? 'green': 'none'} className='imgframe'>
+                                                    <img src={baseConfig.backendImages + image} />
                                                     <h3>{image.split('').map((char, i) => {
                                                         if(i > 13) return char
                                                     })}</h3>
@@ -200,9 +223,14 @@ function Backend({initialProjectsLoad}) {
                                         }): null}
                                     </div>
                                 </div>
-                                <div className='selimageouter'>
-                                    {inputs.images.length == 0 ? null: inputs.images.map((image, i) => {
-                                        return <div key={i} className='selimage'>{image}</div>
+                                <label>Featured Image</label>
+                                <div className='imagePreview'>
+                                    <img src={inputs.images.length != 0 ? baseConfig.backendImages + inputs.images[0]: '/imageplaceholder.png'}/>
+                                </div>
+                                <p className='info'>Click from images below to set featured image</p>
+                                <div className='selectedImages'>
+                                    {inputs.images.length == 0 ? <p className='info'>None Selected</p>: inputs.images.map((image, i) => {
+                                        return <div key={i} onClick={() => moveToFront(image)} className='selimage'>{image}</div>
                                     })}
                                 </div>
                             </div>
@@ -212,6 +240,7 @@ function Backend({initialProjectsLoad}) {
                             name='body'
                             value={inputs.body}
                             onChange={handleTypeing}
+                            placeholder='Information about the project'
                             required
                         />
                         <p className='info'>This is the body paragraph of your post, main description of the project goes here</p>
@@ -232,12 +261,13 @@ function Backend({initialProjectsLoad}) {
                 <div className='pastpro'>
                     <h3 className='subheader'>My Projects</h3>
                     <div onClick={loadProjects} className='centerbox'>View Projects</div>
-                    <div className='list'>
+                    <div className='pastproContainer'>
                         {projects ? projects.map((project, i) => {
                             return (
                                 <div key={project.id} className='singleproject'>
                                     <img className='sinpreview' src={baseConfig.backendImages + project.images[1]}/>
                                     <Link href={`/posts/${project.id}`} ><h2>{project.title}</h2></Link>
+                                    <div className='datetime'><Date datetime={project.date} /></div>
                                     <img className='threedots' src='/threedots.png' />
                                     <ul className='dropdown'>
                                         <Link href={`/posts/${project.id}`} ><li>View</li></Link>
@@ -265,6 +295,21 @@ function Backend({initialProjectsLoad}) {
                 }}>No I Don't want to delete</h4>
             </div>
             <style jsx>{`
+                .imagePreview {
+                    float: left;
+                    width: 90%;
+                    margin: 5px 5%;
+                    max-height: 180px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                    box-shadow: ${Theme.shadows.mat};
+                    border-radius: 3px;
+                }
+                .imagePreview img {
+                    width: 100%;
+                }
                 #areyousure p {
                     float: left;
                     font: 16px 'Roboto';
@@ -389,26 +434,21 @@ function Backend({initialProjectsLoad}) {
                     left: 50%;
                     display: ${imagesLoaded == false ? 'block': 'none'};
                 }
-                .list {
-                    display: ${projects ? 'block': 'none'};
+                .pastproContainer {
+                    display: ${projects ? 'flex': 'none'};
                     float: left;
-                    width: 100%;
-                }
-                .singleproject {
-                    float: left;
-                    width: 95%;
-                    height: 100px;
-                    margin: 5px 0;
-                    padding: 10px 2.5%;
-                    border-radius: 4px;
-                    box-shadow: ${Theme.colors.shadowlight};
-                    background: ${Theme.colors.lightplatinum};
-                    position: relative;
+                    width: 90%;
+                    padding: 5px 5%;
+                    min-height: 500px;
+                    max-height: 620px;
+                    overflow-y: scroll;
+                    flex-flow: column wrap;
+                    flex-wrap: nowrap;
                 }
                 .dropdown {
                     position: absolute;
-                    top: 24px;
-                    right: 4px;
+                    top: 16px;
+                    right: 2px;
                     width: 100px;
                     border-radius: 2px;
                     overflow: hidden;
@@ -437,32 +477,57 @@ function Backend({initialProjectsLoad}) {
                 .dropdown li:hover {
                     background: ${Theme.colors.lightplatinum};
                 }
-                .singleproject .threedots {
+                .threedots {
                     position: absolute;
-                    top: 5px;
-                    right: 5px;
-                    width: 15px;
-                    height: 15px;
+                    top: 0px;
+                    right: 0px;
+                    width: 18px;
+                    height: 18px;
                     border-radius: 50%;
                     cursor: pointer;
-                    padding: 10px;
+                    padding: 5px;
+                }
+                .singleproject {
+                    float: left;
+                    width: 95%;
+                    height: 100px;
+                    margin: 5px 0;
+                    padding: 10px 2.5%;
+                    border-radius: 4px;
+                    box-shadow: ${Theme.colors.shadowlight};
+                    background: ${Theme.colors.lightplatinum};
+                    position: relative;
                 }
                 .singleproject .sinpreview {
-                    float: left;
+                    position: absolute;
+                    left: 10px;
+                    top: 10px;
                     width: 100px;
                     height: 100px;
                     border-radius: 10px;
                     box-shadow: ${Theme.colors.shadow};
                 }
                 .singleproject h2 {
-                    float: left;
-                    font: 12px 'Montserrat';
+                    position: absolute;
+                    left: 110px;
+                    top: 20px;
+                    font: 14px 'Roboto';
                     max-width: 80%;
-                    margin-left: 15px;
-                    margin-top: 15px;
+                    overflow-x: hidden;
+                    margin: 0;
+                    margin-left: 10px;
                     cursor: pointer;
                     transition: all .3s ease-in-out;
-                    color: ${Theme.colors.gunmetal};
+                }
+                .singleproject .datetime {
+                    position: absolute;
+                    left: 110px;
+                    bottom: 30px;
+                    font: 12px 'Roboto';
+                    max-width: 80%;
+                    margin: 4px 0;
+                    margin-left: 10px;
+                    transition: all .3s ease-in-out;
                 }
                 .singleproject h2:hover {
                     color: ${Theme.colors.etonblue};
@@ -476,7 +541,7 @@ function Backend({initialProjectsLoad}) {
                     border-radius: 8px;
                     background: rgba(255,255,255,.7);
                     backdrop-filter: blur(10px);
-                    min-height: 500px;
+                    min-height: 600px;
                     z-index: -10;
                     box-shadow: ${Theme.colors.shadowlight};
                 }
@@ -491,7 +556,6 @@ function Backend({initialProjectsLoad}) {
                     margin-bottom: 35px;
                     box-shadow: ${Theme.colors.shadowlight};
                     font: 16px ${Theme.fonts.title};
-                    background: ${Theme.colors.lightplatinum};
                 }
                 .centerbox {
                     position: absolute;
@@ -514,17 +578,23 @@ function Backend({initialProjectsLoad}) {
                     float: left;
                     width: 90%;
                     padding: 2px 5%;
-                    font: 12px 'Open Sans';
+                    cursor: pointer;
+                    opacity: .7;
+                    transition: all .1s ease;
+                    font: 15px 'Roboto';
                 }
-                .selimageouter {
+                .selimage:hover {
+                    opacity: 1;
+                }
+                .selectedImages {
                     float: left;
-                    width: 100%;
-                    max-height: 130px;
+                    width: 90%;
+                    max-height: 120px;
                     overflow-y: scroll;
-                    box-shadow: inset 0px 0px 9px -1px rgba(20,20,20,.2);
-                    border-radius: 3px;
-                    display: ${inputs.images.length > 0 ? 'block': 'none'};
-                    margin: 10px 0;
+                    background: ${Theme.colors.lightplatinum};
+                    box-shadow: ${Theme.shadows.mat};
+                    border-radius: 4px;
+                    margin: 20px 5%;
                     padding: 10px 0;
                 }
                 .imagewrapper {
@@ -545,9 +615,9 @@ function Backend({initialProjectsLoad}) {
                     width: 100%;
                     padding: 10px 0;
                     margin: 0;
-                    background: rgba(255,255,255,.7);
+                    background: rgba(255,255,255,.9);
                     color: ${Theme.colors.gunmetal};
-                    font: 12px 'Open Sans';
+                    font: 14px 'Roboto';
                 }
                 .imgfloat {
                     position: absolute;
@@ -555,10 +625,11 @@ function Backend({initialProjectsLoad}) {
                     right: -40%;
                     padding: 20px;
                     padding-top: 60px;
+                    z-index: 20;
                     width: 220%;
                     background: white;
                     box-shadow: 0 0 6px rgba(30,30,30,.2);
-                    border-radius: 10px;
+                    border-radius: 6px;
                     display: ${formState == 'chooseimg' ? 'block': 'none'};
                 }
                 .imgfloat p {
@@ -584,6 +655,7 @@ function Backend({initialProjectsLoad}) {
                     position: absolute;
                     right: 10px;
                     top: 0;
+                    padding: 5px 0;
                     width: 48%;
                 }
                 .chooseImages h2 {
@@ -592,9 +664,9 @@ function Backend({initialProjectsLoad}) {
                     padding: 10px 0;
                     margin: 10px 20%;
                     text-align: center;
-                    font: 16px ${Theme.fonts.fancy};
+                    font: 16px ${Theme.fonts.subheader};
                     background: ${Theme.colors.gunmetal};
-                    border-radius: 6px;
+                    border-radius: 3px;
                     color: white;
                     transition: all .3s ease;
                     cursor: pointer;
@@ -608,7 +680,7 @@ function Backend({initialProjectsLoad}) {
                     height: 130px;
                     margin: 8px;
                     border-radius: 8px;
-                    transition: all .3s ease;
+                    transition: all .02s ease;
                     border: 3px solid ${Theme.colors.platinum};
                     opacity: ${imagesLoaded ? '1': '0'};
                     position: relative;
@@ -619,21 +691,20 @@ function Backend({initialProjectsLoad}) {
                 }
                 .imgframe[name='green'] {
                     border: 3px solid #72ff72;
+                    transform: translateY(-2px);
+                    box-shadow: ${Theme.shadows.mat};
                 }
                 .imgframe img {
                     position: absolute;
                     top: 50%;
                     left: 50%;
-                    width: 100%;
+                    height: 100%;
                     transition: all .3s ease;
-                    transform: translate(-50%, -50%) scale(1.1,1.1);
-                }
-                .imgframe:hover img {
                     transform: translate(-50%, -50%) scale(1.2,1.2);
                 }
                 .projects {
                     float: left;
-                    width: 59%;
+                    width: 58%;
                     margin: 20px 1%;
                     padding: 0px 0%;
                     position: relative;
@@ -713,10 +784,13 @@ function Backend({initialProjectsLoad}) {
                 }
                 .tagholder {
                     float: left;
-                    width: 100%;
+                    width: 50%;
                     transition: all .3s ease;
                     margin-top: 20px;
                     min-height: 40px;
+                    display: flex;
+                    justify-content: center;
+                    flex-wrap: wrap;
                 }
                 .tagholder img {
                     width: 10px;
@@ -741,7 +815,7 @@ function Backend({initialProjectsLoad}) {
                 }
                 .upper {
                     width: 90%;
-                    min-height: 220px;
+                    min-height: 440px;
                     position: relative;
                     float: left;
                     padding: 10px 5%;
@@ -783,6 +857,18 @@ function Backend({initialProjectsLoad}) {
                     left: 50%;
                     transform: translate(-50%, -50%) scale(1.1,1.1);
                 }
+                @media only screen and (max-width: 800px) {
+                    .projects {
+                        width: 98%;
+                    }
+                    .pastpro {
+                        width: 98%;
+                    }
+                    .imgfloat {
+                        width: 180%;
+                        right: 5px;
+                    }
+                } 
             `}</style>
         </div>
     )

@@ -68,6 +68,12 @@ function Slide({index, image, height, currentSlide}) {
                     width: 100%;
                     
                 }
+                @media only screen and (max-width: 1200px) {
+                    .slide img {
+                        width: auto;
+                        height: 100%;
+                    }
+                } 
             `}</style>
         </div>
     )
@@ -218,7 +224,7 @@ export default function BannerSlider({hideMovement, cover, defaultBackground, im
                 }
                 @media only screen and (max-width: 800px) {
                     #banner {
-                        height: 240px;
+                        height: 300px;
                     }
                 } 
                 @media only screen and (max-width: 1100px) {

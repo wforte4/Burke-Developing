@@ -3,7 +3,7 @@ import { baseConfig } from './restservice'
 
 const cookies = new Cookies();
 
-export async function createProject(title, body, tags, images) {
+export async function createProject(title, body, tags, images, date) {
     
     const getCookies = cookies.getAll()
     // New Login Data request
@@ -17,7 +17,8 @@ export async function createProject(title, body, tags, images) {
             "title": title,
             "body": body,
             "tags": tags,
-            "images": images
+            "images": images,
+            "date": date
         })
     })
     .then(function(response) {

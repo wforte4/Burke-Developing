@@ -40,7 +40,7 @@ export class Row extends React.Component {
                         overflow: ${this.props.overflow};
                         height: ${this.props.height};
                     }
-                    @media only screen and (max-width: 600px) {
+                    @media only screen and (max-width: 650px) {
                         .row {
                             height: auto;
                         }
@@ -66,7 +66,7 @@ export const Col = ({padding, children, background, margin, width, height, mobil
                     min-height: 200px;
                     height: ${height};
                 }
-                @media only screen and (max-width: 600px) {
+                @media only screen and (max-width: 650px) {
                     .col {
                         width: 100%;
                         display: ${mobileDisplay == false ? 'none': 'block'};
@@ -75,4 +75,17 @@ export const Col = ({padding, children, background, margin, width, height, mobil
             `}</style>
         </div>
     )
+}
+
+export function getDate(datetime) {
+    const first = datetime.split('T')
+    const date = first[0]
+    const second = first[1].split('Z')
+    const time = second[0]
+    return { date, time };
+}
+
+export const Date = ({datetime}) => {
+    const date = datetime.split('T')
+    return date[0]
 }

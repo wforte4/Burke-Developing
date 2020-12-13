@@ -75,7 +75,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
     return (
         <div id='nav'>
             <img className='hamburg' src='/ham.png' onClick={toggleActive} />
-            <Link href="/"><h1>{title}</h1></Link>
+            <Link href="/"><img className='burkeLogo' src='/icons/burkeLogo.png' /></Link>
             <ul ref={_element} className='barlink'>
                 {links.map((link, i) => {
                     return <Link key={i} href={link.url}><li title={link.url}>{link.name}</li></Link>
@@ -103,6 +103,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                     <div className='username'>
                         <img className='flip' src='/logo_arrow_left.png'/>
                         <h2>Welcome, {user}</h2>
+                        <img className='userImg' src='/icons/userIcon.png'/>
                         <div className='dropdown'>
                             <ul>
                                 {permission > 2000 ? <>
@@ -176,8 +177,8 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                 }
                 .username .flip {
                     position: absolute;
-                    left: 10px;
-                    top: 32px;
+                    left: 14px;
+                    top: 30px;
                     width: 14px;
                     height: 14px;
                     cursor: pointer;
@@ -187,13 +188,20 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                 .username:hover .flip {
                     transform: rotate(-90deg);
                 }
+                .username .userImg {
+                    position: absolute;
+                    right: 14px;
+                    top: 26px;
+                    width: 22px;
+                    height: 22px;
+                }
                 .username h2 {
                     float: left;
                     font: 16px ${theme.fonts.subheader};
                     margin: 4px 0;
-                    padding: 8px 0;
+                    padding: 12px 0;
                     border-radius: 8px;
-                    margin-top: 22px;
+                    margin-top: 16px;
                     width: 100%;
                     transition: all .3s ease;
                     cursor: pointer;
@@ -240,9 +248,6 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                 .dropdown ul li:hover img {
                     opacity: 1;
                 }
-                .dropdown ul li:active {
-                    box-shadow: ${theme.shadows.inset};
-                }
                 .dropdown ul {
                     float: left;
                     width: 100%;
@@ -261,13 +266,12 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                     min-height: 80px;
                     margin-right: 10px;
                 }
-                h1 {
+                .burkeLogo {
                     float: left;
-                    font: 32px ${theme.fonts.title};
-                    color: ${theme.colors.onxy};
-                    margin: 0 10px;
+                    width: 160px;
+                    margin: 0 2px;
                     cursor: pointer;
-                    padding: 15px 10px;
+                    padding: 0px 2px;
                 }
                 .barlink {
                     float: left;
@@ -306,7 +310,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                 .barlink li[title="${currentpath}"] {
                     opacity: 1;
                 }
-                @media screen and (max-width: 480px) {
+                @media screen and (max-width: 850px) {
                     .barlink {
                         width: 100%;
                         background: white;
@@ -610,6 +614,14 @@ function Layout({children, links, title, path}) {
                     height: 100%;
                     padding: 0;
                     margin: 0;
+                }
+                select {
+                    text-indent: 0;
+                    padding: 10px 20px;
+                    border-radius: 4px;
+                   -webkit-appearance: none;
+                   -moz-appearance: none;
+                    appearance: none;
                 }
                 @media only screen and (max-width: 800px) {
                     #copyw {
