@@ -55,6 +55,7 @@ function Contact() {
                             name='fullname'
                             value={inputs.fullname}
                             required
+                            autoFocus
                         />
                         <label>Email</label>
                         <input 
@@ -182,7 +183,7 @@ function Contact() {
                     padding: 14px 5%;
                     background: ${Theme.colors.charcoal};
                     color: white;
-                    font: 14px 'Roboto';
+                    font: 16px 'Roboto';
                     margin: 20px 0;
                     border: none;
                     cursor: pointer;
@@ -200,8 +201,8 @@ function Contact() {
                 }
                 .contactform input {
                     float: left;
-                    width: 40%;
-                    padding: 10px 5%;
+                    width: 46%;
+                    padding: 10px 2%;
                     margin: 5px 5%;
                     border-radius: 8px;
                     font: 14px 'Roboto';
@@ -217,8 +218,8 @@ function Contact() {
                 }
                 .contactform textarea {
                     float: left;
-                    width: 80%;
-                    padding: 10px 5%;
+                    width: 86%;
+                    padding: 10px 2%;
                     margin: 5px 5%;
                     border-radius: 8px;
                     font: 14px 'Open Sans';

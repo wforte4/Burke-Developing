@@ -23,6 +23,7 @@
     "react-anchor-link-smooth-scroll": "^1.0.12",
     "react-cookie": "^4.0.3",
     "react-device-detect": "^1.14.0",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "react-transition-group": "^4.4.1"
   }
 }

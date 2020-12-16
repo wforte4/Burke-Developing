@@ -201,3 +201,22 @@ export async function updateTaskStatus(taskId, newstatus) {
         return newTask
     }
 }
+
+export async function searchProjects(newQuery) {
+    // New Login Data request
+    const newSearch = await fetch(baseConfig.baseURL + `/searchprojects/` + newQuery, {
+        method: 'GET',
+        headers: {
+            "Content-type": "application/json"
+        },
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .catch(function(error) {
+        return error
+    });
+    if(newSearch) {
+        return newSearch
+    }
+}

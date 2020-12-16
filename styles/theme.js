@@ -31,7 +31,8 @@ const Theme = {
         inset: "inset 1px 1px 5px #000000, inset -1px -1px 5px #ffffff",
         mat: "0 0 2px rgba(20,20,20,.3)",
         light: "0 0 20px rgba(20,20,20,.1)",
-        border: "1px solid rgba(20,20,20,.4)"
+        border: "1px solid rgba(20,20,20,.4)",
+        highlight: "0px 0px 2px 1px #2B80FF"
     }
 }
 

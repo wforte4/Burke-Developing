@@ -3,8 +3,14 @@ import { getProjects } from '../services/projectservice';
 import Link from 'next/link';
 import { baseConfig } from '../services/restservice'
 import { useEffect, useState } from 'react';
+import { searchProjects } from '../services/apiservice';
+import {
+  CSSTransition,
+  TransitionGroup,
+} from 'react-transition-group';
 
 function getCategories(projects) {
+    if(projects == null) return null
     const cats = []
     projects.map((project, i) => {
         project.tags.map((tag, k) => {
@@ -16,11 +22,18 @@ function getCategories(projects) {
     return cats
 }
 
-function Portfolio({load, searchQuery}) {
+function Portfolio({load, searchQuery, results}) {
 
     const [categories, setCategories] = useState(getCategories(load))
+    const [selectedCategory, setCategory] = useState(null)
     const [projects, setProjects] = useState(load)
     const [painted, setPainted] = useState([])
+    const [inputs, setInputs] = useState({filter: ''})
+
+    const handleTyping = (e) => {
+        e.persist()
+        setInputs({...inputs, [e.target.name]: e.target.value})
+    }
 
     return (
         <div className='body'>
@@ -31,17 +44,70 @@ function Portfolio({load, searchQuery}) {
                 <h2>{searchQuery ? searchQuery: null}</h2>
             </div>
             <div className='categories'>
+                <div className='subtitle'>Categories</div>
+                <h4 style={{background: selectedCategory == null ? Theme.colors.royalblue: null, color: selectedCategory == null ? 'white': 'black', opacity: selectedCategory == null ? 1: '.6'}} onClick={()=> setCategory(null)} >All</h4>
                 {categories ? categories.map((cat, i) => {
-                    return <h4 key={i}>{cat}</h4>
+                    return <h4 style={{background: cat == selectedCategory ? Theme.colors.royalblue: null, color: cat == selectedCategory ? 'white': 'black', opacity: cat == selectedCategory ? 1: '.6'}} onClick={()=> setCategory(cat)} key={i}>{cat}</h4>
                 }): null}
+                <form>
+                    <div className='label'>Search Projects</div>
+                    <input className='filter' name='filter' value={inputs.filter} onChange={handleTyping} placeholder='Filter Projects' />
+                </form>
             </div>
             <div className='searching'>
                 <p>Sorry, no results </p>
             </div>
             <div id='projectcontainer'>
-                {projects == null ? null: projects.map((project, i) => {
-                    if(searchQuery && project.title.toUpperCase().indexOf(searchQuery.toUpperCase()) == -1) return
-                    
+                <TransitionGroup>
+                    {projects == null ? null: projects.map((project, i) => {  
+                        var render = true;
+                        if(selectedCategory) {
+                            render = false;
+                            project.tags.map((tag, i) => {
+                                console.log(selectedCategory.toUpperCase().indexOf(tag.toUpperCase()))
+                                if(selectedCategory.toUpperCase().indexOf(tag.toUpperCase()) != -1) {
+                                    render = true
+                                }
+                            }) 
+                        }
+                        if(inputs.filter.length !== 0) {
+                            render = false
+                            if(project.title.toUpperCase().indexOf(inputs.filter.toUpperCase()) != -1) {
+                                render = true
+                            }
+                        }
+                        if(!render) return null;
+                        return (
+                            <CSSTransition
+                                key={i}
+                                timeout={500}
+                                classNames="item"
+                            >
+                                <div className='project' key={i}>
+                                    <Link href={`/posts/${project.id}`}><h2>{project.title}</h2></Link>
+                                    <div className='frame'>
+                                        <img src={baseConfig.backendImages + project.images[0]} />
+                                    </div>
+                                    <div className='tagholder'>
+                                        {project.tags.map((tag, i) => {
+                                            return <h3 style={{background: tag == selectedCategory ? Theme.colors.royalblue: null, color: tag == selectedCategory ? 'white': 'black'}} key={i}>{tag}</h3>
+                                        })}
+                                    </div>
+                                    <p>{project.body.split('').map((char, i) => {
+                                        if(i <= 200) {
+                                            return char
+                                        } 
+                                        if(i == project.body.length - 1) {
+                                            return ' ...'
+                                        }
+                                    })}</p>
+                                    <Link href={`/posts/${project.id}`}><h4>View Project</h4></Link>
+                                </div>
+                            </CSSTransition>
+                        )
+                    })}
+                </TransitionGroup>
+                {results == null ? null: results.map((project, i) => {                   
                     return (
                         <div className='project' key={i}>
                             <Link href={`/posts/${project.id}`}><h2>{project.title}</h2></Link>
@@ -67,11 +133,54 @@ function Portfolio({load, searchQuery}) {
                 })}
             </div>
             <style jsx>{`
+                .filter {
+                    float: left;
+                    width: 200px;
+                    border-radius: 4px;
+                    padding: 10px 5px;
+                    font: 16px 'Roboto';
+                    border: 1px solid ${Theme.colors.tar};
+                }
+                .label {
+                    float: left;
+                    font: 16px 'Roboto';
+                    margin: 10px 15px;
+                }
+                form {
+                    float: left;
+                    width: 100%;
+                    margin: 10px 0;
+                    padding: 0;
+                    position: relative;
+                    display: flex;
+                    justify-content: center;
+
+                }
+                .item-enter {
+                    opacity: 0;
+                    transform: scale(0,0);
+                }
+                .item-enter-active {
+                    opacity: 1;
+                    transform: scale(1,1);
+                    transition: all 500ms ease;
+                }
+                .item-exit {
+                    opacity: 1;
+                    transform: scale(1,1);
+                }
+                .item-exit-active {
+                    transform: scale(0,0);
+                    transition: all 500ms ease;
+                }
                 .categories {
                     float: left;
-                    width: 80%;
-                    padding: 10px 10%;
-                    display: flex;
+                    width: 70%;
+                    padding: 20px 15%;
+                    background: rgba(255,255,255,.7);
+                    box-shadow: ${Theme.shadows.mat};
+                    backdrop-filter: blur(8px);
+                    display: ${searchQuery ? 'none': 'flex'};
                     justify-content: center;
                     flex-wrap: wrap;
                 }
@@ -79,7 +188,9 @@ function Portfolio({load, searchQuery}) {
                     float: left;
                     font: 16px 'Roboto';
                     cursor: pointer;
-                    padding: 10px 15px;
+                    padding: 10px;
+                    border-radius: 4px;
+                    margin: 0;
                     opacity: .6;
                     transition: all .3s ease;
                 }
@@ -112,7 +223,7 @@ function Portfolio({load, searchQuery}) {
                     width: 40%;
                     padding: 10px 5%;
                     margin-top: 50px 0;
-                    display: none;
+                    display: ${searchQuery && results.length == 0 ? 'block': 'none'};
                     background: white;
                     box-shadow: ${Theme.shadows.mat};
                 }
@@ -219,6 +330,7 @@ function Portfolio({load, searchQuery}) {
                     width: 95%;
                     min-height: 600px;
                     margin: 40px 2.5%;
+                    transition: all .5s ease;
                     display: flex;
                     flex-wrap: wrap;
                     justify-content: center;
@@ -231,13 +343,22 @@ function Portfolio({load, searchQuery}) {
                     position: relative;
                     overflow: hidden;
                 }
+                .subtitle {
+                    float: left;
+                    width: 90%;
+                    padding: 10px 5%;
+                    font: 22px 'Open Sans';
+                    text-align: center;
+                    margin: 10px 0;
+                }
                 #title {
                     float: left;
-                    width: 100%;
-                    font: 34px 'Montserrat';
+                    width: 90%;
+                    padding: 50px 5%;
+                    font: 38px 'Montserrat';
                     color: ${Theme.colors.gunmetal};
-                    margin: 40px 0;
-                    text-align: center;
+                    background: white;
+                    margin: 0;
                 }
                 #body_bg {
                     width: 100%;
@@ -253,9 +374,13 @@ function Portfolio({load, searchQuery}) {
 }
 
 Portfolio.getInitialProps = async(ctx) => {
-    const getAllProjects = await getProjects(50);
     const searchresult = await ctx.query.searchProjects
-    return {load: getAllProjects, searchQuery: searchresult}
+    if(searchresult) {
+        const getSearch = await searchProjects(searchresult)
+        return {load: null, searchQuery: searchresult, results: getSearch}
+    }
+    const getAllProjects = await getProjects(50);
+    return {load: getAllProjects, searchQuery: null}
 }
 
 export default Portfolio

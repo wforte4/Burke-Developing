@@ -12,34 +12,43 @@ import AnchorLink from 'react-anchor-link-smooth-scroll'
 
 const cookies = new Cookies();
 
-export function LoadingScreen({loader}) {
-    return (
-        <div id="body">
-            <style jsx global>{`
-                #__next {
-                    float: left;
-                    width: 100%;
-                    height: 100%;
-                    padding: 0;
-                    margin: 0;
-                }
-                body {
-                    float: left;
-                    width: 100%;
-                    height: 100%;
-                    padding: 0;
-                    margin: 0;
-                }
-                html {
-                    float: left;
-                    width: 100%;
-                    height: 100%;
-                    padding: 0;
-                    margin: 0;
-                }
-            `}</style>
-        </div>
-    )
+const HamburgerButton = ({onClick, active, top, left, right, width, height}) => {
+    return <div onClick={onClick} className='ham'>
+        <div className='line top'></div>
+        <div className='line middle'></div>
+        <div className='line bottom'></div>
+        <style jsx>{`
+            .ham {
+                position: absolute;
+                cursor: pointer;
+                top: ${top};
+                right: ${right};
+                width: ${width}px;
+                height: ${height}px;
+            }
+            .line {
+                position: absolute;
+                left: 0;
+                width: 100%;
+                height: 1px;
+                background: black;
+                transition: all .3s ease;
+            }
+            .top {
+                top: 0;
+                transform: translateY(${active ? (height / 2) - 1: '0'}px) rotate(${active ? '45deg': '0'}) ;
+            }
+            .middle {
+                top: 50%;
+                transform: translateY(-50%);
+                opacity: ${active ? 0: 1};
+            }
+            .bottom {
+                bottom: 0;
+                transform: translateY(-${active ? (height / 2): '0'}px) rotate(${active ? '-45deg': '0'});
+            }
+        `}</style>
+    </div>
 }
 
 const Navigation = ({title, links, logo, currentpath, hideNav, user, permission, clearUserInfo}) => {
@@ -74,7 +83,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
 
     return (
         <div id='nav'>
-            <img className='hamburg' src='/ham.png' onClick={toggleActive} />
+            <HamburgerButton active={mobileactive} onClick={toggleActive} top='30px' right='20px' width={30} height={15} />
             <Link href="/"><img className='burkeLogo' src='/icons/burkeLogo.png' /></Link>
             <ul ref={_element} className='barlink'>
                 {links.map((link, i) => {
@@ -88,15 +97,9 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
             <form onSubmit={handleSearch} className='search'>
                 <img onClick={(e) => {
                     e.persist()
-                    if(searchFocused === true) {
-                        searchRef.current.blur()
-                        setFocused(false)
-                    } else {
-                        searchRef.current.focus()
-                        setFocused(true)
-                    }
+                    searchRef.current.focus()
                 }} src='/icons/icon_search.png'/>
-                <input ref={searchRef} autoComplete='off' value={inputs.search} name='search' onChange={handleType} />
+                <input onFocus={(e)=> e.target.select()} ref={searchRef} autoComplete='off' value={inputs.search} name='search' onChange={handleType} />
             </form>
             <div className='right'>
                 {user == null ? null:
@@ -269,7 +272,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                 .burkeLogo {
                     float: left;
                     width: 160px;
-                    margin: 0 2px;
+                    margin: 5px 20px;
                     cursor: pointer;
                     padding: 0px 2px;
                 }
@@ -600,10 +603,12 @@ function Layout({children, links, title, path}) {
                     margin: 0;
                 }
                 #nprogress .bar {
-                    background: ${theme.colors.etonblue} !important;
+                    height: 2px;
+                    background: #6bba7a !important;
                 }
-                input:focus {
+                *:focus {
                     outline: none;
+                    box-shadow: ${theme.shadows.highlight} !important;
                 }
                 textarea:focus {
                     outline: none;

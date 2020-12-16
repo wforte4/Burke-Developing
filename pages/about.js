@@ -100,7 +100,7 @@ function About() {
                 }
                 .frame {
                     float: left;
-                    width: 260px;
+                    width: 560px;
                     min-width: 200px;
                     margin: 1px;
                     position: relative;
@@ -112,8 +112,8 @@ function About() {
                 }
                 .imgcontainer {
                     float: left;
-                    width: 90%;
-                    padding: 60px 5%;
+                    width: 96%;
+                    padding: 60px 2%;
                     display: flex;
                     flex-wrap: wrap;
                     justify-content: center;

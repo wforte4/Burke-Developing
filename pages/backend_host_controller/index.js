@@ -154,75 +154,43 @@ function Backend({initialProjectsLoad}) {
                     <h3 className='subheader'>{editPost ? `Editing ${editPost.title}`: 'Upload New Project'}</h3>
                     <form onSubmit={editPost == null ? createNewProject: uploadEdits} className='projectsform'>
                         <div className='upper'>
-                            <label>Title</label>
-                            <input 
-                                name='title'
-                                value={inputs.title}
-                                onChange={handleTypeing}
-                                placeholder="Ex: 'Hanson Project'"
-                                required
-                            />
-                            <p className='info'>Main title for the post</p>
-                            <label>Add Tag</label>
-                            <input 
-                                name='tag'
-                                value={inputs.tag}
-                                onChange={handleTypeing}
-                                onKeyPress={addTagToList}
-                                placeholder="Ex. 'Construction'"
-                                tabIndex={0}
-                                autoComplete='off'
-                             />
-                             <p className='info'>Hit the "Space" key to add tag to list</p>
-                            <label>Tags</label>
-                            <div className='tagholder'>
-                                {tags.length !== 0 ? tags.map((tag, i) => {
-                                    return <h3 key={i}>{tag}<img onClick={(e) => removeTag(e, tag)} src='logo_exx.png'/></h3>
-                                }): <p className='info'>~~~</p>}
-                            </div>
-                            <label>Build Date</label>
-                            <input 
-                                name='date'
-                                type='date'
-                                value={inputs.date}
-                                onChange={handleTypeing}
-                                required
-                             />
-                             <p className='info'>Date the Project was built</p>
-                            <div className='chooseImages'>
-                                <h2 onClick={(e)=> {
-                                    if(images == null) loadImages(e)
-                                    toggleFormState(e)
-                                }}>{inputs.images.length == 0 ? 'Select Images': 'Edit Selection'}</h2>
-                                <div className='imgfloat'>
-                                    <div className='tri'></div>
-                                    <img className='imgloader' src='/loading_a.gif'/>
-                                    <p>Click on the images below to select them for the post</p>
-                                    <img onClick={toggleFormState} className='exxx' src='/logo_exx.png'/>
-                                    <div className='imagewrapper'>
-                                        {images != null ? images.map((image, i) => {
-                                            const isSelected = inputs.images.indexOf(image) >= 0 ? true: false
-                                            if(i == images.length - 1) {
-                                                return (
-                                                    <div onClick={(e) => toggleImageSelection(e, image, isSelected)} key={i} name={isSelected == true ? 'green': 'none'} className='imgframe'>
-                                                        <img onLoad={()=> setImagesLoaded(true)} src={baseConfig.backendImages + image} />
-                                                        <h3>{image.split('').map((char, i) => {
-                                                            if(i > 13) return char
-                                                        })}</h3>
-                                                    </div>
-                                                )
-                                            }
-                                            return (
-                                                <div onClick={(e) => toggleImageSelection(e, image, isSelected)} key={i} name={isSelected == true ? 'green': 'none'} className='imgframe'>
-                                                    <img src={baseConfig.backendImages + image} />
-                                                    <h3>{image.split('').map((char, i) => {
-                                                        if(i > 13) return char
-                                                    })}</h3>
-                                                </div>
-                                            )
-                                        }): null}
-                                    </div>
+                            <div className='upleft'>
+                                <label>Title</label>
+                                <input 
+                                    name='title'
+                                    value={inputs.title}
+                                    onChange={handleTypeing}
+                                    placeholder="Ex: 'Hanson Project'"
+                                    required
+                                />
+                                <p className='info'>Main title for the post</p>
+                                <label>Add Tag</label>
+                                <p className='info'>Hit the "Space" key to add tag to list</p>
+                                <div className='tagholder'>
+                                    {tags.length !== 0 ? tags.map((tag, i) => {
+                                        return <h3 key={i}>{tag}<img onClick={(e) => removeTag(e, tag)} src='logo_exx.png'/></h3>
+                                    }): null}
+                                    <input 
+                                        name='tag'
+                                        value={inputs.tag}
+                                        onChange={handleTypeing}
+                                        onKeyPress={addTagToList}
+                                        placeholder="'NewTag'"
+                                        tabIndex={0}
+                                        autoComplete='off'
+                                    />
                                 </div>
+                                <label>Build Date</label>
+                                <input 
+                                    name='date'
+                                    type='date'
+                                    value={inputs.date}
+                                    onChange={handleTypeing}
+                                    required
+                                />
+                                <p className='info'>Date the Project was built</p>
+                            </div>
+                            <div className='chooseImages'>
                                 <label>Featured Image</label>
                                 <div className='imagePreview'>
                                     <img src={inputs.images.length != 0 ? baseConfig.backendImages + inputs.images[0]: '/imageplaceholder.png'}/>
@@ -233,6 +201,10 @@ function Backend({initialProjectsLoad}) {
                                         return <div key={i} onClick={() => moveToFront(image)} className='selimage'>{image}</div>
                                     })}
                                 </div>
+                                <h2 onClick={(e)=> {
+                                    if(images == null) loadImages(e)
+                                    toggleFormState(e)
+                                }}>{inputs.images.length == 0 ? 'Select Images': 'Edit Selection'}</h2>
                             </div>
                         </div>
                         <label>Body</label>
@@ -283,6 +255,36 @@ function Backend({initialProjectsLoad}) {
                     </div>
                 </div>
             </div>
+
+            <div className='imgfloat'>
+                <div className='tri'></div>
+                <img className='imgloader' src='/loading_a.gif'/>
+                <p>Click on the images below to select them for the post</p>
+                <img onClick={toggleFormState} className='exxx' src='/logo_exx.png'/>
+                <div className='imagewrapper'>
+                    {images != null ? images.map((image, i) => {
+                        const isSelected = inputs.images.indexOf(image) >= 0 ? true: false
+                        if(i == images.length - 1) {
+                            return (
+                                <div onClick={(e) => toggleImageSelection(e, image, isSelected)} key={i} name={isSelected == true ? 'green': 'none'} className='imgframe'>
+                                    <img onLoad={()=> setImagesLoaded(true)} src={baseConfig.backendImages + image} />
+                                    <h3>{image.split('').map((char, i) => {
+                                        if(i > 13) return char
+                                    })}</h3>
+                                </div>
+                            )
+                        }
+                        return (
+                            <div onClick={(e) => toggleImageSelection(e, image, isSelected)} key={i} name={isSelected == true ? 'green': 'none'} className='imgframe'>
+                                <img src={baseConfig.backendImages + image} />
+                                <h3>{image.split('').map((char, i) => {
+                                    if(i > 13) return char
+                                })}</h3>
+                            </div>
+                        )
+                    }): null}
+                </div>
+            </div>
             <div id='areyousure'>
                 <p>Are you sure you would like to delete {areYouSure ? areYouSure.title : null}</p>
                 <h2>Warning, you will not be able to undo this action.</h2>
@@ -295,6 +297,10 @@ function Backend({initialProjectsLoad}) {
                 }}>No I Don't want to delete</h4>
             </div>
             <style jsx>{`
+                .upleft {
+                    width: 50%;
+                    float: left;
+                }
                 .imagePreview {
                     float: left;
                     width: 90%;
@@ -356,7 +362,7 @@ function Backend({initialProjectsLoad}) {
                     box-shadow: ${Theme.colors.shadow};
                     display: ${areYouSure ? 'block': 'none'};
                     background: white;
-                    z-index: 99999999;
+                    z-index: 99;
                 }
                 .newedit {
                     transform: translate(-50%,-50%);
@@ -455,7 +461,7 @@ function Backend({initialProjectsLoad}) {
                     box-shadow: ${Theme.colors.shadow};
                     padding: 0;
                     margin: 0;
-                    z-index: 99;
+                    z-index: 18;
                     display: none;
                     background: white;
                 }
@@ -497,19 +503,19 @@ function Backend({initialProjectsLoad}) {
                     box-shadow: ${Theme.colors.shadowlight};
                     background: ${Theme.colors.lightplatinum};
                     position: relative;
+                    overflow: hidden;
                 }
-                .singleproject .sinpreview {
+                .sinpreview {
                     position: absolute;
-                    left: 10px;
-                    top: 10px;
-                    width: 100px;
-                    height: 100px;
-                    border-radius: 10px;
+                    left: 0px;
+                    top: 0px;
+                    width: 120px;
+                    height: 120px;
                     box-shadow: ${Theme.colors.shadow};
                 }
                 .singleproject h2 {
                     position: absolute;
-                    left: 110px;
+                    left: 120px;
                     top: 20px;
                     font: 14px 'Roboto';
                     max-width: 80%;
@@ -521,7 +527,7 @@ function Backend({initialProjectsLoad}) {
                 }
                 .singleproject .datetime {
                     position: absolute;
-                    left: 110px;
+                    left: 120px;
                     bottom: 30px;
                     font: 12px 'Roboto';
                     max-width: 80%;
@@ -555,7 +561,7 @@ function Backend({initialProjectsLoad}) {
                     border-bottom: 2px solid ${Theme.colors.royalblue};
                     margin-bottom: 35px;
                     box-shadow: ${Theme.colors.shadowlight};
-                    font: 16px ${Theme.fonts.title};
+                    font: 18px ${Theme.fonts.title};
                 }
                 .centerbox {
                     position: absolute;
@@ -620,13 +626,14 @@ function Backend({initialProjectsLoad}) {
                     font: 14px 'Roboto';
                 }
                 .imgfloat {
-                    position: absolute;
-                    top: 60px;
-                    right: -40%;
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
                     padding: 20px;
                     padding-top: 60px;
-                    z-index: 20;
-                    width: 220%;
+                    transform: translate(-50%,-50%);
+                    z-index: 100;
+                    width: 90%;
                     background: white;
                     box-shadow: 0 0 6px rgba(30,30,30,.2);
                     border-radius: 6px;
@@ -655,6 +662,7 @@ function Backend({initialProjectsLoad}) {
                     position: absolute;
                     right: 10px;
                     top: 0;
+                    min-height: 600px;
                     padding: 5px 0;
                     width: 48%;
                 }
@@ -679,6 +687,7 @@ function Backend({initialProjectsLoad}) {
                     width: 130px;
                     height: 130px;
                     margin: 8px;
+                    cursor: pointer;
                     border-radius: 8px;
                     transition: all .02s ease;
                     border: 3px solid ${Theme.colors.platinum};
@@ -724,14 +733,28 @@ function Backend({initialProjectsLoad}) {
                 }
                 .projectsform input {
                     float: left;
-                    width: 35%;
-                    padding: 10px 2.5%;
-                    margin: 2px 5%;
+                    width: 70%;
+                    padding: 10px 5%;
+                    margin: 5px 10%;
                     color: ${Theme.colors.onxy};
                     font: 16px 'Roboto';
+                    background: white;
                     border: ${Theme.shadows.border};
                     box-shadow: ${Theme.colors.shadowlight};
                     border-radius: 8px;
+                }
+                .projectsform input[name="tag"] {
+                    width: auto;
+                    min-width: 150px;
+                    max-width: 250px;
+                    padding: 2px 5px;
+                    margin: 0;
+                    background: none;
+                    border: none;
+                    box-shadow: none;
+                }
+                .projectsform input[name="tag"]:focus {
+                    box-shadow: none !important;
                 }
                 .projectsform textarea {
                     float: left;
@@ -750,20 +773,22 @@ function Backend({initialProjectsLoad}) {
                 }
                 .projectsform label {
                     float: left;
-                    width: 95%;
                     padding: 4px 2.5%;
-                    margin: 8px 0;
+                    border-radius: 6px;
+                    margin: 8px 10px;
                     margin-bottom: 1px;
-                    color: ${Theme.colors.charcoal};
-                    font: 16px ${Theme.fonts.fancy};
+                    color: white;
+                    background: ${Theme.colors.royalblue};
+                    font: 17px ${Theme.fonts.subheader};
+                    font-weight: 900;
                 }
-                .projectsform .info {
+                .info {
                     float: left;
                     width: 90%;
                     padding: 2px 5%;
                     margin: 0;
                     color: ${Theme.colors.onxy};
-                    font: 13px ${Theme.fonts.subheader};
+                    font: 14px ${Theme.fonts.subheader};
                 }
                 .projectsform button {
                     float: left;
@@ -777,19 +802,18 @@ function Backend({initialProjectsLoad}) {
                     margin-top: 30px;
                     margin-left: 40px;
                     transition: all .3s ease;
-                    font: 16px ${Theme.fonts.fancy};
+                    font: 16px ${Theme.fonts.subheader};
                 }
                 .projectsform button:hover {
                     opacity: .7;
                 }
                 .tagholder {
                     float: left;
-                    width: 50%;
+                    width: 100%;
                     transition: all .3s ease;
-                    margin-top: 20px;
                     min-height: 40px;
+                    margin: 20px 0;
                     display: flex;
-                    justify-content: center;
                     flex-wrap: wrap;
                 }
                 .tagholder img {
@@ -815,15 +839,12 @@ function Backend({initialProjectsLoad}) {
                 }
                 .upper {
                     width: 90%;
-                    min-height: 440px;
+                    min-height: 480px;
                     position: relative;
                     float: left;
                     padding: 10px 5%;
                     padding-bottom: 20px;
                     border-bottom: 1px solid ${Theme.colors.royalblue};
-                }
-                .layertop {
-                    z-index: 9999;
                 }
                 #fileid {
                     display: none;
@@ -840,7 +861,7 @@ function Backend({initialProjectsLoad}) {
                     float: left;
                     width: 100%;
                     height: 100%;
-                    z-index: 99;
+                    z-index: 5;
                     position: relative;
                     display: flex;
                     justify-content: center;

@@ -3,6 +3,10 @@ import { useState, useEffect, useReducer } from 'react'
 import Router from 'next/router'
 import nextCookie from 'next-cookies'
 import Theme from '../../styles/theme'
+import {
+  CSSTransition,
+  TransitionGroup,
+} from 'react-transition-group';
 
 const sortingOrder = {
     'inprogress': 1,
@@ -126,7 +130,7 @@ function TaskManager({getFirstLoad}) {
     useEffect(() => {
         sortAllTasks(getFirstLoad)
         console.log(sortedTasks)
-    }, [sortedTasks.done.length == 0])
+    }, [])
 
     // Updating Tasks with Backend
     const updateTasks = async(e) => {
@@ -206,71 +210,113 @@ function TaskManager({getFirstLoad}) {
                 </div>
                 <div className='column'>
                     <div className='cat'>To Do</div>
-                    {sortedTasks.created.length > 0 ? sortedTasks.created.map((task, i) => {
-                        let nextStatus = task.status == 'created' ? 'inprogress': 'done';
-                        return (
-                            <div key={i} className='task'>
-                                <h2>{task.objective}</h2>
-                                <h3 style={{background: getPriorityColor(task.priority)}}>{task.priority}</h3>
-                                <h4>{task.assignee}</h4>
-                                <img className='threedots' src='/icons/taskedit.png'/>
-                                <div className='floater'>
-                                    <div onClick={(e) => {
-                                        task.status = nextStatus;
-                                        updateThisTask(e, task.id, nextStatus)
-                                    }} className='update'>Status</div>
-                                    <div onClick={(e) => removeThisTask(e, task.id)} className='remove'>Remove</div>
-                                </div>
-                            </div>
-                        )
-                    }): <p className='info'>No Newly Created Tasks</p>}
+                    <TransitionGroup>
+                        {sortedTasks.created.length > 0 ? sortedTasks.created.map((task, i) => {
+                            let nextStatus = task.status == 'created' ? 'inprogress': 'done';
+                            return (
+                                <CSSTransition
+                                    key={i}
+                                    timeout={500}
+                                    classNames="item"
+                                >
+                                    <div className='task'>
+                                        <h2>{task.objective}</h2>
+                                        <h3 style={{background: getPriorityColor(task.priority)}}>{task.priority}</h3>
+                                        <h4>{task.assignee}</h4>
+                                        <img className='threedots' src='/icons/taskedit.png'/>
+                                        <div className='floater'>
+                                            <div onClick={(e) => {
+                                                task.status = nextStatus;
+                                                updateThisTask(e, task.id, nextStatus)
+                                            }} className='update'>Status</div>
+                                            <div onClick={(e) => removeThisTask(e, task.id)} className='remove'>Remove</div>
+                                        </div>
+                                    </div>
+                                </CSSTransition>
+                            )
+                        }): null}
+
+                    </TransitionGroup>
                 </div>
                 <div className='column'>
                     <div className='cat'>Doing</div>
-                    {sortedTasks.inprogress.length > 0 ? sortedTasks.inprogress.map((task, i) => {
-                        let nextStatus = task.status == 'created' ? 'inprogress': 'done';
-                        return (
-                            <div key={i} className='task'>
-                                <h2>{task.objective}</h2>
-                                <h3 style={{background: getPriorityColor(task.priority)}}>{task.priority}</h3>
-                                <h4>{task.assignee}</h4>
-                                <img className='threedots' src='/icons/taskedit.png'/>
-                                <div className='floater'>
-                                    <div onClick={(e) => {
-                                        task.status = nextStatus;
-                                        updateThisTask(e, task.id, nextStatus)
-                                    }} className='update'>Status</div>
-                                    <div onClick={(e) => removeThisTask(e, task.id)} className='remove'>Remove</div>
-                                </div>
-                            </div>
-                        )
-                    }): <p className='info'>No In Progress Tasks</p>}
+                    <TransitionGroup>
+                        {sortedTasks.inprogress.length > 0 ? sortedTasks.inprogress.map((task, i) => {
+                            let nextStatus = task.status == 'created' ? 'inprogress': 'done';
+                            return (
+                                <CSSTransition
+                                    key={i}
+                                    timeout={500}
+                                    classNames="item"
+                                >
+                                    <div className='task'>
+                                        <h2>{task.objective}</h2>
+                                        <h3 style={{background: getPriorityColor(task.priority)}}>{task.priority}</h3>
+                                        <h4>{task.assignee}</h4>
+                                        <img className='threedots' src='/icons/taskedit.png'/>
+                                        <div className='floater'>
+                                            <div onClick={(e) => {
+                                                task.status = nextStatus;
+                                                updateThisTask(e, task.id, nextStatus)
+                                            }} className='update'>Status</div>
+                                            <div onClick={(e) => removeThisTask(e, task.id)} className='remove'>Remove</div>
+                                        </div>
+                                    </div>
+                                </CSSTransition>
+                            )
+                        }): null}
+                    </TransitionGroup>
                 </div>
                 <div className='column'>
                     <div className='cat'>Done</div>
-                    {sortedTasks.done.length > 0 ? sortedTasks.done.map((task, i) => {
-                        let nextStatus = task.status == 'created' ? 'inprogress': 'done';
-                        return (
-                            <div key={i} className='task'>
-                                <h2>{task.objective}</h2>
-                                <h3 style={{background: getPriorityColor(task.priority)}}>{task.priority}</h3>
-                                <h4>{task.assignee}</h4>
-                                <img className='threedots' src='/icons/taskedit.png'/>
-                                <div className='floater'>
-                                    <div onClick={(e) => {
-                                        task.status = nextStatus;
-                                        updateThisTask(e, task.id, nextStatus)
-                                    }} className='update'>Status</div>
-                                    <div onClick={(e) => removeThisTask(e, task.id)} className='remove'>Remove</div>
-                                </div>
-                            </div>
-                        )
-                    }): <p className='info'>No Completed Tasks</p>}
+                    <TransitionGroup>
+                        {sortedTasks.done.length > 0 ? sortedTasks.done.map((task, i) => {
+                            let nextStatus = task.status == 'created' ? 'inprogress': 'done';
+                            return (
+                                <CSSTransition
+                                    key={i}
+                                    timeout={500}
+                                    classNames="item"
+                                >
+                                    <div className='task'>
+                                        <h2>{task.objective}</h2>
+                                        <h3 style={{background: getPriorityColor(task.priority)}}>{task.priority}</h3>
+                                        <h4>{task.assignee}</h4>
+                                        <img className='threedots' src='/icons/taskedit.png'/>
+                                        <div className='floater'>
+                                            <div onClick={(e) => {
+                                                task.status = nextStatus;
+                                                updateThisTask(e, task.id, nextStatus)
+                                            }} className='update'>Status</div>
+                                            <div onClick={(e) => removeThisTask(e, task.id)} className='remove'>Remove</div>
+                                        </div>
+                                    </div>
+                                </CSSTransition>
+                            )
+                        }): null}
+                    </TransitionGroup>
                 </div>
             </div>
             
             <img id='body_bg' src='/bg_login.png'/>
             <style jsx>{`
+                .item-enter {
+                    opacity: 0;
+                    transform: scale(0,0);
+                }
+                .item-enter-active {
+                    opacity: 1;
+                    transform: scale(1,1);
+                    transition: all 500ms ease;
+                }
+                .item-exit {
+                    opacity: 1;
+                    transform: scale(1,1);
+                }
+                .item-exit-active {
+                    transform: scale(0,0);
+                    transition: all 500ms ease;
+                }
                 .customselect {
                     float: left;
                     width: 300px;
