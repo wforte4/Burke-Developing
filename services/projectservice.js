@@ -44,13 +44,11 @@ export async function getProjects(limit) {
         })
     })
     .then(function(response) {
-        if(response.status == 403) {
-            return 'Not Authorized'
-        }
         return response.json();
     })
     .catch(function(error) {
-        return error
+        console.log(error)
+        return 'none'
     });
     if(getAllProjects) {
         return getAllProjects

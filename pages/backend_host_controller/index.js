@@ -232,7 +232,6 @@ function Backend({initialProjectsLoad}) {
                 </div>
                 <div className='pastpro'>
                     <h3 className='subheader'>My Projects</h3>
-                    <div onClick={loadProjects} className='centerbox'>View Projects</div>
                     <div className='pastproContainer'>
                         {projects ? projects.map((project, i) => {
                             return (
@@ -251,7 +250,7 @@ function Backend({initialProjectsLoad}) {
                                     </ul>
                                 </div>
                             )
-                        }): null}
+                        }): <p className='info'>No Projects Yet</p>}
                     </div>
                 </div>
             </div>
@@ -562,23 +561,6 @@ function Backend({initialProjectsLoad}) {
                     margin-bottom: 35px;
                     box-shadow: ${Theme.colors.shadowlight};
                     font: 18px ${Theme.fonts.title};
-                }
-                .centerbox {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%,-50%);
-                    cursor: pointer;
-                    border-radius: 10px;
-                    margin: 0;
-                    padding: 20px;
-                    background: ${Theme.colors.charcoal};
-                    color: white;
-                    display: ${projects ? 'none': 'block'};
-                    font: 28px ${Theme.fonts.curvy};
-                }
-                .centerbox:hover {
-                    box-shadow: ${Theme.colors.shadow};
                 }
                 .selimage {
                     float: left;
@@ -897,7 +879,8 @@ function Backend({initialProjectsLoad}) {
 
 Backend.getInitialProps = async(ctx) => {
     const getAllProjects = await getProjects(100)
-    return {initialProjectsLoad: getAllProjects}
+    console.log(getAllProjects);
+    return {initialProjectsLoad: getAllProjects !== 'none' ? getAllProjects: null}
 }
 
 export default withAuthSync(Backend)

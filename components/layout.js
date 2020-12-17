@@ -25,6 +25,7 @@ const HamburgerButton = ({onClick, active, top, left, right, width, height}) => 
                 right: ${right};
                 width: ${width}px;
                 height: ${height}px;
+                display: none;
             }
             .line {
                 position: absolute;
@@ -46,6 +47,11 @@ const HamburgerButton = ({onClick, active, top, left, right, width, height}) => 
             .bottom {
                 bottom: 0;
                 transform: translateY(-${active ? (height / 2): '0'}px) rotate(${active ? '-45deg': '0'});
+            }
+            @media screen and (max-width: 800px) {
+                .ham {
+                    display: block;
+                }
             }
         `}</style>
     </div>
@@ -346,7 +352,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                         width: 90%;
                         padding: 8px 5%;
                     }
-                    .hamburg {
+                    .ham {
                         display: block;
                     }
                     .right {
