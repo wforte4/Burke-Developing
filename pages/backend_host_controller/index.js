@@ -892,7 +892,7 @@ function Backend({initialProjectsLoad}) {
                         width: 98%;
                     }
                     .imgfloat {
-                        width: 180%;
+                        width: 90%;
                         right: 5px;
                     }
                 } 
