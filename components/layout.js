@@ -32,7 +32,7 @@ const HamburgerButton = ({onClick, active, top, left, right, width, height}) => 
                 left: 0;
                 width: 100%;
                 height: 1px;
-                background: black;
+                background: white;
                 transition: all .3s ease;
             }
             .top {
@@ -90,7 +90,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
     return (
         <div id='nav'>
             <HamburgerButton active={mobileactive} onClick={toggleActive} top='30px' right='20px' width={30} height={15} />
-            <Link href="/"><img className='burkeLogo' src='/icons/burkeLogo.png' /></Link>
+            <Link href="/"><h1 className='title'>Burke Developing</h1></Link>
             <ul ref={_element} className='barlink'>
                 {links.map((link, i) => {
                     return <Link key={i} href={link.url}><li title={link.url}>{link.name}</li></Link>
@@ -116,9 +116,9 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                         <div className='dropdown'>
                             <ul>
                                 {permission > 2000 ? <>
-                                    <Link href="/backend_host_controller"><li><img src="/icons/projects.png"/>Upload Project</li></Link>
+                                    <Link href="/backend_host_controller"><li><img src="/icons/projects.png"/>Upload New Project</li></Link>
                                     <Link href="/backend_host_controller/imageupload"><li><img src="/icons/uploadimg.png"/>Upload Images</li></Link>
-                                    <Link href="/backend_host_controller/taskmanager"><li><img src="/icons/tasklist.png"/>View Tasks</li></Link>
+                                    <Link href="/backend_host_controller/taskmanager"><li><img src="/icons/tasklist.png"/>Task Manager</li></Link>
                                     </>: null}
                                 <li onClick={clearUserInfo}><img src="/icons/logout.png"/>Logout</li>
                             </ul>
@@ -129,13 +129,15 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
             <style jsx>{`
                 #nav {
                     position: fixed;
+                    top: 0;
                     left: 0;
                     width: 100%;
                     height: 80px;
+                    color: white;
                     z-index: 1000;
                     display: flex;
                     transition: all .8s ease;
-                    background: rgba(255,255,255, .85);
+                    background: rgba(32, 44, 57, .85);
                     backdrop-filter: blur(12px);
                     box-shadow: ${theme.colors.shadowlight};
                     opacity: ${hideNav == false ? '1': '0'};
@@ -186,7 +188,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                 }
                 .username .flip {
                     position: absolute;
-                    left: 14px;
+                    left: 18px;
                     top: 30px;
                     width: 14px;
                     height: 14px;
@@ -203,13 +205,18 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                     top: 26px;
                     width: 22px;
                     height: 22px;
+                    opacity: 0;
+                    transition: all .2 ease;
+                }
+                .username:hover .userImg {
+                    opacity: 1;
                 }
                 .username h2 {
                     float: left;
                     font: 16px ${theme.fonts.subheader};
                     margin: 4px 0;
                     padding: 12px 0;
-                    border-radius: 8px;
+                    border-radius: 3px;
                     margin-top: 16px;
                     width: 100%;
                     transition: all .3s ease;
@@ -220,6 +227,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                 .username:hover h2 {
                     box-shadow: ${theme.colors.shadowlight};
                     background: white;
+                    color: black;
                 }
                 .dropdown {
                     float: left;
@@ -231,15 +239,15 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                     width: 100%;
                     overflow: hidden;
                     border-bottom: 2px solid ${theme.colors.gunmetal};
-                    border-radius: 8px;
+                    border-radius: 3px;
                     box-shadow: ${theme.colors.shadowlight};
                 }
                 .dropdown ul li img {
-                    width: 20px;
-                    height: 20px;
+                    width: 16px;
+                    height: 16px;
                     opacity: .7;
                     transition: all .4s ease;
-                    margin-bottom: -5px;
+                    margin-bottom: -2px;
                     margin-right: 7px;
                 }
                 .dropdown ul li {
@@ -247,6 +255,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                     width: 90%;
                     padding: 10px 5%;
                     cursor: pointer;
+                    color: black;
                     font: 16px 'Roboto';
                     list-style: none;
                     transition: background .2s ease;
@@ -275,12 +284,13 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                     min-height: 80px;
                     margin-right: 10px;
                 }
-                .burkeLogo {
+                .title {
                     float: left;
-                    width: 160px;
-                    margin: 5px 20px;
+                    margin: 8px 20px;
+                    color: white;
+                    font: 28px ${theme.fonts.title};
                     cursor: pointer;
-                    padding: 0px 2px;
+                    padding: 12px 5px;
                 }
                 .barlink {
                     float: left;
@@ -307,7 +317,7 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                 .barlink li:after {
                   display:block;
                   content: '';
-                  border-bottom: solid 2px ${theme.colors.charcoal};  
+                  border-bottom: solid 1px white;  
                   transform: scaleX(0);  
                   transition: transform 250ms ease-in-out;
                 }
@@ -322,18 +332,23 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                 @media screen and (max-width: 850px) {
                     .barlink {
                         width: 100%;
-                        background: white;
                         position: absolute;
-                        top: 130px;
+                        top: 139px;
                         left: 0;
                         margin: 0;
-                        padding: 10px 0;
+                        height: auto;
+                        z-index: 1000;
+                        padding: 20px 0;
+                        background: rgba(32, 44, 57, .95);
+                        backdrop-filter: blur(12px);
                         transform: translateX(${mobileactive ? 0: '-100%'});
                     }
                     .search {
                         width: 90%;
-                        background: white;
+                        background: rgba(32, 44, 57, .95);
+                        backdrop-filter: blur(12px);
                         position: absolute;
+                        z-index: 1000;
                         top: 80px;
                         left: 0;
                         margin: 0;
@@ -348,25 +363,31 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                     .search input:focus {
                         width: 80%;
                     }
+                    .username h2 {
+                        color: black;
+                    }
                     .barlink li {
                         width: 90%;
                         padding: 8px 5%;
+
                     }
+                    
                     .ham {
                         display: block;
                     }
                     .right {
                         width: 90%;
                         display: block;
-                        background: white;
                         position: absolute;
-                        top: ${_element.current ? 120 + _element.current.clientHeight: 0}px;
+                        top: ${_element.current ? 120 + _element.current.clientHeight + 20: 0}px;
                         left: 0;
                         right: none;
                         margin: 0;
-                        z-index: 99;
+                        z-index: 1000;
                         padding: 10px 5%;
                         transition: all .7s ease;
+                        background: rgba(32, 44, 57, .95);
+                        backdrop-filter: blur(12px);
                         transform: translateX(${mobileactive ? 0: '-100%'});
                     }
                 }

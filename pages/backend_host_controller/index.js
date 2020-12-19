@@ -175,7 +175,7 @@ function Backend({initialProjectsLoad}) {
                                         value={inputs.tag}
                                         onChange={handleTypeing}
                                         onKeyPress={addTagToList}
-                                        placeholder="'NewTag'"
+                                        placeholder="New tag here"
                                         tabIndex={0}
                                         autoComplete='off'
                                     />
@@ -198,7 +198,10 @@ function Backend({initialProjectsLoad}) {
                                 <p className='info'>Click from images below to set featured image</p>
                                 <div className='selectedImages'>
                                     {inputs.images.length == 0 ? <p className='info'>None Selected</p>: inputs.images.map((image, i) => {
-                                        return <div key={i} onClick={() => moveToFront(image)} className='selimage'>{image}</div>
+                                        return <div className="imglist">
+                                            <div key={i} onClick={() => moveToFront(image)} className='selimage'>{image}</div>
+                                            <div onClick={(e)=> toggleImageSelection(e, image, true)} className='ex'>x</div>
+                                        </div>
                                     })}
                                 </div>
                                 <h2 onClick={(e)=> {
@@ -236,7 +239,7 @@ function Backend({initialProjectsLoad}) {
                         {projects ? projects.map((project, i) => {
                             return (
                                 <div key={project.id} className='singleproject'>
-                                    <img className='sinpreview' src={baseConfig.backendImages + project.images[1]}/>
+                                    <img className='sinpreview' src={baseConfig.backendImages + project.images[0]}/>
                                     <Link href={`/posts/${project.id}`} ><h2>{project.title}</h2></Link>
                                     <div className='datetime'><Date datetime={project.date} /></div>
                                     <img className='threedots' src='/threedots.png' />
@@ -296,6 +299,29 @@ function Backend({initialProjectsLoad}) {
                 }}>No I Don't want to delete</h4>
             </div>
             <style jsx>{`
+                .imglist {
+                    float: left;
+                    width: 100%;
+                    position: relative;
+                }
+                .imglist:hover {
+                    background: rgba(20,20,20,.2);
+                }
+                .ex {
+                    position: absolute;
+                    right: 15px;
+                    padding: 5px;
+                    top: 0px;
+                    font: 18px 'Roboto';
+                    cursor: pointer;
+                    z-index: 5;
+                    transition: all .3s ease;
+                    opacity: .5;
+                }
+                .ex:hover {
+                    opacity: 1;
+                    color: red;
+                }
                 .upleft {
                     width: 50%;
                     float: left;
@@ -445,7 +471,6 @@ function Backend({initialProjectsLoad}) {
                     width: 90%;
                     padding: 5px 5%;
                     min-height: 500px;
-                    max-height: 620px;
                     overflow-y: scroll;
                     flex-flow: column wrap;
                     flex-wrap: nowrap;
@@ -543,7 +568,7 @@ function Backend({initialProjectsLoad}) {
                     width: 28%;
                     margin: 20px 1%;
                     padding: 0;
-                    border-radius: 8px;
+                    border-radius: 3px;
                     background: rgba(255,255,255,.7);
                     backdrop-filter: blur(10px);
                     min-height: 600px;
@@ -555,8 +580,8 @@ function Backend({initialProjectsLoad}) {
                     width: 90%;
                     padding: 14px 5%;
                     margin: 0px 0;
-                    border-top-right-radius: 8px;
-                    border-top-left-radius: 8px;
+                    border-top-right-radius: 3px;
+                    border-top-left-radius: 3px;
                     border-bottom: 2px solid ${Theme.colors.royalblue};
                     margin-bottom: 35px;
                     box-shadow: ${Theme.colors.shadowlight};
@@ -699,7 +724,7 @@ function Backend({initialProjectsLoad}) {
                     margin: 20px 1%;
                     padding: 0px 0%;
                     position: relative;
-                    border-radius: 10px;
+                    border-radius: 3px;
                     backdrop-filter: blur(10px);
                     background: rgba(255,255,255,.7);
                     transition: all .3s ease;
@@ -723,7 +748,7 @@ function Backend({initialProjectsLoad}) {
                     background: white;
                     border: ${Theme.shadows.border};
                     box-shadow: ${Theme.colors.shadowlight};
-                    border-radius: 8px;
+                    border-radius: 3px;
                 }
                 .projectsform input[name="tag"] {
                     width: auto;
@@ -747,7 +772,7 @@ function Backend({initialProjectsLoad}) {
                     color: ${Theme.colors.onxy};
                     font: 16px 'Roboto';
                     border: ${Theme.shadows.border};
-                    border-radius: 8px;
+                    border-radius: 3px;
                     box-shadow: ${Theme.shadows.light};
                     min-height: 150px;
                     max-height: 250px;
@@ -755,12 +780,11 @@ function Backend({initialProjectsLoad}) {
                 }
                 .projectsform label {
                     float: left;
-                    padding: 4px 2.5%;
+                    padding: 1px 5%;
                     border-radius: 6px;
-                    margin: 8px 10px;
+                    margin: 2px 10px;
                     margin-bottom: 1px;
-                    color: white;
-                    background: ${Theme.colors.royalblue};
+                    margin-top: 10px;
                     font: 17px ${Theme.fonts.subheader};
                     font-weight: 900;
                 }

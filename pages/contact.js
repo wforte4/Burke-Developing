@@ -151,10 +151,10 @@ function Contact() {
                     float: left;
                     min-height: 400px;
                     max-height: 700px;
-                    margin: 10px 1%;
+                    margin: 30px 1%;
                     padding: 10px 1%;
-                    border-radius: 8px;
-                    box-shadow: ${Theme.colors.shadowlight};
+                    border-radius: 3px;
+                    box-shadow: ${Theme.shadows.mat};
                 }
                 .cinfo h1 {
                     float: left;
@@ -203,30 +203,30 @@ function Contact() {
                     float: left;
                     width: 46%;
                     padding: 10px 2%;
-                    margin: 5px 5%;
-                    border-radius: 8px;
+                    margin: 5px 1%;
+                    border-radius: 3px;
                     font: 14px 'Roboto';
                     border: ${Theme.shadows.border};
-                    box-shadow: ${Theme.colors.shadowlight};
+                    box-shadow: ${Theme.shadows.mat};
                 }
                 .contactform label {
                     float: left;
                     width: 90%;
                     padding: 5px 0%;
-                    font: 14px ${Theme.fonts.fancy};
-                    margin: 5px 0%;
+                    font: 16px ${Theme.fonts.subheader};
+                    margin: 2px 0%;
                 }
                 .contactform textarea {
                     float: left;
-                    width: 86%;
+                    width: 94%;
                     padding: 10px 2%;
-                    margin: 5px 5%;
-                    border-radius: 8px;
+                    margin: 5px 1%;
+                    border-radius: 3px;
                     font: 14px 'Open Sans';
                     border: ${Theme.shadows.border};
                     min-height: 140px;
                     resize: vertical;
-                    box-shadow: ${Theme.colors.shadowlight};
+                    box-shadow: ${Theme.shadows.mat};
                 }
                 .contactform {
                     float: left;
@@ -237,11 +237,11 @@ function Contact() {
                 .column {
                     float: left;
                     width: 48%;
-                    margin: 10px 1%;
-                    padding: 30px 3%;
-                    border-radius: 8px;
+                    margin: 30px 1%;
+                    padding: 20px 3%;
+                    border-radius: 3px;
                     position: relative;
-                    box-shadow: ${Theme.colors.shadowlight};
+                    box-shadow: ${Theme.shadows.mat};
                 }
                 .content {
                     float: left;
