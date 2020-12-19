@@ -111,7 +111,7 @@ function Contact() {
                     width: 90%;
                     padding: 10px 5%;
                     text-align: center;
-                    font: 14px ${Theme.fonts.title};
+                    font: 16px ${Theme.fonts.subheader};
                 }
                 .next {
                     float: left;
@@ -119,7 +119,8 @@ function Contact() {
                     background: ${Theme.colors.gunmetal};
                     color: white;
                     margin-left: 50%;
-                    font: 12px 'Roboto';
+                    font: 16px 'Roboto';
+                    border-radius: 3px;
                     cursor: pointer;
                     transform: translateX(-50%);
                 }

@@ -493,11 +493,23 @@ function TaskManager({getFirstLoad}) {
                     margin-top: 80px;
                     overflow: hidden;
                 }
-                .maindiv h1 {
+                .nav h1 {
                     float: left;
-                    margin: 10px 5%;
-                    width: 90%;
+                    margin: 10px 25px;
+                    width: auto;
                     font: 30px ${Theme.fonts.title};
+                }
+                .nav p {
+                    float: left;
+                    font: 16px 'Roboto';
+                    margin: 0 10px;
+                }
+                .nav {
+                    float: left;
+                    width: 100%;
+                    padding: 20px 0;
+                    background: white;
+                    box-shadow: ${Theme.shadows.mat};
                 }
                 .maindiv form {
                     float: left;
@@ -524,6 +536,16 @@ function TaskManager({getFirstLoad}) {
                     border: none;
                     border-radius: 8px;
                     margin: 10px 5%;
+                }
+                @media screen and (max-width: 800px) {
+                    .tasklist {
+                        flex-wrap: wrap;
+                        align-items: column;
+
+                    }
+                    .column {
+                        width: 100%;
+                    }
                 }
             `}</style>
         </div>

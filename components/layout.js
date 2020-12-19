@@ -57,7 +57,7 @@ const HamburgerButton = ({onClick, active, top, left, right, width, height}) => 
     </div>
 }
 
-const Navigation = ({title, links, logo, currentpath, hideNav, user, permission, clearUserInfo}) => {
+const Navigation = ({title, links, logo, currentpath, user, permission, clearUserInfo}) => {
 
     const scroll = useScroll();
     const router = useRouter()
@@ -97,7 +97,6 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                 })}
                 {user == null ? <>
                     <Link href='/login'><li>Login</li></Link>
-                    <Link href='/createprofile'><li>CreateProfile</li></Link>
                 </>:null}
             </ul>
             <form onSubmit={handleSearch} className='search'>
@@ -139,8 +138,8 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                     transition: all .8s ease;
                     background: rgba(32, 44, 57, .85);
                     backdrop-filter: blur(12px);
+                    -webkit-backdrop-filter: blur(12px);
                     box-shadow: ${theme.colors.shadowlight};
-                    opacity: ${hideNav == false ? '1': '0'};
                 }
                 .search {
                     float: left;
@@ -364,6 +363,9 @@ const Navigation = ({title, links, logo, currentpath, hideNav, user, permission,
                         width: 80%;
                     }
                     .username h2 {
+                        color: white;
+                    }
+                    .username:hover h2 {
                         color: black;
                     }
                     .barlink li {
@@ -407,21 +409,6 @@ const Header = ({title, currentpath}) => {
     )
 }
 
-const restrictedRoutes = [
-    '/login',
-    '/createprofile'
-]
-
-function hideNavigation(currentpath) {
-    var decision = null
-    restrictedRoutes.forEach(route => {
-        if(route === currentpath) decision = true
-    })
-    if(decision == true) {
-        return true
-    }
-    return false
-}
 
 function Layout({children, links, title, path}) {
     
@@ -431,12 +418,6 @@ function Layout({children, links, title, path}) {
     const [userFullName, setFullName] = useState(null)
     const mobiletrue = useState(isMobile)
     const newscroll = useScroll()
-
-    const [hideNav, setNav] = useState(hideNavigation(router.pathname) ? true: false)
-
-    useEffect(() => {
-        setNav(hideNavigation(router.pathname) ? true: false)
-    }, [router.pathname])
 
     useEffect(() => {
         const updateUser = () => {
@@ -467,7 +448,7 @@ function Layout({children, links, title, path}) {
     return (
         <div id='layout'>
             <Header title={title} currentpath={path}/>
-            <Navigation permission={permission} user={userFullName} hideNav={hideNav} title={title} links={links} logo='/uplinkflat.png' currentpath={path} clearUserInfo={clearUser}/>
+            <Navigation permission={permission} user={userFullName} title={title} links={links} logo='/uplinkflat.png' currentpath={path} clearUserInfo={clearUser}/>
             <div id="canvas">
                 {children}
             </div>

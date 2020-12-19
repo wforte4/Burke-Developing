@@ -55,7 +55,7 @@ function Slide({index, image, height, currentSlide}) {
                     top: 0;
                     left: ${index * 100}%;
                     width: 100%;
-                    height: ${height}px;
+                    height: 100%;
                     overflow: hidden;
                     z-index: 10;
                 }
@@ -64,7 +64,7 @@ function Slide({index, image, height, currentSlide}) {
                     top: 50%;
                     left: 50%;
                     transition: all 8s ease;
-                    transform: translate(-50%,-50%) scale(${index == currentSlide ? '1.1, 1.1': '1.5, 1.5'}) translate3d(0, 0, 0);
+                    transform: translate(-50%,-50%) scale(${index == currentSlide ? '1.2, 1.2': '1.5, 1.5'}) translate3d(0, 0, 0);
                     width: 100%;
                     
                 }
@@ -99,6 +99,7 @@ export default function BannerSlider({hideMovement, cover, defaultBackground, im
     })
 
     const leftClick = () => {
+        clearTimeout(timer)
         var nextSlide = currentSlide - 1;
         if(nextSlide < 0) {
             setCurrent(images.length - 1)
@@ -108,6 +109,7 @@ export default function BannerSlider({hideMovement, cover, defaultBackground, im
     }
 
     const rightClick = () => {
+        clearTimeout(timer)
         var nextSlide = currentSlide + 1;
         if(nextSlide > images.length - 1) {
             setCurrent(0)
@@ -174,13 +176,13 @@ export default function BannerSlider({hideMovement, cover, defaultBackground, im
                 }
                 .dot {
                     float: left;
-                    width: 12px;
-                    height: 12px;
+                    width: 14px;
+                    height: 14px;
                     box-shadow: 0 0 2px rgba(20, 20,20,.4);
                     border-radius: 50%;
                     cursor: pointer;
                     transition: all .4s ease;
-                    margin: 0 5px;
+                    margin: 2px 4px;
                 }
                 .arrow {
                     position: absolute;

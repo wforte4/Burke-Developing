@@ -278,13 +278,17 @@ function UploadImage({firstLoadImages}) {
                     top: 60px;
                     left: 20px;
                     padding: 10px;
+                    box-shadow: ${Theme.shadows.mat};
                     cursor: pointer;
-                    opacity: .7;
+                    opacity: .9;
+                    border-radius: 3px;
                     transition: all .3s ease;
                     font: 14px 'Roboto';
                 }
                 .uploadform label:hover {
                     opacity: 1;
+                    color: white;
+                    background: ${Theme.colors.gunmetal};
                 }
                 .uploadform button {
                     position: absolute;
@@ -292,16 +296,18 @@ function UploadImage({firstLoadImages}) {
                     left: 20px;
                     padding: 10px;
                     cursor: pointer;
+                    background: ${Theme.colors.gunmetal};
+                    color: white;
                     border: none;
                     border-radius: 6px;
-                    opacity: .7;
+                    opacity: .2;
                     transition: all .3s ease;
                     font: 16px 'Roboto';
                 }
                 .uploadform button:hover {
                     opacity: 1;
                     transform: scale(1.05,1.05) translateY(-2px);
-                    box-shadow: ${Theme.shadows.neo};
+                    box-shadow: ${Theme.shadows.mat};
                 }
                 .uploadform .previewframe {
                     position: absolute;
@@ -377,6 +383,15 @@ function UploadImage({firstLoadImages}) {
                     top: 50%;
                     left: 50%;
                     transform: translate(-50%, -50%) scale(1.1,1.1);
+                }
+                @media screen and (max-width: 850px) {
+                    #left {
+                        width: 100%;
+                        margin: 10px 0;
+                    }
+                    .images {
+                        width: 100%;
+                    }
                 }
             `}</style>
         </div>
