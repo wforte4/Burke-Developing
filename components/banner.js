@@ -91,15 +91,14 @@ export default function BannerSlider({hideMovement, cover, defaultBackground, im
     let timer = null
 
     useEffect(() => {
-        if(isHovering == false) {
+        if(isHovering === false) {
             timer = setTimeout(() => {
                 if(isHovering == false) rightClick();
             }, slideTimer * 1000)
         } 
-    })
+    }, [!isHovering])
 
     const leftClick = () => {
-        clearTimeout(timer)
         var nextSlide = currentSlide - 1;
         if(nextSlide < 0) {
             setCurrent(images.length - 1)
@@ -109,7 +108,6 @@ export default function BannerSlider({hideMovement, cover, defaultBackground, im
     }
 
     const rightClick = () => {
-        clearTimeout(timer)
         var nextSlide = currentSlide + 1;
         if(nextSlide > images.length - 1) {
             setCurrent(0)
@@ -137,11 +135,20 @@ export default function BannerSlider({hideMovement, cover, defaultBackground, im
             </div>
             <div className='dots'>
                 {images == null ? null: images.map((image, i) => {
-                    return <div style={{background: currentSlide == i ? 'white': 'rgba(255, 255, 255, .2)'}} key={i} className='dot' onClick={() => setCurrent(i)}></div>
+                    return <div style={{background: currentSlide == i ? 'white': 'rgba(255, 255, 255, .2)'}} key={i} className='dot' onClick={() => {
+                        setCurrent(i)
+                        clearTimeout(timer)
+                    }}></div>
                 })}
             </div>
-            <img onClick={leftClick} className='arrow' style={{left: 40}} src={'/logo_arrow_left.png'} />
-            <img onClick={rightClick}  className='arrow right' style={{right: 40}} src={'/logo_arrow_left.png'} />
+            <img onClick={()=> {
+                leftClick()
+                clearTimeout(timer)
+                }} className='arrow' style={{left: 40}} src={'/logo_arrow_left.png'} />
+            <img onClick={()=> {
+                rightClick()
+                clearTimeout(timer)
+                }}  className='arrow right' style={{right: 40}} src={'/logo_arrow_left.png'} />
             <div className='content'>{children}</div>
             <style jsx>{`
                 #banner {

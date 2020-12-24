@@ -165,7 +165,6 @@ function Backend({initialProjectsLoad}) {
                                 />
                                 <p className='info'>Main title for the post</p>
                                 <label>Add Tag</label>
-                                <p className='info'>Hit the "Space" key to add tag to list</p>
                                 <div className='tagholder'>
                                     {tags.length !== 0 ? tags.map((tag, i) => {
                                         return <h3 key={i}>{tag}<img onClick={(e) => removeTag(e, tag)} src='logo_exx.png'/></h3>
@@ -180,6 +179,7 @@ function Backend({initialProjectsLoad}) {
                                         autoComplete='off'
                                     />
                                 </div>
+                                <p className='info'>Hit the "Space" key to add tag to list</p>
                                 <label>Build Date</label>
                                 <input 
                                     name='date'
