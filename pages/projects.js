@@ -58,7 +58,7 @@ function Portfolio({load, searchQuery, results}) {
                 <p>Sorry, no results </p>
             </div>
             <div id='projectcontainer'>
-                <TransitionGroup>
+                <TransitionGroup id="outter" style={{display: 'flex',justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap'}}>
                     {projects == null ? null: projects.map((project, i) => {  
                         var render = true;
                         if(selectedCategory) {
@@ -266,6 +266,7 @@ function Portfolio({load, searchQuery, results}) {
                     margin: 10px 25px;
                     overflow: hidden;
                     background: white;
+                    transition: all .5s ease;
                     box-shadow: 0 0 1px ${Theme.colors.gunmetal};
                     border-radius: 4px;
                     border-bottom: 1px solid ${Theme.colors.gunmetal};
@@ -332,6 +333,14 @@ function Portfolio({load, searchQuery, results}) {
                     margin: 40px 2.5%;
                     transition: all .5s ease;
                     display: flex;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                }
+                #outter {
+                    float: left;
+                    display: flex;
+                    align-items: center;
                     flex-wrap: wrap;
                     justify-content: center;
                 }
