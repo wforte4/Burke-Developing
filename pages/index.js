@@ -13,8 +13,8 @@ function Index() {
     return (
         <div id="mybody">
             <BannerSlider
-                images={['/yellow_house.jpg', '/3foyer.jpg', '/4livingroom.jpg', '/9kitchen.jpg', '/kitchen_living.jpg']}
-                height={isMobile == true ? 250:650}
+                images={['/banner/overview_one.jpg', '/banner/exterior_front.jpg', '/banner/interior_kitchen.jpg', '/banner/interior_livingroom.jpg', '/banner/yellow_house.jpg']}
+                height='800px'
                 hideMovement={true}
                 cover='rgba(0,0,0,.4)'
             >
@@ -25,7 +25,7 @@ function Index() {
             </Span>
             <Row
                 padding='2.5'
-                height='550px'>
+                height='650px'>
                 <Col background={Theme.colors.white}>
                     <div className='center'>
                         <img className='icon' src='/icons/gear.png'/>
@@ -52,13 +52,13 @@ function Index() {
                 </Col>
             </Row>
             <Row
-            height='580px' overflow='hidden'>
+            height='650px' overflow='hidden'>
                 <Col mobileDisplay={false} background={Theme.colors.lightplatinum}>
                     <div className='kitchenframe'>
-                        <img src='/9kitchen.jpg' className='kitchen'/>
+                        <img src='/banner/overview_one.jpg' className='kitchen'/>
                     </div>
                 </Col>
-                <Col background='rgba(255,255,255,.94)'>
+                <Col background='rgba(255,255,255,.88)'>
                     <div className='center'>
                         <img className='abimg' src='/icons/alliance.png'/>
                         <p className='abp'>Burke Developing's mission is to provide safe and stable structures for residential homes. We also turn old structures into new clean monuments. Click the link below to see our past work!</p>
@@ -66,7 +66,7 @@ function Index() {
                     </div>
                 </Col>
             </Row>
-            <Row height='600px' overflow='hidden'>
+            <Row height='650px' overflow='hidden'>
                 <Col>
                     <div className='center'>
                         <img className='abimg' src='/icons/task.png'/>
@@ -86,7 +86,7 @@ function Index() {
                     </div>
                 </Col>
             </Row>
-            <Row height='600px' overflow='hidden' background={Theme.colors.lightplatinum}>
+            <Row height='650px' overflow='hidden' background={Theme.colors.lightplatinum}>
                 <Col mobileDisplay={false}>
                     <div className='imgcollage'>
                         <img src='/display/1605307370593-14familyroom.jpg'/>
@@ -180,7 +180,7 @@ function Index() {
                     position: absolute;
                     top: 50%;
                     left: 50%;
-                    width: 65%;
+                    width: 55%;
                     transform: translate(-50%,-50%);
                 }
                 .kitchen {
@@ -239,7 +239,8 @@ function Index() {
                 #mybody {
                     float: left;
                     width: 100%;
-                    min-height: 1200px;
+                    min-height: 100%;
+                    height: auto;
                     margin-top: 80px;
                 }
                 .center {
@@ -286,6 +287,11 @@ function Index() {
                     text-align: center;
                     color: ${Theme.colors.onxy};
                     font: 18px 'Roboto';
+                }
+                @media only screen and (max-width: 800px) {
+                    .burketitle {
+                        width: 80%;
+                    }
                 }
             `}</style>
         </div>

@@ -45,10 +45,10 @@ export function BannerSingle({defaultBackground, image, children, customHeight, 
     )
 }
 
-function Slide({index, image, height, currentSlide}) {
+function Slide({index, image, currentSlide, onLoad}) {
     return (
         <div className='slide'>
-            <img src={image} />
+            <img onLoad={onLoad} src={image} />
             <style jsx>{`
                 .slide {
                     position: absolute;
@@ -79,24 +79,32 @@ function Slide({index, image, height, currentSlide}) {
     )
 }
 
-export default function BannerSlider({hideMovement, cover, defaultBackground, images, children, height, shadow, backendImageRoute}) {
+export default function BannerSlider({hideMovement = false, cover, defaultBackground, images, children, height, shadow, backendImageRoute}) {
     
     const defaultSize = 600;
     const usePosition = useScroll()
-    const [currentSlide, setCurrent] = useState(0);
+    const [currentSlide, setCurrent] = useState(-1);
     const [isHovering, setHovering] = useState(false);
-
+    const [doneAnimating, setDone] = useState(false)
+    const [loading, setLoading] = useState(true)
     // Measured in Seconds
     const slideTimer = 7;
-    let timer = null
 
+    // Slide timer for counting the amount of seconds before slide turns to next one
     useEffect(() => {
-        if(isHovering === false) {
-            timer = setTimeout(() => {
-                if(isHovering == false) rightClick();
+        setDone(false)
+        const timer = !isHovering && setTimeout(() => {
+                rightClick();
+                setDone(true)
             }, slideTimer * 1000)
-        } 
-    }, [!isHovering])
+        if(isHovering) clearTimeout(timer);
+        return () => clearTimeout(timer);
+    }, [isHovering, doneAnimating])
+
+    // Fix for first slide not animating
+    useEffect(() => {
+        setCurrent(0)
+    }, [loading == false])
 
     const leftClick = () => {
         var nextSlide = currentSlide - 1;
@@ -117,10 +125,11 @@ export default function BannerSlider({hideMovement, cover, defaultBackground, im
     }
 
     return (
-        <div id='banner' onMouseEnter={()=> {
+        <div id='banner' onMouseEnter={(e)=> {
+            e.persist()
             if(!hideMovement) {
                 setHovering(true)
-                clearTimeout(timer)
+                console.log('hit')
             }
         }} onMouseLeave={()=> {
             if(!hideMovement) setHovering(false)
@@ -128,26 +137,29 @@ export default function BannerSlider({hideMovement, cover, defaultBackground, im
             <div className='cover'></div>
             <div className='imgcont'>
                 {images == null ? null: images.map((image, i) => {
-                    return (
-                        <Slide key={i} image={backendImageRoute ? backendImageRoute + image: image} height={height} index={i} currentSlide={currentSlide} />
-                    )
+                    if(i < images.length - 1) {
+                        return (
+                            <Slide key={i} image={backendImageRoute ? backendImageRoute + image: image} index={i} currentSlide={currentSlide} />
+                        )
+                    } else {
+                        return (
+                            <Slide onLoad={()=> setLoading(false)} key={i} image={backendImageRoute ? backendImageRoute + image: image} index={i} currentSlide={currentSlide} />
+                        )
+                    }
                 })}
             </div>
             <div className='dots'>
                 {images == null ? null: images.map((image, i) => {
                     return <div style={{background: currentSlide == i ? 'white': 'rgba(255, 255, 255, .2)'}} key={i} className='dot' onClick={() => {
                         setCurrent(i)
-                        clearTimeout(timer)
                     }}></div>
                 })}
             </div>
             <img onClick={()=> {
                 leftClick()
-                clearTimeout(timer)
                 }} className='arrow' style={{left: 40}} src={'/logo_arrow_left.png'} />
             <img onClick={()=> {
                 rightClick()
-                clearTimeout(timer)
                 }}  className='arrow right' style={{right: 40}} src={'/logo_arrow_left.png'} />
             <div className='content'>{children}</div>
             <style jsx>{`
@@ -157,7 +169,7 @@ export default function BannerSlider({hideMovement, cover, defaultBackground, im
                     position: relative;
                     overflow: hidden;
                     background: ${defaultBackground};
-                    height: ${height}px;
+                    height: ${height};
                 }
                 .content {
                     z-index: 20;
@@ -233,7 +245,7 @@ export default function BannerSlider({hideMovement, cover, defaultBackground, im
                 }
                 @media only screen and (max-width: 800px) {
                     #banner {
-                        height: 300px;
+                        max-height: 450px;
                     }
                 } 
                 @media only screen and (max-width: 1100px) {
