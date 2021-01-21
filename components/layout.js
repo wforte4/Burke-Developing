@@ -232,19 +232,22 @@ const Navigation = ({title, links, logo, currentpath, user, permission, clearUse
                     float: left;
                     background: white;
                     z-index: 1;
-                    height: .01px;
+                    height: .001px;
                     opacity: 0;
-                    transition: height .4s ease, opacity 1s ease;
+                    transition: all .3s ease;
                     width: 100%;
                     overflow: hidden;
                     border-bottom: 2px solid ${theme.colors.gunmetal};
                     border-radius: 3px;
                     box-shadow: ${theme.colors.shadowlight};
                 }
+                .username:hover .dropdown {
+                    opacity: 1;
+                    height: 200px;
+                }
                 .dropdown ul li img {
-                    width: 16px;
-                    height: 16px;
-                    opacity: .7;
+                    width: 14px;
+                    height: 14px;
                     transition: all .4s ease;
                     margin-bottom: -2px;
                     margin-right: 7px;
@@ -252,7 +255,7 @@ const Navigation = ({title, links, logo, currentpath, user, permission, clearUse
                 .dropdown ul li {
                     float: left;
                     width: 90%;
-                    padding: 10px 5%;
+                    padding: 12px 5%;
                     cursor: pointer;
                     color: black;
                     font: 16px 'Roboto';
@@ -262,18 +265,11 @@ const Navigation = ({title, links, logo, currentpath, user, permission, clearUse
                 .dropdown ul li:hover {
                     background: ${theme.colors.platinum};
                 }
-                .dropdown ul li:hover img {
-                    opacity: 1;
-                }
                 .dropdown ul {
                     float: left;
                     width: 100%;
                     margin: 0;
                     padding: 0;
-                }
-                .username:hover .dropdown {
-                    height: 170px;
-                    opacity: 1;
                 }
                 .right {
                     position: fixed;
