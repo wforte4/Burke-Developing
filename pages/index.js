@@ -6,15 +6,16 @@ import {Span, Row, Col} from '../components/elements';
 import {isMobile} from 'react-device-detect';
 import { useState } from 'react';
 import Link from 'next/link';
-import { useScroll } from '../components/hooks';
+import { useScroll, useWindowSize } from '../components/hooks';
 
 function Index() {
     const newscroll = useScroll()
+    const window = useWindowSize()
     return (
         <div id="mybody">
             <BannerSlider
                 images={['/banner/overview_one.jpg', '/banner/exterior_front.jpg', '/banner/interior_kitchen.jpg', '/banner/interior_livingroom.jpg', '/banner/yellow_house.jpg']}
-                height='800px'
+                height={window.height + 'px'}
                 hideMovement={true}
                 cover='rgba(0,0,0,.4)'
             >
@@ -87,16 +88,9 @@ function Index() {
                 </Col>
             </Row>
             <Row height='650px' overflow='hidden' background={Theme.colors.lightplatinum}>
-                <Col mobileDisplay={false}>
-                    <div className='imgcollage'>
-                        <img src='/display/1605307370593-14familyroom.jpg'/>
-                        <img src='/display/1605311538665-8kitchen.jpg'/>
-                        <img src='/display/1605311560545-11kitchen.jpg'/>
-                        <img src='/display/1605311898012-15bedroom1.jpg'/>
-                    </div>
-                </Col>
                 <Col>
-                    <div className='center'>
+                    <img src='/banner/exterior_front.jpg' className='bgimage'/>
+                    <div className='center white'>
                         <img className='abimg' src='/icons/group.png'/>
                         <h2 className='servicetitle'>Contact Us Directly</h2>
                         <div className='sep'></div>
@@ -106,6 +100,18 @@ function Index() {
                 </Col>
             </Row>
             <style jsx>{`
+                .bgimage {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                }
+                .white { 
+                    background: rgba(255,255,255,.88);
+                    backdrop-filter: blur(4px);
+                    padding: 30px;
+                    border-radius: 10px;
+                }
                 .imgcollage {
                     width: 70%;
                     position: absolute;
@@ -142,7 +148,8 @@ function Index() {
                 }
                 .ablink {
                     float: left;
-                    width: 100%;
+                    width: 90%;
+                    margin: 2px 5%;
                     text-align: center;
                     padding: 14px 0;
                     border-radius: 10px;
@@ -188,7 +195,7 @@ function Index() {
                     width: 200%;
                     backface-visibility: false;
                     transform: scale(1.4,1.4) translate3d(0,0,0);
-                    margin-top: -${newscroll.scrollY > 500 && newscroll.scrollY < 1650 ? ((newscroll.scrollY - 500) / 7): (1650-500)/7||0}px;
+                    margin-top: -${newscroll.scrollY > 1200 && newscroll.scrollY < 1600 ? ((newscroll.scrollY - 1200) / 7): (1600-1200)/7||0}px;
                 }
                 .kitchenframe {
                     position: absolute;
@@ -241,7 +248,6 @@ function Index() {
                     width: 100%;
                     min-height: 100%;
                     height: auto;
-                    margin-top: 80px;
                 }
                 .center {
                     width: 50%;

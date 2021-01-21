@@ -365,6 +365,7 @@ function UploadImage({firstLoadImages}) {
                     float: left;
                     width: 40%;
                     height: 100%;
+                    margin: 20px 0;
                     backdrop-filter: blur(12px);
                     box-shadow: ${Theme.colors.shadowlight};
                     background: rgba(255,255,255,.8);
