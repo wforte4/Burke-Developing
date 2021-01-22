@@ -106,12 +106,6 @@ function Index() {
                     left: 0;
                     width: 100%;
                 }
-                .white { 
-                    background: rgba(255,255,255,.88);
-                    backdrop-filter: blur(4px);
-                    padding: 30px;
-                    border-radius: 10px;
-                }
                 .imgcollage {
                     width: 70%;
                     position: absolute;
@@ -255,6 +249,13 @@ function Index() {
                     left: 50%;
                     top: 50%;
                     transform: translate(-50%,-50%);
+                }
+                .white { 
+                    background: rgba(255,255,255,.8);
+                    backdrop-filter: blur(6px);
+                    padding: 30px;
+                    border-radius: 30px;
+                    width: 30%;
                 }
                 .icon {
                     float: left;

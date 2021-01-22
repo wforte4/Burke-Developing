@@ -26,7 +26,7 @@ function About() {
                 </Col>
                 <Col>
                     <div className='center'>
-                        <h2 className='servicetitle'>Let's Grow Together</h2>
+                        <h2 className='servicetitle'>Let's Build Together</h2>
                         <img className='serviceimg' src='/icons/stockmarket.png'/>
                         <p className='info'>The value of your house could greatly increase with a Re-design of the interior or exterior of the property. The Burke Team is ready to help you make this dream come true, click the link below to fill out our easy contact form so we can get started!</p>
                         <Link href='/contact'><div className='contactlink'>Get In Touch</div></Link>
@@ -35,12 +35,11 @@ function About() {
                     </div>
                 </Col>
             </Row>
-            <p id='spanner'>See below what we could help achieve for you!</p>
+            <p id='spanner'>These are just some examples of what we could help achieve for you!</p>
             <div className='imgcontainer'>
                 {build.displayimages.map((image, i) => {
-                    console.log(i % 2)
                     return (
-                        <div className='frame'>
+                        <div className='frame' key={i}>
                             <img src={'/display' + image} />
                         </div>
                     )
@@ -50,7 +49,7 @@ function About() {
                 .banner {
                     float: left;
                     width: 100%;
-                    height: 400px;
+                    height: 300px;
                     overflow: hidden;
                     position: relative;
                 }
@@ -100,7 +99,7 @@ function About() {
                 }
                 .frame {
                     float: left;
-                    width: 560px;
+                    width: 320px;
                     min-width: 200px;
                     margin: 1px;
                     position: relative;

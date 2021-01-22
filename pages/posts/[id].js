@@ -8,7 +8,7 @@ import Link from 'next/link'
 function Project({project}) {
     return (
         <div id='body'>
-            <BannerSlider height='750px' images={project.images} backendImageRoute={baseConfig.backendImages}/>
+            <BannerSlider height='500px' images={project.images} backendImageRoute={baseConfig.backendImages}/>
             <div className='title'>{project.title}</div>
             <div className='tagholder'>
                 {project.tags.map((tag, i) => {

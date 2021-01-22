@@ -8,6 +8,7 @@ import {
   CSSTransition,
   TransitionGroup,
 } from 'react-transition-group';
+import { getDate } from '../components/elements';
 
 function getCategories(projects) {
     if(projects == null) return null
@@ -22,11 +23,19 @@ function getCategories(projects) {
     return cats
 }
 
+function sortByDate(a, b) {
+    let dateone = getDate(a.created_at)
+    let datetwo = getDate(b.created_at)
+    if(dateone.date < datetwo.date) return 1
+    if(dateone.date > datetwo.date) return -1
+    return 0
+}
+
 function Portfolio({load, searchQuery, results}) {
 
     const [categories, setCategories] = useState(getCategories(load))
     const [selectedCategory, setCategory] = useState(null)
-    const [projects, setProjects] = useState(load)
+    const [projects, setProjects] = useState(load.sort(sortByDate))
     const [painted, setPainted] = useState([])
     const [inputs, setInputs] = useState({filter: ''})
 
@@ -60,6 +69,7 @@ function Portfolio({load, searchQuery, results}) {
             <div id='projectcontainer'>
                 <TransitionGroup id="outter" style={{display: 'flex',justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap'}}>
                     {projects == null ? null: projects.map((project, i) => {  
+                        const {date, time} = getDate(project.created_at)
                         var render = true;
                         if(selectedCategory) {
                             render = false;
@@ -84,7 +94,7 @@ function Portfolio({load, searchQuery, results}) {
                                 classNames="item"
                             >
                                 <div className='project' key={i}>
-                                    <Link href={`/posts/${project.id}`}><h2>{project.title}</h2></Link>
+                                    <Link href={`/posts/${project.id}`}><h1>{project.title}</h1></Link>
                                     <div className='frame'>
                                         <img src={baseConfig.backendImages + project.images[0]} />
                                     </div>
@@ -93,6 +103,7 @@ function Portfolio({load, searchQuery, results}) {
                                             return <h3 style={{background: tag == selectedCategory ? Theme.colors.royalblue: null, color: tag == selectedCategory ? 'white': 'black'}} key={i}>{tag}</h3>
                                         })}
                                     </div>
+                                    <h2>Build Date: {date}</h2>
                                     <p>{project.body.split('').map((char, i) => {
                                         if(i <= 200) {
                                             return char
@@ -101,7 +112,7 @@ function Portfolio({load, searchQuery, results}) {
                                             return ' ...'
                                         }
                                     })}</p>
-                                    <Link href={`/posts/${project.id}`}><h4>View Project</h4></Link>
+                                    <Link href={`/posts/${project.id}`}><div className='button'>View Project</div></Link>
                                 </div>
                             </CSSTransition>
                         )
@@ -176,26 +187,28 @@ function Portfolio({load, searchQuery, results}) {
                 .categories {
                     float: left;
                     width: 70%;
-                    padding: 20px 15%;
+                    padding: 10px 15%;
                     background: rgba(255,255,255,.7);
                     box-shadow: ${Theme.shadows.mat};
                     backdrop-filter: blur(8px);
                     display: ${searchQuery ? 'none': 'flex'};
                     justify-content: center;
+                    align-content: center;
                     flex-wrap: wrap;
                 }
                 .categories h4 {
                     float: left;
                     font: 16px 'Roboto';
                     cursor: pointer;
-                    padding: 10px;
+                    padding: 8px;
                     border-radius: 4px;
                     margin: 0;
-                    opacity: .6;
+                    color: green;
+                    opacity: .8;
                     transition: all .3s ease;
                 }
                 .categories h4:hover {
-                    transform: translateY(-2px);
+                    color: blue;
                     opacity: 1;
                 }
                 .searchQuery {
@@ -235,10 +248,19 @@ function Portfolio({load, searchQuery, results}) {
                     background: white;
                     text-align: center;
                 }
-                .tagholder {
+                .project {
                     float: left;
-                    width: 95%;
-                    padding: 3px 2.5%;
+                    position: relative;
+                    width: 390px;
+                    height: 560px;
+                    padding: 0px 0px;
+                    margin: 10px 25px;
+                    overflow: hidden;
+                    background: white;
+                    transition: all .5s ease;
+                    box-shadow: 0 0 1px ${Theme.colors.gunmetal};
+                    border-radius: 4px;
+                    border-bottom: 1px solid ${Theme.colors.gunmetal};
                 }
                 .frame {
                     float: left;
@@ -257,19 +279,38 @@ function Portfolio({load, searchQuery, results}) {
                     height: auto;
                     transition: all .3s ease-in-out;
                 }
-                .project {
-                    float: left;
-                    position: relative;
-                    width: 380px;
-                    height: 590px;
-                    padding: 0px 0px;
-                    margin: 10px 25px;
-                    overflow: hidden;
-                    background: white;
-                    transition: all .5s ease;
-                    box-shadow: 0 0 1px ${Theme.colors.gunmetal};
+                .project h1 {
+                    position: absolute;
+                    top: 2px;
+                    left: 0;
+                    width: 90%;
+                    padding: 18px 5%;
+                    transform: scale(.98,.98);
+                    margin: 0px 0;
+                    cursor: pointer;
+                    color: white;
+                    z-index: 10;
                     border-radius: 4px;
-                    border-bottom: 1px solid ${Theme.colors.gunmetal};
+                    text-align: center;
+                    font: 20px 'Montserrat';
+                    transition: all .3s ease;
+                }
+                .project h1:hover {
+                    background: rgba(255,255,255,.70);
+                    backdrop-filter: blur(8px);
+                    color: ${Theme.colors.tar};
+                    box-shadow: ${Theme.shadows.mat};
+                }
+                .tagholder {
+                    float: left;
+                    width: 95%;
+                    padding: 3px 2.5%;
+                }
+                .project h2 {
+                    float: left;
+                    margin: 2px 5%;
+                    width: 90%;
+                    font: 12px 'Roboto';
                 }
                 .project h3 {
                     float: left;
@@ -278,52 +319,32 @@ function Portfolio({load, searchQuery, results}) {
                     font-style: italic;
                     margin: 2px 2px;
                 }
-                .project h4 {
+                .project .button {
                     position: absolute;
-                    bottom: 5px;
-                    left: 10px;
-                    font: 16px 'Roboto';
+                    bottom: 15px;
+                    left: 5px;
+                    font: 15px 'Roboto';
                     color: white;
                     background: ${Theme.colors.tar};
-                    padding: 10px;
+                    padding: 7px;
                     margin-left: 10px;
                     cursor: pointer;
-                    border-radius: 8px;
+                    border-radius: 3px;
                     opacity: .8;
                     transition: all .3s ease-in-out;
                 }
-                .project h4:hover {
+                .project .button:hover {
                     opacity: 1;
-                    box-shadow: ${Theme.shadows.neo};
-                }
-                .project h4:active {
-                    box-shadow: ${Theme.shadows.inset};
-                }
-                .project h2 {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 90%;
-                    padding: 18px 5%;
-                    margin: 0px 0;
-                    cursor: pointer;
-                    color: white;
-                    z-index: 10;
-                    background: ${Theme.colors.tar};
-                    text-align: center;
-                    font: 17px 'Montserrat';
-                    transition: all .3s ease;
-                }
-                .project h2:hover {
-                    transform: scale(1.05,1.05);
-                    border-radius: 8px;
                     box-shadow: ${Theme.shadows.mat};
+                }
+                .project .button:active {
+                    box-shadow: ${Theme.shadows.inset};
                 }
                 .project p {
                     float: left;
                     width: 90%;
-                    padding: 10px 5%;
-                    font: 16px 'Open Sans';
+                    padding: 4px 5%;
+                    font: 15px 'Open Sans';
                     color: ${Theme.colors.onxy};
                 }
                 #projectcontainer {
@@ -362,9 +383,9 @@ function Portfolio({load, searchQuery, results}) {
                 }
                 #title {
                     float: left;
-                    width: 90%;
-                    padding: 50px 5%;
-                    font: 38px 'Montserrat';
+                    width: 95%;
+                    padding: 15px 2.5%;
+                    font: 32px 'Montserrat';
                     color: ${Theme.colors.gunmetal};
                     background: white;
                     margin: 0;
