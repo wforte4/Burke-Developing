@@ -64,7 +64,7 @@ function Slide({index, image, currentSlide, onLoad}) {
                     top: 50%;
                     left: 50%;
                     transition: all 8s ease;
-                    transform: translate(-50%,-50%) scale(${index == currentSlide ? '1.0, 1.0': '1.4, 1.4'}) translate3d(0, 0, 0);
+                    transform: translate(-50%,-50%) scale(${index == currentSlide ? '1.1, 1.1': '1.4, 1.4'}) translate3d(0, 0, 0);
                     width: 100%;
                     
                 }
@@ -99,7 +99,7 @@ export default function BannerSlider({hideMovement = false, cover, defaultBackgr
             }, slideTimer * 1000)
         if(isHovering) clearTimeout(timer);
         return () => clearTimeout(timer);
-    }, [isHovering, doneAnimating])
+    }, [isHovering, doneAnimating, currentSlide])
 
     // Fix for first slide not animating
     useEffect(() => {
