@@ -95,9 +95,6 @@ const Navigation = ({title, links, logo, currentpath, user, permission, clearUse
                 {links.map((link, i) => {
                     return <Link key={i} href={link.url}><li title={link.url}>{link.name}</li></Link>
                 })}
-                {user == null ? <>
-                    <Link href='/login'><li>Login</li></Link>
-                </>:null}
             </ul>
             <form onSubmit={handleSearch} className='search'>
                 <img onClick={(e) => {
@@ -163,7 +160,7 @@ const Navigation = ({title, links, logo, currentpath, user, permission, clearUse
                     transition: all .4s ease-in-out;
                 }
                 .search input:focus {
-                    background: rgba(244,244,244,.7);
+                    background: white;
                     outline: none;
                     opacity: 1;
                     width: 140px;

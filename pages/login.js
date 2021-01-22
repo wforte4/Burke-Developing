@@ -37,8 +37,9 @@ function Login() {
     return (
             <div className='body'>
                 <img className='bgimage' src='/bg_login.png' />
-                <h1 className='header'>BurkeDeveloping</h1>
                 <div className='formbody'>
+
+                    <h1 className='header'>BurkeDeveloping</h1>
                     <form onSubmit={formStatus !== 'loading' ? userLoginRequest: null}>
                         <label title='username'>Username</label>
                         <input 
@@ -82,11 +83,22 @@ function Login() {
                         box-shadow: 0 0 4px rgba(25, 26, 24, .2);
                         border-radius: 4px;
                     }
+                    .formbody form {
+                        float: left;
+                        width: 100%;
+                        margin-top: 90px;
+                        transition: all .3s ease;
+                        display: flex;
+                        justify-content: center;
+                        flex-flow: column wrap;
+                        align-items: center;
+                        align-content: center;
+                        opacity: ${formStatus == 'loading' ? 0: 1};
+                    }
                     .formbody label {
                         float: left;
-                        width: 80%;
-                        padding: 10px 5%;
-                        margin: 4px 5%;
+                        width: 60%;
+                        margin: 10px;
                         color: rgb(63, 63, 63);
                         font: 16px ${Theme.fonts.subheader};
                     }
@@ -94,7 +106,6 @@ function Login() {
                         float: left;
                         width: 60%;
                         padding: 10px 5%;
-                        margin: 5px 15%;
                         border-radius: 8px;
                         border: ${Theme.shadows.border};
                         font: 14px 'Open Sans';
@@ -122,13 +133,6 @@ function Login() {
                         float: left;
                         width: 90%;
                         padding: 5px 5%;
-                    }
-                    .formbody form {
-                        float: left;
-                        width: 100%;
-                        margin-top: 70px;
-                        transition: all .3s ease;
-                        opacity: ${formStatus == 'loading' ? 0: 1};
                     }
                     .formbody .loader {
                         position: absolute;
