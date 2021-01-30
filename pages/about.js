@@ -3,11 +3,16 @@ import build from '../components/pagebuild.json';
 import {Row, Col} from '../components/elements';
 import Link from 'next/link'
 import AnchorLink from 'react-anchor-link-smooth-scroll'
+import Head from 'next/head'
 
 function About() {
 
     return (
         <div className='body'>
+            <Head>
+                <title>About</title>
+                <meta name="Description" content="About page, services offered by burke developing. Home renovation company located in MA."/>
+            </Head>
             <div className='banner'>
                 <img src='/display/blurabout.jpg' />
                 <h1>About Burke Developing</h1>

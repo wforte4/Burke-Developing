@@ -2,6 +2,7 @@ import Theme from '../styles/theme';
 import { useState } from 'react';
 import { submitContact } from '../services/apiservice';
 import { useScroll } from '../components/hooks';
+import Head from 'next/head'
 
 function Contact() {
 
@@ -44,6 +45,10 @@ function Contact() {
 
     return (
         <div className='body'>
+            <Head>
+                <title>Contact</title>
+                <meta name="Description" content="Contact form for Burke Developing building services. Get in touch with Daniel Burke today!"/>
+            </Head>
             <div className='content'>
                 <div className='column'>
                     <img className='loader' src='/loading_a.gif'/>
@@ -126,12 +131,10 @@ function Contact() {
                 }
                 .cinfo ul {
                     float: left;
-                    width: 90%;
+                    width: 80%;
                     background: ${Theme.colors.gunmetal};
-                    padding: 20px 5%;
+                    padding: 20px 10%;
                     transition: all .5s ease;
-                    transform: perspective(200px) translate3d(0,0,10px);
-                    margin-top: ${newscroll.scrollY < 300 ? newscroll.scrollY || 0: newscroll.scrollY >20 ? 300: 0||0}px;
                 }
                 .cinfo ul li {
                     float: left;

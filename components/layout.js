@@ -91,13 +91,13 @@ const Navigation = ({title, links, logo, currentpath, user, permission, clearUse
         <div id='nav'>
             <HamburgerButton active={mobileactive} onClick={toggleActive} top='30px' right='20px' width={30} height={15} />
             <Link href="/"><h1 className='title'>Burke Developing</h1></Link>
-            <ul ref={_element} className='barlink'>
+            <div ref={_element} className='barlink'>
                 {links.map((link, i) => {
                     return <Link key={i} href={link.url}><li title={link.url}>{link.name}</li></Link>
                 })}
-            </ul>
+            </div>
             <form onSubmit={handleSearch} className='search'>
-                <img onClick={(e) => {
+                <img alt='search' onClick={(e) => {
                     e.persist()
                     searchRef.current.focus()
                 }} src='/icons/icon_search.png'/>
@@ -106,18 +106,16 @@ const Navigation = ({title, links, logo, currentpath, user, permission, clearUse
             <div className='right'>
                 {user == null ? null:
                     <div className='username'>
-                        <img className='flip' src='/logo_arrow_left.png'/>
+                        <img alt='left' className='flip' src='/logo_arrow_left.png'/>
                         <h2>Welcome, {user}</h2>
-                        <img className='userImg' src='/icons/userIcon.png'/>
+                        <img alt='user_logo' className='userImg' src='/icons/userIcon.png'/>
                         <div className='dropdown'>
-                            <ul>
-                                {permission > 2000 ? <>
-                                    <Link href="/backend_host_controller"><li><img src="/icons/projects.png"/>Upload New Project</li></Link>
-                                    <Link href="/backend_host_controller/imageupload"><li><img src="/icons/uploadimg.png"/>Upload Images</li></Link>
-                                    <Link href="/backend_host_controller/taskmanager"><li><img src="/icons/tasklist.png"/>Task Manager</li></Link>
-                                    </>: null}
-                                <li onClick={clearUserInfo}><img src="/icons/logout.png"/>Logout</li>
-                            </ul>
+                            {permission > 2000 ? <>
+                                <Link href="/backend_host_controller"><li><img alt='projects' src="/icons/projects.png"/>Upload New Project</li></Link>
+                                <Link href="/backend_host_controller/imageupload"><li><img alt='images' src="/icons/uploadimg.png"/>Upload Images</li></Link>
+                                <Link href="/backend_host_controller/taskmanager"><li><img alt='tasks' src="/icons/tasklist.png"/>Task Manager</li></Link>
+                                </>: null}
+                            <li onClick={clearUserInfo}><img alt='logout' src="/icons/logout.png"/>Logout</li>
                         </div>
                     </div>
                 }
@@ -242,14 +240,14 @@ const Navigation = ({title, links, logo, currentpath, user, permission, clearUse
                     opacity: 1;
                     height: 200px;
                 }
-                .dropdown ul li img {
+                .dropdown li img {
                     width: 14px;
                     height: 14px;
                     transition: all .4s ease;
                     margin-bottom: -2px;
                     margin-right: 7px;
                 }
-                .dropdown ul li {
+                .dropdown li {
                     float: left;
                     width: 90%;
                     padding: 12px 5%;
@@ -259,14 +257,8 @@ const Navigation = ({title, links, logo, currentpath, user, permission, clearUse
                     list-style: none;
                     transition: background .2s ease;
                 }
-                .dropdown ul li:hover {
+                .dropdown li:hover {
                     background: ${theme.colors.platinum};
-                }
-                .dropdown ul {
-                    float: left;
-                    width: 100%;
-                    margin: 0;
-                    padding: 0;
                 }
                 .right {
                     position: fixed;
@@ -391,17 +383,6 @@ const Navigation = ({title, links, logo, currentpath, user, permission, clearUse
     )
 }
 
-const Header = ({title, currentpath}) => {
-    return (
-        <Head>
-            <title>{title}</title>
-            <link rel="preconnect" href="https://fonts.gstatic.com"/>
-            <link rel='icon' href='/icons/icon_bd.png' type="image/gif" sizes="16x16"/><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans&family=Roboto&display=swap" rel="stylesheet"/>
-            <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Inline+Display:wght@500&family=Big+Shoulders+Stencil+Display:wght@700&family=Playfair+Display:wght@500&display=swap" rel="stylesheet"/>
-        </Head>
-    )
-}
-
 
 function Layout({children, links, title, path}) {
     
@@ -440,12 +421,16 @@ function Layout({children, links, title, path}) {
 
     return (
         <div id='layout'>
-            <Header title={title} currentpath={path}/>
+            <Head>
+                <link rel="preconnect" href="https://fonts.gstatic.com"/>
+                <link rel='icon' href='/icons/icon_bd.png' type="image/gif" sizes="16x16"/><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans&family=Roboto&display=swap" rel="stylesheet"/>
+                <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Inline+Display:wght@500&family=Big+Shoulders+Stencil+Display:wght@700&family=Playfair+Display:wght@500&display=swap" rel="stylesheet"/>
+            </Head>
             <Navigation permission={permission} user={userFullName} title={title} links={links} logo='/uplinkflat.png' currentpath={path} clearUserInfo={clearUser}/>
             <div id="canvas">
                 {children}
             </div>
-            <AnchorLink href='#layout'><img id='totop' src='/logo_arrow_left.png' /></AnchorLink>
+            <AnchorLink href='#layout'><img alt='left' id='totop' src='/logo_arrow_left.png' /></AnchorLink>
             <div id="footer">
                 <p>"The finest compliment I can receive is the referral of <br></br>your friends, family, and business associates.<br></br>Thank you for your trust"</p>
                 <Row height={mobiletrue ? 'auto': '400px'} padding='4'>
@@ -453,22 +438,22 @@ function Layout({children, links, title, path}) {
                         <ul className='footlink big'>
                             <h2>Links</h2>
                             {links.map((link, i) => {
-                                return <Link key={i} href={link.url}><li title={link.url}><img className='flip' src='/logo_arrow_left_white.png'/>{link.name}</li></Link>
+                                return <Link key={i} href={link.url}><li title={link.url}><img alt='flip'  className='flip' src='/logo_arrow_left_white.png'/>{link.name}</li></Link>
                             })}
                         </ul>
                     </Col>
                     <Col>
                         <ul className='footlink big'>
                             <h2>Quick Contact</h2>
-                            <li><img src='/icons/icon_boss.png'/>Daniel Burke</li>
-                            <li><img src='/icons/icon_phone.png'/>1-781-426-1894</li>
-                            <li><img src='/icons/icon_email.png'/>dan@burkedeveloping.com</li>
+                            <li><img alt='manager' src='/icons/icon_boss.png'/>Daniel Burke</li>
+                            <li><img alt='phone' src='/icons/icon_phone.png'/>1-781-426-1894</li>
+                            <li><img alt='email' src='/icons/icon_email.png'/>dan@burkedeveloping.com</li>
                         </ul>
                     </Col>
                     <Col>
                         <ul className='footlink big'>
                             <h2>Social Media</h2>
-                            <Link href='http://www.facebook.com/BurkeDeveloping'><li><img src='/icons/facebook.png'/>Facebook</li></Link>
+                            <Link href='http://www.facebook.com/BurkeDeveloping'><li><img alt='facebook' src='/icons/facebook.png'/>Facebook</li></Link>
                         </ul>
                     </Col>
                 </Row>
