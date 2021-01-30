@@ -1,5 +1,6 @@
 import { useWindowSize, useScroll } from './hooks';
 import { useState, useEffect } from 'react';
+import { useSpring, animated, config } from 'react-spring'
 
 export function BannerSingle({defaultBackground, image, children, customHeight, fullsize, parallax}) {
 
@@ -14,7 +15,7 @@ export function BannerSingle({defaultBackground, image, children, customHeight, 
 
     return (
         <div id='banner'>
-            <img className='singleimage' src={image} style={{top: parallax == true && getScroll.scrollY >=0 ? (((fullsize == true ? getWindow.height: customHeight) / 2) - (getScroll.scrollY / 3)) || 0: '50%'}}/>
+            <img alt={image} className='singleimage' src={image} style={{top: parallax == true && getScroll.scrollY >=0 ? (((fullsize == true ? getWindow.height: customHeight) / 2) - (getScroll.scrollY / 3)) || 0: '50%'}}/>
             <div className='content'>{children}</div>
             <style jsx>{`
                 #banner {
@@ -48,7 +49,7 @@ export function BannerSingle({defaultBackground, image, children, customHeight, 
 function Slide({index, image, currentSlide, onLoad}) {
     return (
         <div className='slide'>
-            <img onLoad={onLoad} src={image} />
+            <img alt={image} onLoad={onLoad} src={image} />
             <style jsx>{`
                 .slide {
                     position: absolute;
@@ -89,6 +90,10 @@ export default function BannerSlider({hideMovement = false, cover, defaultBackgr
     const [loading, setLoading] = useState(true)
     // Measured in Seconds
     const slideTimer = 7;
+    const props = useSpring({
+        config: config.slow,
+        from: {opacity: 0, transform: 'translateX(200px)'}, to: {opacity: 1, transform: 'translateX(0)'}
+    })
 
     // Slide timer for counting the amount of seconds before slide turns to next one
     useEffect(() => {
@@ -125,7 +130,7 @@ export default function BannerSlider({hideMovement = false, cover, defaultBackgr
     }
 
     return (
-        <div id='banner' onMouseEnter={(e)=> {
+        <animated.div style={props}><div id='banner' onMouseEnter={(e)=> {
             e.persist()
             if(!hideMovement) {
                 setHovering(true)
@@ -251,6 +256,6 @@ export default function BannerSlider({hideMovement = false, cover, defaultBackgr
                 @media only screen and (max-width: 1100px) {
                 }
             `}</style>
-        </div>
+        </div></animated.div>
     )
 }

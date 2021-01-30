@@ -6,6 +6,7 @@ import {Span, Row, Col} from '../components/elements';
 import {isMobile} from 'react-device-detect';
 import { useState } from 'react';
 import Link from 'next/link';
+import Head from 'next/head';
 import { useScroll, useWindowSize } from '../components/hooks';
 
 function Index() {
@@ -13,13 +14,17 @@ function Index() {
     const window = useWindowSize()
     return (
         <div id="mybody">
+            <Head>
+                <title>Burke Developing</title>
+                <meta name="Description" content="Home renovation company registered in Boston MA."/>
+            </Head>
             <BannerSlider
                 images={['/banner/overview_one.jpg', '/banner/exterior_front.jpg', '/banner/interior_kitchen.jpg', '/banner/interior_livingroom.jpg', '/banner/yellow_house.jpg']}
                 height={window.height + 'px'}
                 hideMovement={true}
                 cover='rgba(0,0,0,.4)'
             >
-                <img className='burketitle' src='/burke_wide_title.png' />
+                <img alt='burketitle' className='burketitle' src='/burke_wide_title.png' />
             </BannerSlider>
             <Span background={Theme.colors.lightplatinum} padding={40}>
                 <p className="quote">Burke Developing is a registered home improvement company located in Quincy Massachusetts</p>
@@ -29,7 +34,7 @@ function Index() {
                 height='650px'>
                 <Col background={Theme.colors.white}>
                     <div className='center'>
-                        <img className='icon' src='/icons/gear.png'/>
+                        <img alt='gear' className='icon' src='/icons/gear.png'/>
                         <div className='servicetitle'>Building Services</div>
                         <div className='sep'></div>
                         <div className='pg'>Our subcontractors are reliable and responsive. They are the collective workforce that make up the Burke Developing team.</div>
@@ -37,7 +42,7 @@ function Index() {
                 </Col>
                 <Col background={Theme.colors.white}>
                     <div className='center'>
-                        <img className='icon' src='/icons/house.png'/>
+                        <img alt='house' className='icon' src='/icons/house.png'/>
                         <div className='servicetitle'>Home Renovations</div>
                         <div className='sep'></div>
                         <div className='pg'>Our specialty is complete home renovations. Through our primary business of buying and selling homes, one of our biggest assets has become our roladex of specialized subcontractors.</div>
@@ -45,7 +50,7 @@ function Index() {
                 </Col>
                 <Col background={Theme.colors.white}>
                     <div className='center'>
-                        <img className='icon' src='/icons/hardhat.png'/>
+                        <img alt='hardhat' className='icon' src='/icons/hardhat.png'/>
                         <div className='servicetitle'>On-Site Management</div>
                         <div className='sep'></div>
                         <div className='pg'>This advantage, along with our experience of being on site providing direction toward each order of operations, necessary to complete a project, helps our clients projects run smoother and more cost effective, resulting in a professional project completed.</div>
@@ -56,12 +61,12 @@ function Index() {
             height='650px' overflow='hidden'>
                 <Col mobileDisplay={false} background={Theme.colors.lightplatinum}>
                     <div className='kitchenframe'>
-                        <img src='/banner/overview_one.jpg' className='kitchen'/>
+                        <img alt='overview' src='/banner/overview_one.jpg' className='kitchen'/>
                     </div>
                 </Col>
                 <Col background='rgba(255,255,255,.88)'>
                     <div className='center'>
-                        <img className='abimg' src='/icons/alliance.png'/>
+                        <img alt='building' className='abimg' src='/icons/alliance.png'/>
                         <p className='abp'>Burke Developing's mission is to provide safe and stable structures for residential homes. We also turn old structures into new clean monuments. Click the link below to see our past work!</p>
                         <Link href='/projects'><div className='ablink'>View Projects</div></Link>
                     </div>
@@ -70,7 +75,7 @@ function Index() {
             <Row height='650px' overflow='hidden'>
                 <Col>
                     <div className='center'>
-                        <img className='abimg' src='/icons/task.png'/>
+                        <img alt='services' className='abimg' src='/icons/task.png'/>
                         <p className='abp'>We offer a variety of services to satisfy all of your home improvement needs. We are the experienced professionals you need to repair, maintain, and increase the value of your home.<br></br> These are just some of the services we offer, click the link below to learn more about how we could service you!</p>
                         <Link href='/about'><div className='ablink'>Learn More</div></Link>
                     </div>
@@ -89,9 +94,9 @@ function Index() {
             </Row>
             <Row height='650px' overflow='hidden' background={Theme.colors.lightplatinum}>
                 <Col>
-                    <img src='/banner/exterior_front.jpg' className='bgimage'/>
+                    <img alt='house front' src='/banner/exterior_front.jpg' className='bgimage'/>
                     <div className='center white'>
-                        <img className='abimg' src='/icons/group.png'/>
+                        <img alt='group'  className='abimg' src='/icons/group.png'/>
                         <h2 className='servicetitle'>Contact Us Directly</h2>
                         <div className='sep'></div>
                         <p className='abp'>Contact us today! Want to find out how we could re-create your home, click the link below and we can start planning!</p>
@@ -127,7 +132,6 @@ function Index() {
                 .abimg {
                     float: left;
                     width: 170px;
-                    height: 170px;
                     margin-left: 50%;
                     margin-top: -90px;
                     transform: translateX(-50%);

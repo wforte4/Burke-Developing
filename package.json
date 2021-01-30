@@ -24,6 +24,7 @@
     "react-cookie": "^4.0.3",
     "react-device-detect": "^1.14.0",
     "react-dom": "^16.13.1",
+    "react-spring": "^8.0.27",
     "react-transition-group": "^4.4.1"
   }
 }

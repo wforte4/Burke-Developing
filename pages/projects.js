@@ -9,6 +9,9 @@ import {
   TransitionGroup,
 } from 'react-transition-group';
 import { getDate } from '../components/elements';
+import Head from 'next/head'
+import { useSpring, animated , config} from 'react-spring'
+import { FadeIn } from '../components/springs'
 
 function getCategories(projects) {
     if(projects == null) return null
@@ -38,6 +41,10 @@ function Portfolio({load, searchQuery, results}) {
     const [projects, setProjects] = useState(load.sort(sortByDate))
     const [painted, setPainted] = useState([])
     const [inputs, setInputs] = useState({filter: ''})
+    const props = useSpring({
+        config: config.gentle,
+        from: {opacity: 0, transform: 'translateX(-400px)'}, to: {opacity: 1, transform: 'translateX(0)'}
+    })
 
     const handleTyping = (e) => {
         e.persist()
@@ -46,26 +53,31 @@ function Portfolio({load, searchQuery, results}) {
 
     return (
         <div className='body'>
+            <Head>
+                <title>Projects</title>
+                <meta name="Description" content="Projects page displaying burke devloping portfolio of beautiful interior and exterior design."/>
+            </Head>
             <img id='body_bg' src='/bg_login.png'/>
-            <h1 id='title'>Home Improvement Projects</h1>
             <div className='searchQuery'>
                 <h1>Search Result:</h1>
                 <h2>{searchQuery ? searchQuery: null}</h2>
             </div>
-            <div className='categories'>
+            <animated.div style={props}><div className='categories'>
+                <h1 id='title'>Home Improvement Projects</h1>
                 <div className='subtitle'>Categories</div>
                 <h4 style={{background: selectedCategory == null ? Theme.colors.royalblue: null, color: selectedCategory == null ? 'white': 'black', opacity: selectedCategory == null ? 1: '.6'}} onClick={()=> setCategory(null)} >All</h4>
                 {categories ? categories.map((cat, i) => {
-                    return <h4 style={{background: cat == selectedCategory ? Theme.colors.royalblue: null, color: cat == selectedCategory ? 'white': 'black', opacity: cat == selectedCategory ? 1: '.6'}} onClick={()=> setCategory(cat)} key={i}>{cat}</h4>
+                    return <h4 style={{background: cat == selectedCategory ? Theme.colors.royalblue: null, color: cat == selectedCategory ? 'white': 'black', opacity: cat == selectedCategory ? 1: '.9'}} onClick={()=> setCategory(cat)} key={i}>{cat}</h4>
                 }): null}
                 <form>
                     <div className='label'>Search Projects</div>
                     <input className='filter' name='filter' value={inputs.filter} onChange={handleTyping} placeholder='Filter Projects' />
                 </form>
-            </div>
+            </div></animated.div>
             <div className='searching'>
                 <p>Sorry, no results </p>
             </div>
+            <FadeIn>
             <div id='projectcontainer'>
                 <TransitionGroup id="outter" style={{display: 'flex',justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap'}}>
                     {projects == null ? null: projects.map((project, i) => {  
@@ -94,9 +106,9 @@ function Portfolio({load, searchQuery, results}) {
                                 classNames="item"
                             >
                                 <div className='project' key={i}>
-                                    <Link href={`/posts/${project.id}`}><h1>{project.title}</h1></Link>
+                                    <Link href={`/project/${project.id}`}><h1>{project.title}</h1></Link>
                                     <div className='frame'>
-                                        <img src={baseConfig.backendImages + project.images[0]} />
+                                        <img alt={project.title} src={baseConfig.backendImages + project.images[0]} />
                                     </div>
                                     <div className='tagholder'>
                                         {project.tags.map((tag, i) => {
@@ -112,7 +124,7 @@ function Portfolio({load, searchQuery, results}) {
                                             return ' ...'
                                         }
                                     })}</p>
-                                    <Link href={`/posts/${project.id}`}><div className='button'>View Project</div></Link>
+                                    <Link href={`/project/${project.id}`}><div className='button'>View Project</div></Link>
                                 </div>
                             </CSSTransition>
                         )
@@ -143,6 +155,7 @@ function Portfolio({load, searchQuery, results}) {
                     )
                 })}
             </div>
+            </FadeIn>
             <style jsx>{`
                 .filter {
                     float: left;
@@ -317,7 +330,7 @@ function Portfolio({load, searchQuery, results}) {
                     width: auto;
                     font: 12px ${Theme.fonts.subheader};
                     font-style: italic;
-                    margin: 2px 2px;
+                    margin: 3px 5px;
                 }
                 .project .button {
                     position: absolute;
@@ -344,8 +357,8 @@ function Portfolio({load, searchQuery, results}) {
                     float: left;
                     width: 90%;
                     padding: 4px 5%;
-                    font: 15px 'Open Sans';
-                    color: ${Theme.colors.onxy};
+                    font: 16px 'Roboto';
+                    color: black;
                 }
                 #projectcontainer {
                     float: left;
@@ -385,10 +398,11 @@ function Portfolio({load, searchQuery, results}) {
                     float: left;
                     width: 95%;
                     padding: 15px 2.5%;
-                    font: 32px 'Montserrat';
+                    font: 30px 'Montserrat';
                     color: ${Theme.colors.gunmetal};
                     background: white;
-                    margin: 0;
+                    text-align: center;
+                    margin: 10px 0;
                 }
                 #body_bg {
                     width: 100%;
