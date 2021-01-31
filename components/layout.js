@@ -91,18 +91,18 @@ const Navigation = ({title, links, logo, currentpath, user, permission, clearUse
         <div id='nav'>
             <HamburgerButton active={mobileactive} onClick={toggleActive} top='30px' right='20px' width={30} height={15} />
             <Link href="/"><h1 className='title'>Burke Developing</h1></Link>
-            <div ref={_element} className='barlink'>
+            <div ref={_element} className='linkholder'>
                 {links.map((link, i) => {
-                    return <Link key={i} href={link.url}><li title={link.url}>{link.name}</li></Link>
+                    return <Link key={i} href={link.url}><div className='navlink' title={link.url}>{link.name}</div></Link>
                 })}
+                <form onSubmit={handleSearch} className='search'>
+                    <img alt='search' onClick={(e) => {
+                        e.persist()
+                        searchRef.current.focus()
+                    }} src='/icons/icon_search.png'/>
+                    <input onFocus={(e)=> e.target.select()} ref={searchRef} autoComplete='off' value={inputs.search} name='search' onChange={handleType} />
+                </form>
             </div>
-            <form onSubmit={handleSearch} className='search'>
-                <img alt='search' onClick={(e) => {
-                    e.persist()
-                    searchRef.current.focus()
-                }} src='/icons/icon_search.png'/>
-                <input onFocus={(e)=> e.target.select()} ref={searchRef} autoComplete='off' value={inputs.search} name='search' onChange={handleType} />
-            </form>
             <div className='right'>
                 {user == null ? null:
                     <div className='username'>
@@ -130,6 +130,7 @@ const Navigation = ({title, links, logo, currentpath, user, permission, clearUse
                     color: white;
                     z-index: 1000;
                     display: flex;
+                    justify-content: space-evenly;
                     transition: all .8s ease;
                     background: rgba(32, 44, 57, .85);
                     backdrop-filter: blur(12px);
@@ -138,7 +139,7 @@ const Navigation = ({title, links, logo, currentpath, user, permission, clearUse
                 }
                 .search {
                     float: left;
-                    margin: 22px 5px;
+                    margin: 0px 5px;
                 }
                 .search img {
                     width: 20px;
@@ -155,6 +156,7 @@ const Navigation = ({title, links, logo, currentpath, user, permission, clearUse
                     width: .01px;
                     opacity: 0;
                     margin: 0 10px;
+                    margin-top: -5px;
                     transition: all .4s ease-in-out;
                 }
                 .search input:focus {
@@ -276,7 +278,7 @@ const Navigation = ({title, links, logo, currentpath, user, permission, clearUse
                     cursor: pointer;
                     padding: 12px 5px;
                 }
-                .barlink {
+                .linkholder {
                     float: left;
                     margin: 10px;
                     margin-top: 15px;
@@ -284,7 +286,7 @@ const Navigation = ({title, links, logo, currentpath, user, permission, clearUse
                     position: relative;
                     transition: transform .6s ease-in-out;
                 }
-                .barlink li {
+                .linkholder .navlink {
                     float: left;
                     font: 17px ${theme.fonts.subheader};
                     padding: 10px 10px;
@@ -292,26 +294,22 @@ const Navigation = ({title, links, logo, currentpath, user, permission, clearUse
                     height: 18px;
                     border-bottom: 2px solid ${theme.colors.opaq};
                     transition: all .3s ease;
-                    opacity: .7;
                     line-height: 32px;
                     list-style: none;
                     cursor: pointer;
                     display: inline-block;
                 }
-                .barlink li:after {
+                .linkholder .navlink:after {
                   display:block;
                   content: '';
                   border-bottom: solid 1px white;  
                   transform: scaleX(0);  
                   transition: transform 250ms ease-in-out;
                 }
-                .barlink li:after{ transform-origin: 100% 50%; }
-                .barlink li:hover:after{ transform: scaleX(1); transform-origin: 0% 50%; }
-                .barlink li:hover {
-                    opacity: 1;
-                }
-                .barlink li[title="${currentpath}"] {
-                    opacity: 1;
+                .linkholder .navlink:after{ transform-origin: 100% 50%; }
+                .linkholder .navlink:hover:after{ transform: scaleX(1); transform-origin: 0% 50%; }
+                .linkholder .navlink[title="${currentpath}"] {
+                    border-top: solid 1px white;  
                 }
                 @media screen and (max-width: 850px) {
                     .barlink {
