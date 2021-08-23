@@ -258,7 +258,7 @@ function Index() {
                     background: rgba(255,255,255,.8);
                     backdrop-filter: blur(6px);
                     padding: 30px;
-                    border-radius: 30px;
+                    border-radius: 8px;
                     width: 30%;
                 }
                 .icon {

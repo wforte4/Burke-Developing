@@ -7,7 +7,9 @@ import Router, { useRouter } from 'next/router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { useEffect, useState } from 'react';
-import { useCookies } from 'react-cookie';
+import { Provider } from "react-redux";
+import { createWrapper } from 'next-redux-wrapper'
+import store from "../store/store";
 
 Router.events.on('routeChangeStart', () => NProgress.start()); 
 Router.events.on('routeChangeComplete', () => NProgress.done()); 
@@ -22,10 +24,15 @@ function MyApp({ Component, pageProps, router}) {
     return <LoadingScreen message={`Loading...`}/>
   }
   return (
-    <Layout links={build.paths} title={build.title} path={router.pathname} >
-      <Component {...pageProps}></Component>
-    </Layout>
+    <Provider store={store}>
+      <Layout links={build.paths} title={build.title} path={router.pathname} >
+        <Component {...pageProps}></Component>
+      </Layout>
+    </Provider>
   )
 }
 
-export default MyApp
+const makestore = ()=> store;
+const wrapper = createWrapper(makestore)
+
+export default wrapper.withRedux(MyApp)

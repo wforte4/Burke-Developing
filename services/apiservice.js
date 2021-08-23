@@ -72,7 +72,7 @@ export async function Logout() {
     cookies.remove('email')
     cookies.remove('refreshKey')
     cookies.remove('userId')
-    await Router.push("/login");
+    await Router.push("/");
 }
 
 export async function submitContact(name, message, email, cellphone) {
