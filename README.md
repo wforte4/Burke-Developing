@@ -1,6 +1,6 @@
 # Burke Developing Website
 
-Burke Developing, a construction company located in Massachussetts [^1]
+Burke Developing, a construction company located in Massachussetts. [^1]
 
 [^1]: Burke Developing
 
