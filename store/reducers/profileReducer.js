@@ -4,8 +4,9 @@ import { Cookies } from 'react-cookie'
 const cookies = new Cookies()
 
 const initialState = { 
-    profile: cookies.get('user')||null,
-    auth: cookies.get('auth')||null,
+    profile: null,
+    token: null,
+    refreshToken: null,
     loading: false,
     error: null
 }
@@ -13,19 +14,12 @@ const initialState = {
 export const postReducer = (state = initialState, action) => {
 
     switch(action.type) {
-        case types.GET_THOUGHTS:
-            return {
-                ...state,
-                thoughts: action.payload,
-                loading: false,
-                error: null
-            }
         case types.LOGIN:
             return {
                 ...state,
-                profile: action.payload,
-                loading: false,
-                error: null
+                token: action.payload.auth,
+                refreshToken: action.payload.refresh,
+                profile: action.payload.profile
             }
         case types.AUTH:
             return {

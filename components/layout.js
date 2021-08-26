@@ -13,42 +13,11 @@ import Navigation from './Navigation';
 
 const cookies = new Cookies();
 
-
-
-function Layout({children, links, title, path}) {
+function Layout({children, title, links, path}) {
     
     const router = useRouter();
-    const [user, setUser] = useState(null)
-    const [permission, setPermission] = useState(null)
-    const [userFullName, setFullName] = useState(null)
     const mobiletrue = useState(isMobile)
     const newscroll = useScroll()
-
-    useEffect(() => {
-        const updateUser = () => {
-            const email = cookies.get('email')
-            const fullname = cookies.get('name')
-            const permissions = cookies.get('permission_level')
-            if(email && fullname && permissions) {
-                setUser(email)
-                setFullName(fullname)
-                setPermission(permissions)
-            } else {
-                setUser(null)
-                setFullName(null)
-                setPermission(null)
-            }
-        }
-        updateUser();
-    }, [router.pathname])
-
-    const clearUser = async(e) => {
-        e.persist()
-        setUser(null)
-        setFullName(null)
-        setPermission(null)
-        await Logout()
-    }
 
     return (
         <div id='layout'>
@@ -58,13 +27,10 @@ function Layout({children, links, title, path}) {
                 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Inline+Display:wght@500&family=Big+Shoulders+Stencil+Display:wght@700&family=Playfair+Display:wght@500&display=swap" rel="stylesheet"/>
             </Head>
             <Navigation 
-                permission={permission} 
-                user={userFullName} 
                 title={title} 
-                links={links} 
+                links={links}
                 logo='/uplinkflat.png' 
-                currentpath={path} 
-                clearUserInfo={clearUser}/>
+                currentpath={path} />
             <div id="canvas">
                 {children}
             </div>

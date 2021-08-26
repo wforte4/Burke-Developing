@@ -1,12 +1,11 @@
 import React from 'react'
-import App from 'next/app'
 import Layout from '../components/layout'
 import LoadingScreen from '../components/loadingscreen'
 import build from '../components/pagebuild.json'
 import Router, { useRouter } from 'next/router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Provider } from "react-redux";
 import { createWrapper } from 'next-redux-wrapper'
 import store from "../store/store";

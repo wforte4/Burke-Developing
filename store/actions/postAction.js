@@ -1,67 +1,42 @@
 import * as types from '../types'
-import { loginRequest, getAllUsers, patchUser } from '../../services/apiservice'
-import jwt_decode from 'jwt-decode';
 import Router from 'next/router';
 import { Cookies } from 'react-cookie';
-import { getThoughts } from '../../services/thoughtservice';
+import axios from 'axios'
+import jwt_decode from "jwt-decode";
 
 const cookies = new Cookies();
 
-export const fetchThoughts = (email, auth) => async dispatch => {
-    const res = await getThoughts(email, auth)
-    console.log(res)
-    dispatch({
-        type: types.GET_THOUGHTS,
-        payload: res.length > 0 ? res: null
-    })
-}
-
-export const updateProfile = (userId, token, inputs) => async dispatch => {
-    console.log(token)
-    const res = await patchUser(userId, token, inputs);
-    cookies.set('user', inputs)
-    dispatch({
-        type: types.UPDATE,
-        payload: inputs
-    })
-    await Router.reload('/myprofile')
-}
-
-export const getAllUsersAdmin = (token, limit) => async dispatch => {
-    const res = await getAllUsers(token, limit);
-    console.log(res)
-    if(res === 403 || res === 401) await Router.push(`/error?errorMessage=${res}`)
-    dispatch({
-        type: types.GET_ALLUSERS,
-        payload: res.length > 0 ? res: null,
-        error: null,
-        errorMessage: null
-    })
-}
 
 export const signIn = (email, password) => async dispatch => {
-    const res = await loginRequest(email, password)
-    console.log(res)
-    if(res === 400) {
+    try {
+        const res = await axios.post("http://localhost:3600/auth", {
+            email: email,
+            password: password
+        })
+        var decoded = jwt_decode(res.data.accessToken);
+        console.log(res)
+        dispatch({
+            type: types.LOGIN,
+            payload: {
+                profile: decoded,
+                auth: res.data.accessToken,
+                refresh: res.data.refreshToken
+            }
+        })
+        await Router.push('/')
+    } catch (e) {
         dispatch({
             type: types.FAILEDLOGIN,
-            payload: 400,
-            errorMessage: 'Invalid Email or Password'
+            payload: "Incorrect Username or Password"
         })
-        return
     }
-    const decoded = jwt_decode(res.accessToken)
-    cookies.set('user', decoded)
-    cookies.set('auth', res)
+}
+
+export const clearError = () => async dispatch => {
     dispatch({
-        type: types.AUTH,
-        payload: res
+        type: types.FAILEDLOGIN,
+        payload: null
     })
-    dispatch({
-        type: types.LOGIN,
-        payload: decoded
-    })
-    await Router.push('/')
 }
 
 export const signOut = () => async dispatch => {

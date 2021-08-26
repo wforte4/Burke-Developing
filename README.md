@@ -1,6 +1,8 @@
 # Burke Developing Website
 
-This website is intended for the purpose's of Burke Developing Corp. only
+Burke Developing, a construction company located in Massachussetts [^1]
+
+[^1]: Burke Developing
 
 ---
 
@@ -13,7 +15,7 @@ Main Dependencies
 
 Author: William Forte
 
-`Burke Developing, a construction company located in Massachussetts`
+
 
 ## How to
 

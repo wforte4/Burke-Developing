@@ -1,10 +1,12 @@
-import Layout from '../components/layout';
-import build from '../components/pagebuild.json';
-import BannerSlider from '../components/banner';
 import Theme from '../styles/theme';
-import { loginRequest } from '../services/apiservice'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useWindowSize } from '../components/hooks';
+import { TextField, Button, IconButton} from '@material-ui/core'
+import { useDispatch, useSelector } from 'react-redux'
+import { signIn, clearError } from '../store/actions/postAction';
+import Alert from '@material-ui/lab/Alert';
+import CloseIcon from '@material-ui/icons/Close';
+import Router from 'next/router';
 
 function Login() {
 
@@ -13,17 +15,15 @@ function Login() {
         password: '',
     })
     const wsize = useWindowSize();
-    const [formStatus, setFormStatus] = useState('form');
-    const [status, setStatus] = useState(null)
+    const dispatch = useDispatch();
+    const {error} = useSelector(state => state.user)
+    const [formStatus, setFormStatus] = useState('default');
 
     const userLoginRequest = async(e) => {
         e.preventDefault();
         setFormStatus('loading');
-        const newLogin = await loginRequest(inputs.username, inputs.password);
-        if(newLogin) {
-            setFormStatus('failed');
-            setStatus(newLogin)
-        }
+        await dispatch(signIn(inputs.username, inputs.password))
+        setFormStatus('default');
     }
 
     const isTyping = (e) => {
@@ -34,37 +34,76 @@ function Login() {
         })
     }
 
+    const clear = () => {
+        dispatch(clearError())
+    }
+
+    useEffect(() => {
+        if(error) {
+            setFormStatus('failed')
+        }
+    }, [error])
+
+    const styles = {
+        margin: '10px 0',
+        width: '70%'
+    }
+
     return (
             <div className='body'>
                 <img className='bgimage' src='/bg_login.png' />
                 <div className='formbody'>
-
-                    <h1 className='header'>BurkeDeveloping</h1>
                     <form onSubmit={formStatus !== 'loading' ? userLoginRequest: null}>
-                        <label title='username'>Username</label>
-                        <input 
+                        <h1 className='header'>BurkeDeveloping</h1>
+                        {error ? <Alert
+                            severity="error"
+                            action={
+                                <IconButton
+                                aria-label="close"
+                                color="inherit"
+                                size="small"
+                                onClick={clear}
+                                >
+                                <CloseIcon fontSize="inherit" />
+                                </IconButton>
+                            }
+                        >
+
+                            Incorrect username or password
+                        </Alert>: null}
+                        <TextField 
                             name='username'
                             value={inputs.username}
                             onChange={isTyping}
+                            variant="filled"
+                            label="Username"
+                            style={styles}
                             required 
                         />
-                        <label>Password</label>
-                        <input 
+                        <TextField 
                             name='password'
                             type='password'
                             value={inputs.password}
                             onChange={isTyping}
+                            label="Password"
+                            variant="filled"
+                            style={styles}
                             required 
                         />
-                        <div className='formstatus'>{status ? status: null}</div>
-                        <button type="submit">Login</button>
+                        <Button
+                            style={styles}
+                            variant="outlined"
+                            color="primary"
+                            onClick={userLoginRequest}
+                            type="submit"
+                        >Login</Button>
                     </form>
                     <img className='loader' src='/loading_a.gif'/>
                 </div>
                 <style jsx>{`
                     .formstatus {
                         float: left;
-                        margin: 20px 5%;
+                        margin: 0px 5%;
                         width: 90%;
                         font: 12px 'Roboto';
                         color: red;
@@ -78,7 +117,6 @@ function Login() {
                         width: 400px;
                         transition: all .4s ease;
                         height: ${formStatus == 'loading' ? '250px': '500px'};
-                        backdrop-filter: blur(8px);
                         background: rgba(255, 255, 255, .7);
                         box-shadow: 0 0 4px rgba(25, 26, 24, .2);
                         border-radius: 4px;
@@ -95,40 +133,6 @@ function Login() {
                         align-content: center;
                         opacity: ${formStatus == 'loading' ? 0: 1};
                     }
-                    .formbody label {
-                        float: left;
-                        width: 60%;
-                        margin: 10px;
-                        color: rgb(63, 63, 63);
-                        font: 16px ${Theme.fonts.subheader};
-                    }
-                    .formbody input {
-                        float: left;
-                        width: 60%;
-                        padding: 10px 5%;
-                        border-radius: 8px;
-                        border: ${Theme.shadows.border};
-                        font: 14px 'Open Sans';
-                        margin-bottom: 15px;
-                        box-shadow: ${Theme.colors.shadowlight};
-                    }
-                    .formbody button {
-                        float: left;
-                        width: 60%;
-                        padding: 10px 5%;
-                        margin: 2px 20%;
-                        margin-top: 20px;
-                        border-radius: 8px;
-                        font: 16px ${Theme.fonts.subheader};
-                        border: none;
-                        cursor: pointer;
-                        transition: all .3s ease;
-                        background: ${Theme.colors.platinum};
-                    }
-                    .formbody button:hover {
-                        color: white;
-                        background: ${Theme.colors.charcoal};
-                    }
                     .formstatus {
                         float: left;
                         width: 90%;
@@ -142,7 +146,7 @@ function Login() {
                         width: 60px;
                         height: 60px;
                         z-index: 100;
-                        opacity: ${formStatus == 'loading' ? 1: 0};
+                        display: ${formStatus == 'loading' ? 'block': 'none'};
 
                     }
                     .bgimage {

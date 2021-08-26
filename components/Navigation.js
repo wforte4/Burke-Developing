@@ -4,14 +4,13 @@ import { useRouter } from 'next/router'
 import theme from '../styles/theme'
 import { HamburgerButton } from './HamburgerButton'
 import Link from 'next/link'
+import { useSelector } from 'react-redux'
 
-export default function Navigation({links, currentpath, user, permission, clearUserInfo}) {
+export default function Navigation({links, currentpath}) {
 
-    const scroll = useScroll();
     const router = useRouter()
     const searchRef = useRef()
     const _element = useRef()
-    const [searchFocused, setFocused] = useState(false)
     const [mobileactive, setActive] = useState(false)
     const toggleActive = (e) => {
         e.persist();
@@ -19,6 +18,8 @@ export default function Navigation({links, currentpath, user, permission, clearU
         else setActive(true)
     }
     const [inputs, setInputs] = useState({search: ''})
+    const user = useSelector(state => state.user.profile)
+    console.log(user)
 
     useEffect(() => {
         setActive(false)
@@ -55,15 +56,15 @@ export default function Navigation({links, currentpath, user, permission, clearU
                 {user == null ? null:
                     <div className='username'>
                         <img alt='left' className='flip' src='/logo_arrow_left.png'/>
-                        <h2>Welcome, {user}</h2>
+                        <h2>Welcome, {user.fullname}</h2>
                         <img alt='user_logo' className='userImg' src='/icons/userIcon.png'/>
                         <div className='dropdown'>
-                            {permission > 2000 ? <>
+                            {user.permission == 'admin' ? <>
                                 <Link href="/burke-admin"><li><img alt='projects' src="/icons/projects.png"/>Upload New Project</li></Link>
                                 <Link href="/burke-admin/imageupload"><li><img alt='images' src="/icons/uploadimg.png"/>Upload Images</li></Link>
                                 <Link href="/burke-admin/taskmanager"><li><img alt='tasks' src="/icons/tasklist.png"/>Task Manager</li></Link>
                                 </>: null}
-                            <li onClick={clearUserInfo}><img alt='logout' src="/icons/logout.png"/>Logout</li>
+                            <li><img alt='logout' src="/icons/logout.png"/>Logout</li>
                         </div>
                     </div>
                 }
@@ -78,7 +79,7 @@ export default function Navigation({links, currentpath, user, permission, clearU
                     color: white;
                     z-index: 1000;
                     display: flex;
-                    justify-content: space-evenly;
+                    justify-content: start;
                     transition: all .8s ease;
                     background: rgba(32, 44, 57, .85);
                     backdrop-filter: blur(12px);
